@@ -1,0 +1,110 @@
+@prefix wg:   <https://example.org/wishgraph#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+<https://example.org/wishgraph#> a owl:Ontology ;
+    rdfs:label   "WishGraph — Cyber-Ritual Wishing Ontology" ;
+    rdfs:comment "An OWL 2 ontology modelling cyber-ritual wishing practices in Chinese digital culture, derived from a 28-dimension structured case dataset." .
+
+############################################################
+# Central class
+############################################################
+
+wg:CyberRitualCase a owl:Class ;
+    rdfs:label   "CyberRitualCase" ;
+    rdfs:comment "One cyber-ritual event: an online wish together with its full context." .
+
+############################################################
+# Dimension classes (one per CSV dimension family)
+############################################################
+
+wg:Subject a owl:Class ;
+    rdfs:label "Subject" .
+
+wg:Platform a owl:Class ;
+    rdfs:label "Platform" .
+
+wg:PerformativeAction a owl:Class ;
+    rdfs:label "PerformativeAction" .
+
+wg:SecularPressure a owl:Class ;
+    rdfs:label "SecularPressure" .
+
+wg:RemediatedSignifier a owl:Class ;
+    rdfs:label "RemediatedSignifier" .
+
+wg:RitualSymbol a owl:Class ;
+    rdfs:label "RitualSymbol" .
+
+wg:Archetype a owl:Class ;
+    rdfs:label "Archetype" .
+
+wg:RemediationStrategy a owl:Class ;
+    rdfs:label "RemediationStrategy" .
+
+wg:AffectiveOutcome a owl:Class ;
+    rdfs:label "AffectiveOutcome" .
+
+# Subject sub-types
+wg:Poster  a owl:Class ; rdfs:subClassOf wg:Subject ; rdfs:label "Poster" .
+wg:Commenter a owl:Class ; rdfs:subClassOf wg:Subject ; rdfs:label "Commenter" .
+
+############################################################
+# Object properties — case -> dimension
+############################################################
+
+wg:hasSubject a owl:ObjectProperty ;
+    rdfs:domain wg:CyberRitualCase ;
+    rdfs:range  wg:Subject ;
+    rdfs:label  "hasSubject" .
+
+wg:hasPerformativeAction a owl:ObjectProperty ;
+    rdfs:domain wg:CyberRitualCase ;
+    rdfs:range  wg:PerformativeAction ;
+    rdfs:label  "hasPerformativeAction" .
+
+wg:circulatesOnPlatform a owl:ObjectProperty ;
+    rdfs:domain wg:CyberRitualCase ;
+    rdfs:range  wg:Platform ;
+    rdfs:label  "circulatesOnPlatform" .
+
+wg:hasSecularPressure a owl:ObjectProperty ;
+    rdfs:domain wg:CyberRitualCase ;
+    rdfs:range  wg:SecularPressure ;
+    rdfs:label  "hasSecularPressure" .
+
+wg:usesRemediatedSignifier a owl:ObjectProperty ;
+    rdfs:domain wg:CyberRitualCase ;
+    rdfs:range  wg:RemediatedSignifier ;
+    rdfs:label  "usesRemediatedSignifier" .
+
+wg:usesRitualSymbol a owl:ObjectProperty ;
+    rdfs:domain wg:CyberRitualCase ;
+    rdfs:range  wg:RitualSymbol ;
+    rdfs:label  "usesRitualSymbol" .
+
+wg:hasArchetype a owl:ObjectProperty ;
+    rdfs:domain wg:CyberRitualCase ;
+    rdfs:range  wg:Archetype ;
+    rdfs:label  "hasArchetype" .
+
+wg:hasRemediationStrategy a owl:ObjectProperty ;
+    rdfs:domain wg:CyberRitualCase ;
+    rdfs:range  wg:RemediationStrategy ;
+    rdfs:label  "hasRemediationStrategy" .
+
+wg:resultsInOutcome a owl:ObjectProperty ;
+    rdfs:domain wg:CyberRitualCase ;
+    rdfs:range  wg:AffectiveOutcome ;
+    rdfs:label  "resultsInOutcome" .
+
+
+############################################################
+# Datatype properties — dimension -> typed facet value
+############################################################
+wg:pressureType  a owl:DatatypeProperty ; rdfs:domain wg:SecularPressure ;     rdfs:range xsd:string ; rdfs:label "pressureType" .
+wg:signifierType a owl:DatatypeProperty ; rdfs:domain wg:RemediatedSignifier ; rdfs:range xsd:string ; rdfs:label "signifierType" .
+wg:archetypeType a owl:DatatypeProperty ; rdfs:domain wg:Archetype ;           rdfs:range xsd:string ; rdfs:label "archetypeType" .
+wg:strategyType  a owl:DatatypeProperty ; rdfs:domain wg:RemediationStrategy ; rdfs:range xsd:string ; rdfs:label "strategyType" .

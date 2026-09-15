@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 2: Knowledge Representation - WishGraph</title>
+<style>
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --gold: #c9943a;
+  --gold-light: #f0d085;
+  --red: #c0392b;
+  --deep: #1a0a00;
+  --ink: #2c1a0e;
+  --bg: #fdf6e8;
+  --card-bg: #fffcf4;
+  --muted: #7a6652;
+  --border: #e8d5a3;
+  --accent: #8b2500;
+  --tag-bg: #fef3d0;
+  --tag-border: #d4aa50;
+  --nav-bg: #1a0a00;
+  --sidebar-w: 240px;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.7;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ---- Conceptual Model Figure 2.1 ---- */
+.conceptual-figure {
+  margin: 2rem 0 0;
+  padding: 0;
+}
+
+.conceptual-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 24px rgba(201, 148, 58, 0.12);
+  background: #fffdf8;
+}
+
+.conceptual-figure figcaption {
+  max-width: 48rem;
+  margin: 0.8rem auto 0;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.conceptual-figure figcaption strong {
+  color: var(--accent);
+}
+
+/* ── Sidebar Navigation ── */
+#sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--nav-bg);
+  border-right: 2px solid var(--gold);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 200;
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+#sidebar.collapsed {
+  transform: translateX(calc(-1 * var(--sidebar-w) + 36px));
+}
+.sidebar-logo {
+  padding: 1.2rem 1rem 0.8rem;
+  border-bottom: 1px solid rgba(201,148,58,0.3);
+}
+.sidebar-logo h1 {
+  font-size: 1.1rem; color: var(--gold-light);
+  letter-spacing: 0.06em;
+}
+.sidebar-logo p {
+  font-size: 0.65rem; color: var(--muted);
+  font-family: Arial, sans-serif;
+  margin-top: 0.2rem;
+}
+.nav-section {
+  padding: 0.8rem 0 0;
+}
+.nav-section-label {
+  font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em;
+  color: rgba(201,148,58,0.5); padding: 0 1rem 0.3rem;
+  font-family: Arial, sans-serif;
+}
+.nav-link {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  color: #c4a35a; text-decoration: none;
+  font-family: Arial, sans-serif; font-size: 0.8rem;
+  border-left: 3px solid transparent;
+  transition: all 0.2s;
+  line-height: 1.3;
+}
+.nav-link:hover, .nav-link.active {
+  color: var(--gold-light);
+  background: rgba(201,148,58,0.08);
+  border-left-color: var(--gold);
+}
+.nav-link.current { color: var(--gold-light); background: rgba(201,148,58,0.15); border-left-color: var(--gold); }
+.nav-link .nav-icon {
+  font-size: 0.9rem; min-width: 1.2rem; text-align: center;
+}
+.nav-link .nav-step {
+  font-size: 0.6rem; background: rgba(201,148,58,0.25);
+  color: var(--gold-light); border-radius: 3px;
+  padding: 0.1rem 0.35rem; margin-left: auto;
+  font-weight: bold; white-space: nowrap;
+}
+
+/* Toggle button */
+#sidebar-toggle {
+  position: fixed; top: 14px; left: calc(var(--sidebar-w) - 18px);
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--gold); border: 2px solid var(--nav-bg);
+  color: white; font-size: 0.75rem; cursor: pointer;
+  z-index: 300; display: flex; align-items: center; justify-content: center;
+  transition: left 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+body.sidebar-collapsed #sidebar-toggle {
+  left: 18px;
+  transform: rotate(180deg);
+}
+body.sidebar-collapsed #sidebar { transform: translateX(calc(-1 * var(--sidebar-w) + 36px)); }
+body.sidebar-collapsed #main-content { margin-left: 36px; }
+
+/* ── Main Content ── */
+#main-content {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  transition: margin-left 0.3s ease;
+  min-width: 0;
+}
+
+/* ── Hero ── */
+.hero {
+  background: linear-gradient(135deg, #1a0a00 0%, #3d1a00 50%, #5c2800 100%);
+  color: #f9e8c0;
+  text-align: center;
+  padding: 4rem 2rem 3rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: "☸";
+  position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+  font-size: 12rem; opacity: 0.04; color: var(--gold);
+  pointer-events: none;
+}
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  color: var(--gold-light);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+}
+.hero .subtitle {
+  font-size: 1.05rem; color: #d4b870;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+.hero .desc {
+  max-width: 700px; margin: 0 auto;
+  font-size: 0.95rem; color: #c9b08a; line-height: 1.8;
+}
+.badge-row {
+  display: flex; justify-content: center; gap: 1rem;
+  margin-top: 1.5rem; flex-wrap: wrap;
+}
+.badge {
+  background: rgba(201,148,58,0.18); border: 1px solid var(--gold);
+  color: var(--gold-light); border-radius: 20px;
+  padding: 0.25rem 0.9rem; font-size: 0.78rem;
+  font-family: 'Arial', sans-serif;
+}
+
+/* ── Introduction Block ── */
+.intro-block {
+  background: linear-gradient(135deg, #2c1a0e 0%, #1a0a00 100%);
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  color: #e8d5a3;
+}
+.intro-block h3 {
+  color: var(--gold-light); font-size: 1rem; margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+.role-card {
+  background: rgba(201,148,58,0.08);
+  border: 1px solid rgba(201,148,58,0.3);
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+}
+.role-card .role-tag {
+  font-size: 0.68rem; background: var(--gold);
+  color: white; border-radius: 4px;
+  padding: 0.1rem 0.5rem; display: inline-block;
+  margin-bottom: 0.4rem; font-family: Arial, sans-serif;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.role-card p {
+  font-size: 0.78rem; color: #c9b08a;
+  font-family: Arial, sans-serif; line-height: 1.5;
+}
+
+/* ── Section Layout ── */
+.section {
+  max-width: 1060px; margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+.section-title {
+  font-size: 1.5rem; color: var(--accent);
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 0.5rem; margin-bottom: 1.8rem;
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.section-title .num {
+  background: var(--gold); color: white;
+  width: 2rem; height: 2rem; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.9rem; font-weight: bold;
+}
+.step-label {
+  font-size: 0.65rem; background: rgba(139,37,0,0.1);
+  color: var(--accent); border: 1px solid rgba(139,37,0,0.25);
+  border-radius: 4px; padding: 0.1rem 0.5rem;
+  font-family: Arial, sans-serif; text-transform: uppercase;
+  letter-spacing: 0.06em; margin-left: 0.3rem;
+}
+
+/* ── Ontology graph figure ── */
+.onto-graph {
+  background: linear-gradient(135deg, #fffcf4, #fdf4e0);
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 1rem 1rem .8rem; margin: 0 0 2.2rem;
+  box-shadow: 0 3px 16px rgba(201,148,58,.10);
+  transition: box-shadow .35s ease, border-color .35s ease, transform .35s cubic-bezier(.2,.7,.3,1);
+  opacity: 0; transform: translateY(12px);
+  animation: ogIn .6s cubic-bezier(.2,.7,.3,1) forwards;
+}
+@keyframes ogIn { to { opacity: 1; transform: translateY(0); } }
+.onto-graph:hover { box-shadow: 0 10px 30px rgba(201,148,58,.20); border-color: var(--tag-border); }
+.onto-graph img { width: 100%; display: block; border-radius: 8px; background: #fff; }
+.onto-graph figcaption {
+  font-family: Arial, sans-serif; font-size: .74rem; color: var(--muted);
+  margin-top: .8rem; line-height: 1.65; text-align: center;
+}
+.onto-graph figcaption strong { color: var(--accent); }
+.onto-graph figcaption code {
+  font-size: .7rem; background: var(--tag-bg); border-radius: 3px;
+  padding: .05rem .3rem; color: var(--gold);
+}
+
+/* ── Ontology Structure ── */
+.onto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem; margin-bottom: 2rem;
+}
+.onto-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--gold);
+  border-radius: 8px; padding: 1rem;
+  transition: box-shadow 0.2s;
+}
+.onto-card:hover { box-shadow: 0 4px 16px rgba(201,148,58,0.18); }
+.onto-card h3 { font-size: 0.9rem; color: var(--accent); margin-bottom: 0.4rem; }
+.onto-card p { font-size: 0.78rem; color: var(--muted); line-height: 1.5; font-family: Arial, sans-serif; }
+.onto-card .class-uri {
+  font-size: 0.7rem; color: var(--gold); font-family: monospace;
+  background: var(--tag-bg); padding: 0.1rem 0.4rem;
+  border-radius: 3px; margin-bottom: 0.4rem; display: inline-block;
+}
+
+/* ── CSV Dataset Table ── */
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%; border-collapse: collapse;
+  font-size: 0.78rem; font-family: Arial, sans-serif;
+}
+thead tr { background: var(--nav-bg); color: var(--gold-light); }
+thead th { padding: 0.7rem 0.8rem; text-align: left; font-weight: 600; }
+tbody tr { border-bottom: 1px solid var(--border); }
+tbody tr:nth-child(even) { background: #fdf4e0; }
+tbody tr:hover { background: #fef7e6; }
+tbody td { padding: 0.55rem 0.8rem; vertical-align: top; }
+.tag {
+  display: inline-block;
+  background: var(--tag-bg); border: 1px solid var(--tag-border);
+  color: var(--ink); border-radius: 12px;
+  padding: 0.1rem 0.5rem; font-size: 0.68rem;
+  margin: 1px 2px; white-space: nowrap;
+}
+.person-badge {
+  background: #2d0000; color: #f0d085;
+  padding: 0.2rem 0.6rem; border-radius: 4px;
+  font-weight: bold; font-size: 0.72rem;
+}
+
+/* ── Case Cards ── */
+.case-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.2rem;
+}
+.case-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 1.2rem;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.case-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+.case-card .case-num {
+  position: absolute; top: -10px; left: 1rem;
+  background: var(--gold); color: white;
+  font-size: 0.7rem; font-weight: bold;
+  padding: 0.15rem 0.6rem; border-radius: 10px;
+  font-family: Arial, sans-serif;
+}
+.case-card h3 {
+  font-size: 1rem; color: var(--accent);
+  margin: 0.5rem 0 0.3rem;
+}
+.case-card .pressure {
+  font-size: 0.78rem; color: var(--muted);
+  font-style: italic; margin-bottom: 0.8rem;
+  font-family: Arial, sans-serif;
+}
+.case-field { margin-bottom: 0.5rem; }
+.case-field .field-label {
+  font-size: 0.68rem; font-weight: bold; text-transform: uppercase;
+  color: var(--gold); letter-spacing: 0.05em;
+  font-family: Arial, sans-serif;
+}
+.case-field .field-value {
+  font-size: 0.8rem; color: var(--ink);
+  font-family: Arial, sans-serif;
+}
+.source-link {
+  display: inline-block; margin-top: 0.5rem;
+  font-size: 0.7rem; color: var(--gold);
+  text-decoration: none; font-family: Arial, sans-serif;
+}
+.source-link:hover { text-decoration: underline; }
+
+/* ── RDF / Turtle viewer ── */
+.code-block {
+  background: #1e1410;
+  border: 1px solid #4a3000;
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  overflow-x: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 0.76rem;
+  color: #d4c8a0;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+.code-block .c-prefix { color: #7ec8e3; }
+.code-block .c-uri { color: #f0d085; }
+.code-block .c-class { color: #c3e88d; }
+.code-block .c-prop { color: #82aaff; }
+.code-block .c-lit { color: #f78c6c; }
+.code-block .c-comment { color: #546e7a; font-style: italic; }
+
+/* ── SPARQL ── */
+.cq-block {
+  background: var(--card-bg);
+  border-left: 4px solid var(--gold);
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.2rem; margin-bottom: 1.5rem;
+}
+.cq-block h3 { font-size: 1rem; color: var(--accent); margin-bottom: 0.3rem; }
+.cq-block p { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.7rem; font-family: Arial, sans-serif; }
+
+/* ── Workflow Diagram ── */
+.workflow {
+  display: flex; align-items: stretch; gap: 0;
+  flex-wrap: wrap; margin: 1.5rem 0;
+}
+.wf-step {
+  flex: 1; min-width: 130px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 1rem;
+  text-align: center; position: relative;
+}
+.wf-step .wf-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
+.wf-step h4 { font-size: 0.82rem; color: var(--accent); margin-bottom: 0.2rem; }
+.wf-step p { font-size: 0.72rem; color: var(--muted); font-family: Arial, sans-serif; }
+.wf-arrow {
+  display: flex; align-items: center;
+  color: var(--gold); font-size: 1.5rem; padding: 0 0.3rem;
+  align-self: center;
+}
+
+/* ── Property Table ── */
+.prop-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.prop-table th {
+  background: #2c1a0e; color: var(--gold-light);
+  padding: 0.6rem 0.8rem; text-align: left;
+  font-family: Arial, sans-serif; font-size: 0.8rem;
+}
+.prop-table td { padding: 0.5rem 0.8rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; font-family: Arial, sans-serif; }
+.prop-table tr:hover { background: #fdf4e0; }
+.mono { font-family: 'Courier New', monospace; color: var(--accent); font-size: 0.78rem; }
+
+/* ── Meme Gallery ── */
+.meme-gallery-intro {
+  font-size: 0.88rem; color: var(--muted); font-family: Arial, sans-serif;
+  margin-bottom: 1.5rem; line-height: 1.7;
+  background: var(--card-bg); border-left: 4px solid var(--gold);
+  padding: 0.8rem 1rem; border-radius: 0 8px 8px 0;
+}
+.meme-group {
+  margin-bottom: 2.5rem;
+}
+.meme-group-title {
+  font-size: 0.95rem; font-weight: bold; color: var(--accent);
+  margin-bottom: 0.8rem; padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: Arial, sans-serif;
+}
+.meme-group-title .meme-badge {
+  background: var(--accent); color: white;
+  font-size: 0.62rem; padding: 0.1rem 0.45rem;
+  border-radius: 4px; text-transform: uppercase;
+}
+.meme-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.meme-item {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+}
+.meme-item img {
+  width: 100%; display: block;
+  max-height: 360px; object-fit: contain;
+  background: #f5f0e8;
+}
+.meme-item .meme-caption {
+  padding: 0.5rem 0.7rem;
+  font-size: 0.72rem; color: var(--muted);
+  font-family: Arial, sans-serif;
+  border-top: 1px solid var(--border);
+}
+.meme-item .meme-caption strong {
+  color: var(--accent); font-size: 0.75rem;
+}
+
+/* ── AI Prompt Section ── */
+.prompt-intro {
+  font-size: 0.88rem; color: var(--muted); font-family: Arial, sans-serif;
+  margin-bottom: 1.5rem; line-height: 1.7;
+  background: linear-gradient(135deg, #fffcf4, #fef8e8);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 1rem 1.2rem;
+}
+.prompt-logic {
+  display: flex; gap: 0.5rem; align-items: center;
+  margin: 0.8rem 0; flex-wrap: wrap;
+}
+.prompt-logic .pl-step {
+  background: var(--nav-bg); color: var(--gold-light);
+  padding: 0.3rem 0.8rem; border-radius: 20px;
+  font-size: 0.75rem; font-family: Arial, sans-serif;
+  font-weight: bold;
+}
+.prompt-logic .pl-arrow {
+  color: var(--gold); font-size: 1rem; font-weight: bold;
+}
+
+.prompt-round {
+  margin-bottom: 3rem;
+}
+.prompt-round-label {
+  font-size: 1rem; font-weight: bold; color: var(--accent);
+  margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: Arial, sans-serif;
+}
+.prompt-round-label .pr-num {
+  background: var(--gold); color: white;
+  width: 1.8rem; height: 1.8rem; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: bold;
+}
+.prompt-round-label .pr-title {
+  font-size: 0.78rem; background: rgba(139,37,0,0.08);
+  color: var(--accent); border: 1px solid rgba(139,37,0,0.2);
+  border-radius: 4px; padding: 0.2rem 0.6rem;
+  font-weight: normal;
+}
+
+.prompt-tricolumn {
+  display: grid;
+  grid-template-columns: 260px 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.ptc-col {
+  display: flex; flex-direction: column;
+}
+.ptc-col:not(:last-child) {
+  border-right: 1px solid var(--border);
+}
+
+.ptc-header {
+  background: var(--nav-bg); color: var(--gold-light);
+  padding: 0.6rem 1rem;
+  font-size: 0.75rem; font-weight: bold;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  letter-spacing: 0.04em;
+  display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+}
+
+.ptc-body {
+  flex: 1;
+  background: var(--card-bg);
+  padding: 0.8rem;
+}
+
+/* Meme image column */
+.ptc-meme-img {
+  width: 100%; display: block;
+  object-fit: contain;
+  background: #f5f0e8;
+  max-height: 400px;
+}
+
+/* Prompt text column */
+.ptc-prompt-text {
+  font-size: 0.78rem; color: var(--ink);
+  font-family: Arial, sans-serif; line-height: 1.7;
+  height: 100%;
+}
+.ptc-prompt-text .pq-label {
+  font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--gold); font-weight: bold; margin-bottom: 0.5rem;
+  display: block;
+}
+.ptc-prompt-text .pq-content {
+  font-size: 0.8rem; color: var(--ink); line-height: 1.7;
+}
+.ptc-prompt-text .pq-sub {
+  margin-top: 0.6rem; padding-top: 0.6rem;
+  border-top: 1px dashed var(--border);
+}
+.pq-ask {
+  background: rgba(201,148,58,0.08);
+  border: 1px solid rgba(201,148,58,0.3);
+  border-radius: 6px; padding: 0.5rem 0.7rem;
+  font-size: 0.78rem; color: var(--ink);
+  font-family: Arial, sans-serif; line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+/* AI output column */
+.ptc-ai-output {
+  font-size: 0.75rem; font-family: 'Courier New', monospace;
+  line-height: 1.6; height: 100%;
+}
+.ai-screenshot {
+  width: 100%; display: block;
+  border-radius: 4px; overflow: hidden;
+  object-fit: contain;
+  max-height: 480px;
+}
+
+/* ── Footer ── */
+footer {
+  background: var(--nav-bg); color: #7a6652;
+  text-align: center; padding: 1.5rem;
+  font-size: 0.8rem; font-family: Arial, sans-serif;
+  border-top: 2px solid #3d1a00;
+}
+footer a { color: var(--gold); }
+footer strong { color: var(--gold-light); }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  #sidebar { transform: translateX(-100%); }
+  body.sidebar-open #sidebar { transform: translateX(0); }
+  #main-content { margin-left: 0; }
+  body.sidebar-collapsed #main-content { margin-left: 0; }
+  .prompt-tricolumn { grid-template-columns: 1fr; }
+  .ptc-col:not(:last-child) { border-right: none; border-bottom: 1px solid var(--border); }
+  .meme-pair { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .wf-arrow { display: none; }
+  .wf-step { min-width: 100%; }
+}
+/* WG-SECTIONS-PATCH */
+  /* subsection number pill */
+  .section-title .num.pill {
+    width: auto; min-width: 2.9rem; border-radius: 1.3rem;
+    padding: 0 .6rem; font-size: .78rem; letter-spacing: .02em;
+  }
+  /* subtitle chip (sentence case) */
+  .step-label.sub {
+    text-transform: none; letter-spacing: 0; font-size: .74rem;
+    padding: .14rem .6rem;
+  }
+  /* hero keyword chips as links */
+  .badge-row a.badge {
+    text-decoration: none; display: inline-block;
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .badge-row a.badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0,0,0,.30);
+    border-color: var(--gold-light);
+  }
+  /* reserved slot — content still to be added */
+  .todo-slot {
+    border: 2px dashed rgba(139,37,0,.22);
+    border-radius: 12px; min-height: 7rem;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(201,148,58,.05);
+  }
+  .todo-label {
+    font-size: .78rem; color: var(--muted);
+    font-family: Arial, sans-serif; letter-spacing: .04em;
+  }
+  /* reserved slot — figure still to be added */
+  .fig-slot {
+    border: 2px dashed rgba(139,37,0,.22);
+    border-radius: 12px; aspect-ratio: 16 / 9;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(201,148,58,.05); margin-top: 2rem;
+  }
+  /* full-dataset disclosure */
+  .full-data {
+    margin-top: 1.6rem; border: 1px solid var(--border);
+    border-radius: 10px; background: #fffdf8; overflow: hidden;
+  }
+  .full-data > summary {
+    cursor: pointer; list-style: none; padding: .8rem 1.1rem;
+    font-size: .84rem; font-weight: bold; color: var(--accent);
+    font-family: Arial, sans-serif; display: flex; align-items: center; gap: .5rem;
+    transition: background .25s ease;
+  }
+  .full-data > summary::-webkit-details-marker { display: none; }
+  .full-data > summary:hover { background: rgba(201,148,58,.10); }
+  .full-data .fd-chev { transition: transform .28s ease; font-size: .75rem; color: var(--gold); }
+  .full-data[open] .fd-chev { transform: rotate(90deg); }
+  .full-data .table-wrap { border-top: 1px solid var(--border); padding: 0 .4rem .4rem; }
+  #full-table { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; font-size: .7rem; }
+  #full-table th {
+    background: #4a3728; color: #f5e6c8; font-weight: bold;
+    padding: .5rem .55rem; text-align: left; white-space: nowrap;
+  }
+  #full-table td {
+    border-bottom: 1px solid #efe6d8; padding: .45rem .55rem;
+    vertical-align: top; min-width: 8.5rem; max-width: 17rem; line-height: 1.45;
+  }
+  #full-table tbody tr:nth-child(even) { background: rgba(201,148,58,.05); }
+/* /WG-SECTIONS-PATCH */
+/* WG-CH2-PATCH */
+  /* ---- two-up case comparison (2.1) ---- */
+  .case-two-up { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.4rem 0 1.6rem; align-items: start; }
+  @media (max-width: 820px) { .case-two-up { grid-template-columns: 1fr; } }
+  .case-col {
+    background: #fff; border: 1px solid var(--border); border-radius: 12px;
+    padding: 1rem 1rem 1.15rem; display: flex; flex-direction: column;
+    transition: transform .3s ease, box-shadow .3s ease;
+  }
+  .case-col:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,.10); }
+  .case-col h4 { font-size: .95rem; color: var(--accent); margin: 0 0 .6rem; letter-spacing: .01em; }
+  .case-col figure { margin: 0 0 .8rem; }
+  .case-col img {
+    display: block; width: 100%; height: auto; border-radius: 8px;
+    border: 1px solid var(--border); background: #fafafa;
+  }
+  .case-col figcaption {
+    font-size: .72rem; color: var(--muted); font-family: Arial, sans-serif;
+    line-height: 1.55; margin-top: .45rem;
+  }
+  .case-col p { font-size: .84rem; line-height: 1.75; margin: 0; }
+  .case-tag {
+    display: inline-block; font-size: .66rem; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--muted); border: 1px solid var(--border); border-radius: 999px;
+    padding: .12rem .5rem; margin-bottom: .5rem; align-self: flex-start;
+  }
+  /* ---- figure slot with visible caption ---- */
+  .fig-slot .todo-label { display: block; margin-bottom: .35rem; }
+  .fig-caption {
+    font-size: .78rem; color: var(--muted); font-family: Arial, sans-serif;
+    line-height: 1.65; text-align: left; max-width: 44rem; margin: .25rem auto 0;
+  }
+  .fig-caption strong { color: var(--text, #2b2b2b); }
+  /* ---- CQ cards (2.2) ---- */
+  .cq-list { display: flex; flex-direction: column; gap: .85rem; margin: 1.2rem 0 1.3rem; }
+  .cq-item {
+    background: #fff; border: 1px solid var(--border); border-left: 3px solid var(--gold, #d9a441);
+    border-radius: 10px; padding: .95rem 1.15rem;
+    transition: transform .25s ease, box-shadow .25s ease, border-left-color .25s ease;
+  }
+  .cq-item:hover { transform: translateX(3px); box-shadow: 0 8px 20px rgba(0,0,0,.08); border-left-color: var(--accent); }
+  .cq-name { font-size: .82rem; font-weight: 700; color: var(--accent); letter-spacing: .01em; }
+  .cq-q { font-size: .88rem; line-height: 1.7; margin: .4rem 0 .5rem; }
+  .cq-q em { font-style: normal; background: linear-gradient(transparent 62%, #f6e0a8 62%); }
+  .cq-why { font-size: .8rem; color: var(--muted); line-height: 1.7; margin: 0; }
+  /* ---- closing note ---- */
+  .closing-note {
+    margin-top: 1.6rem; padding: 1.05rem 1.2rem; border-radius: 10px;
+    background: #fff9f0; border: 1px solid var(--border);
+    font-size: .85rem; line-height: 1.8;
+  }
+  .closing-note p { margin: 0 0 .7rem; }
+  .closing-note p:last-child { margin-bottom: 0; }
+/* /WG-CH2-PATCH */</style>
+</head><body>
+
+<!-- Sidebar Toggle Button -->
+<button id="sidebar-toggle" onclick="toggleSidebar()" title="Toggle Sidebar">◀</button>
+
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <h1>☸ WishGraph</h1>
+    <p>Cyber-Wishing Knowledge Graph</p>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Overview</div>
+    <a class="nav-link" href="../index.html">
+      <span class="nav-icon">📑</span>
+      <span>Home Page</span>
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Chapters</div>
+    <a class="nav-link" href="chapter1.html">
+      <span class="nav-icon">📋</span>
+      <span>Research Framework</span>
+      <span class="nav-step">Ch1</span>
+    </a>
+    <a class="nav-link current" href="chapter2.html">
+      <span class="nav-icon">🧠</span>
+      <span>Knowledge Representation</span>
+      <span class="nav-step">Ch2</span>
+    </a>
+    <a class="nav-link" href="chapter3.html">
+      <span class="nav-icon">🔍</span>
+      <span>Knowledge Extraction</span>
+      <span class="nav-step">Ch3</span>
+    </a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div id="main-content">
+
+<!-- Hero -->
+<div class="hero" id="overview">
+  <h1>WishGraph</h1>
+  <div class="subtitle">Chapter 2: Knowledge Representation</div>
+  <div class="desc">
+    This chapter defines how cyber-wishing is represented in WishGraph: the conceptual model of the
+    phenomenon, the competency questions the ontology has to answer, and the T-Box design that
+    formalises its classes, hierarchy and properties.
+  </div>
+  <div class="badge-row">
+    <a class="badge" href="#sec21">2.1 Conceptual Model</a>
+    <a class="badge" href="#sec22">2.2 Competency Questions</a>
+    <a class="badge" href="#sec23">2.3 T-Box Design</a>
+  </div>
+</div>
+
+<!-- 2.1 Conceptual Model -->
+<section id="sec21">
+<div class="section">
+  <h2 class="section-title"><span class="num pill">2.1</span> Conceptual Model
+    <span class="step-label sub">Define the main dimensions of cyber-wishing</span></h2>
+
+  <h3 style="font-size:1rem;color:var(--accent);margin-bottom:.9rem;">From Cases to Representational Dimensions</h3>
+
+  <p style="font-size:.88rem;line-height:1.85;margin-bottom:.9rem;">
+    Before defining ontology classes and properties, we began by examining how cyber-wishing actually unfolds in
+    concrete cases. Two contrasting examples were particularly useful for this abstraction: a
+    <strong>Medicine Buddha wishing case</strong>, rooted in traditional Buddhist imagery, and a
+    <strong>Kardashian manifestation case</strong>, rooted in contemporary celebrity and manifestation culture.
+  </p>
+
+  <p style="font-size:.88rem;line-height:1.85;margin-bottom:1.2rem;">
+    At first sight, the two cases appear very different. One draws on an established religious figure and an
+    existing ritual tradition, while the other transforms a contemporary celebrity image into a symbolic resource
+    for aspiration and manifestation. However, once the cases are decomposed into their functional components,
+    a similar underlying structure becomes visible.
+  </p>
+
+  <div class="case-two-up">
+    <div class="case-col">
+      <span class="case-tag">Case A</span>
+      <h4>Medicine Buddha Wishing</h4>
+      <figure>
+        <img src="../assets/case_medicine_buddha_wish.jpg" alt="Medicine Buddha healing-mantra video on YouTube, showing the Buddha figure, the mantra text and the platform interface">
+        <figcaption>Digitally mediated Buddhist imagery circulating as a short video: the Medicine Buddha, the mantra
+          text overlaid on the image, and the engagement counters of the platform.</figcaption>
+      </figure>
+      <p>In the Medicine Buddha case, a user encounters or circulates digitally mediated Buddhist imagery and performs
+        a wishing-related action through the platform. The digital content retains recognizable ritual and religious
+        references, but these references are now embedded in the interaction logic of social media. A personal or
+        secular concern motivates the participation, while the symbolic act provides a way of expressing hope,
+        reassurance, or emotional orientation.</p>
+    </div>
+    <div class="case-col">
+      <span class="case-tag">Case B</span>
+      <h4>Kardashian Manifestation</h4>
+      <figure>
+        <img src="../assets/case_kardashian_manifestation.jpg" alt="Kardashian manifestation avatar post with headline, caption lines and hashtags">
+        <figcaption>A celebrity image re-circulated as a manifestation avatar, framed by caption lines and hashtags
+          that turn it into a resource for aspiration and abundance.</figcaption>
+      </figure>
+      <p>In the Kardashian manifestation case, the symbolic source is very different: the central figure comes from
+        contemporary celebrity culture rather than a traditional religious system. Nevertheless, the image is
+        similarly recontextualized through digital circulation and user participation. Posting, commenting, or
+        engaging with the content becomes a performative act through which aspiration is articulated and the
+        celebrity image acquires a function that goes beyond ordinary representation.</p>
+    </div>
+  </div>
+
+  <p style="font-size:.88rem;line-height:1.85;margin-bottom:.9rem;">
+    Despite their different cultural origins, the two cases can therefore be described through the same set of
+    representational dimensions. In both cases, there is a <strong>subject</strong> who performs an
+    <strong>action</strong> on a <strong>digital platform</strong>; the participation emerges in relation to a
+    particular <strong>secular pressure</strong>; a digitally circulated <strong>remediated signifier</strong>
+    mobilizes one or more <strong>ritual symbols</strong> and refers to a broader <strong>archetype</strong>; a
+    particular <strong>remediation strategy</strong> explains how the symbolic material is transformed in the
+    digital context; and the process ultimately leads toward an <strong>affective outcome</strong>.
+  </p>
+
+  <p style="font-size:.88rem;line-height:1.85;">
+    These recurring dimensions form the conceptual basis of our ontology. Rather than treating the image, the user,
+    or the symbolic object as the sole center of the model, we adopt a <strong>case-centered perspective</strong>:
+    each cyber-ritual case functions as a hub that brings together actors, actions, platforms, pressures, symbolic
+    materials, transformation processes, and affective consequences.
+  </p>
+
+  <figure class="conceptual-figure">
+    <img
+      src="../assets/conceptual_diagram.png"
+      alt="Conceptual model comparing the Medicine Buddha wishing case and the Kardashian manifestation case across shared cyber-wishing dimensions"
+    >
+  
+    <figcaption>
+      <strong>Figure 2.1 — Case-centered conceptual model of cyber-wishing.</strong>
+      The central model abstracts the shared representational structure of the
+      Medicine Buddha and Kardashian manifestation cases, while the two sides
+      illustrate how the same conceptual dimensions are instantiated differently
+      in concrete cyber-ritual practices.
+    </figcaption>
+  </figure>
+</div>
+</section>
+
+<!-- 2.2 Competency Questions -->
+<section id="sec22" style="background:#fff9f0;">
+<div class="section">
+  <h2 class="section-title"><span class="num pill">2.2</span> Competency Questions
+    <span class="step-label sub">Define what the ontology should be able to answer</span></h2>
+
+  <p style="font-size:.88rem;line-height:1.85;margin-bottom:.4rem;">
+    Our CQs were therefore designed around the recurring relations identified in the conceptual model. Together,
+    they move from the observable structure of a cyber-ritual case - who acts, what they do, and where - toward
+    less immediately visible dimensions such as pressure, symbolic transformation, archetypal reference, and
+    affective outcome.
+  </p>
+
+  <div class="cq-list">
+    <div class="cq-item">
+      <div class="cq-name">CQ1 — Performative Action, Subject and Platform</div>
+      <p class="cq-q">What performative actions are carried out in each cyber-ritual case, who performs them, and on which platform does the case circulate?</p>
+      <p class="cq-why">This question captures the observable layer of participation. It requires the ontology to distinguish the cyber-ritual case itself from the subject who participates in it, the performative action carried out by that subject, and the digital platform in which the action occurs.</p>
+    </div>
+    <div class="cq-item">
+      <div class="cq-name">CQ2 — Trigger / Pressure</div>
+      <p class="cq-q">Which secular pressure triggers each cyber-ritual case, and what type of pressure is it?</p>
+      <p class="cq-why">Cyber-wishing is not represented as an isolated symbolic act. Each case is connected to a worldly concern, desire, uncertainty, or pressure that provides the context for participation. This question therefore introduces the motivational dimension of the model.</p>
+    </div>
+    <div class="cq-item">
+      <div class="cq-name">CQ3 — Transformation and Affective Outcome</div>
+      <p class="cq-q">Which remediation strategy transforms each cyber-ritual case, and what outcome does the case resolve into?</p>
+      <p class="cq-why">This question focuses on the transformation process. It connects the way symbolic material is adapted, reproduced, augmented, aestheticized, sacralized, or otherwise remediated with the emotional or affective function produced by the cyber-ritual practice.</p>
+    </div>
+    <div class="cq-item">
+      <div class="cq-name">CQ4 — Signifier and Ritual Symbol</div>
+      <p class="cq-q">Which remediated signifier is employed in each cyber-ritual case, and which ritual symbols does it contain?</p>
+      <p class="cq-why">This question distinguishes the concrete digital object that circulates online from the symbolic elements mobilized within it. A meme, image, video, or other digital artifact is therefore not treated as equivalent to the ritual symbol it contains or evokes.</p>
+    </div>
+    <div class="cq-item">
+      <div class="cq-name">CQ5 — Archetype and Archetype Type</div>
+      <p class="cq-q">For each cyber-ritual case, which archetype is remediated by its signifier, and what type of archetype is it?</p>
+      <p class="cq-why">The final question moves from visible symbolic elements toward their broader cultural reference. It allows the ontology to represent how different digital signifiers may draw on traditional, contemporary, animal, religious, celebrity-related, or other archetypal sources while still participating in the same cyber-wishing structure.</p>
+    </div>
+  </div>
+
+  <p style="font-size:.88rem;line-height:1.85;">
+    More importantly, the questions provide a bridge between conceptual analysis and formal modelling. If a relation
+    is required to answer a Competency Question, the T-Box must provide an appropriate class or property through
+    which that relation can be represented.
+  </p>
+</div>
+</section>
+
+<!-- 2.3 T-Box Design -->
+<section id="sec23">
+<div class="section">
+  <h2 class="section-title"><span class="num pill">2.3</span> T-Box Design
+    <span class="step-label sub">Classes, hierarchy and properties</span></h2>
+
+  <p style="font-size:.88rem;line-height:1.85;margin-bottom:1.2rem;">
+    The conceptual dimensions and Competency Questions were subsequently formalized as an OWL 2 T-Box in Protege.
+    At this stage, the informal distinctions developed in the previous sections become explicit ontology entities:
+    concepts are represented through <strong>classes</strong>, relations through <strong>object properties</strong>,
+    and additional descriptive facets through <strong>datatype properties</strong>.
+  </p>
+
+  <h3 style="font-size:1rem;color:var(--accent);margin-bottom:.7rem;">Core Classes</h3>
+  <p style="font-size:.86rem;line-height:1.8;margin-bottom:.6rem;">
+    The T-Box is organized around <code class="mono">CyberRitualCase</code> as its central class. This modelling
+    decision reflects both the research questions and the structure of our data: the unit we want to compare is the
+    cyber-ritual case as a whole.
+  </p>
+  <p style="font-size:.86rem;line-height:1.8;margin-bottom:1rem;">
+    The class system reflects the major dimensions identified during conceptual abstraction.
+    <code class="mono">CyberRitualCase</code> represents the unit of analysis, while classes for Performative Action,
+    Platform, Secular Pressure, Remediated Signifier, Ritual Symbol, Archetype, Remediation Strategy, and Affective
+    Outcome represent the principal components through which each case is described. The acting subject is
+    represented through the corresponding person / agent layer of the ontology.
+  </p>
+
+  <div class="onto-grid">
+    <div class="onto-card">
+      <div class="class-uri">cw:CyberRitualCase</div>
+      <h3>CyberRitualCase</h3>
+      <p>Central class. The unit of analysis: one cyber-ritual case as a whole, acting as the hub that links every other dimension.</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">cw:Subject</div>
+      <h3>Subject</h3>
+      <p>The acting subject who performs the wishing practice (a sub-class of <span class="mono">dul:Agent</span>, so it can be reached through <span class="mono">cw:performedBy</span>).</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">cw:PerformativeAction</div>
+      <h3>PerformativeAction</h3>
+      <p>The wishing-related action carried out on the platform (subclasses: Posting Action, Commenting Action).</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">cw:Platform</div>
+      <h3>Platform</h3>
+      <p>The digital environment in which the case circulates (Xiaohongshu, Instagram, X, YouTube...).</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">cw:SecularPressure</div>
+      <h3>SecularPressure</h3>
+      <p>The worldly concern, desire, uncertainty or pressure that motivates participation (subclasses: Mundane Pressure, Existential Pressure).</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">cw:RemediatedSignifier</div>
+      <h3>RemediatedSignifier</h3>
+      <p>The concrete digital object that circulates online and carries symbolic content (subclasses: Image Signifier, Video Signifier).</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">cw:RitualSymbol</div>
+      <h3>RitualSymbol</h3>
+      <p>The symbolic element mobilized inside the signifier (subclasses: Mantra, Emoji, Visual or Auditory Marker).</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">cw:Archetype</div>
+      <h3>Archetype</h3>
+      <p>The broader cultural reference the signifier draws on (subclasses: Traditional, Modern, Animal, Secular Commodity Archetype).</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">cw:RemediationStrategy</div>
+      <h3>RemediationStrategy</h3>
+      <p>How the symbolic material is transformed in the digital context (subclasses: Digital Transposition, Sacred Amplification, Sacred Hybridization, Secular Idol Deification, Symbolic Enchantment).</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">cw:AffectiveOutcome</div>
+      <h3>AffectiveOutcome</h3>
+      <p>The emotional or affective function the practice resolves into (anxiety relief, hope, reassurance, communal encouragement).</p>
+    </div>
+  </div>
+
+  <h3 style="font-size:1rem;color:var(--accent);margin:1.6rem 0 .7rem;">Object Properties</h3>
+  <p style="font-size:.86rem;line-height:1.8;margin-bottom:.8rem;">
+    The object properties formalize the relational paths identified in the conceptual model. Rather than connecting
+    every dimension directly to the case, the T-Box preserves meaningful intermediate relations: a
+    <code class="mono">CyberRitualCase</code> has a performative action, the action is
+    <code class="mono">performedBy</code> an agent, and a remediated signifier both
+    <code class="mono">containsSymbol</code> and <code class="mono">remediates</code> an archetype.
+    Several properties are also aligned as subproperties of relations reused from CREON, making the model compatible
+    with the imported creativity pattern.
+  </p>
+
+  <div class="table-wrap">
+  <table class="prop-table">
+    <thead>
+      <tr><th>Property</th><th>Domain</th><th>Range</th><th>Meaning</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="mono">circulatesOn</td>
+        <td>CyberRitualCase</td>
+        <td>Platform</td>
+        <td>Specifies the digital platform on which the cyber-ritual case circulates.</td>
+      </tr>
+      <tr>
+        <td class="mono">hasPerformativeAction</td>
+        <td>CyberRitualCase</td>
+        <td>PerformativeAction</td>
+        <td>Connects the case to the concrete posting, commenting, or other performative action carried out within it.</td>
+      </tr>
+      <tr>
+        <td class="mono">performedBy</td>
+        <td>PerformativeAction</td>
+        <td>dul:Agent</td>
+        <td>Connects a performative action to the agent who performs it. WishGraph subjects are subclasses of <span class="mono">dul:Agent</span>.</td>
+      </tr>
+      <tr>
+        <td class="mono">triggeredBy</td>
+        <td>CyberRitualCase</td>
+        <td>SecularPressure</td>
+        <td>Links the case to the mundane or existential pressure that motivates the cyber-wishing practice.</td>
+      </tr>
+      <tr>
+        <td class="mono">employsSignifier</td>
+        <td>CyberRitualCase</td>
+        <td>RemediatedSignifier</td>
+        <td>Links the case to the digital signifier through which the cyber-wishing practice is expressed.</td>
+      </tr>
+      <tr>
+        <td class="mono">containsSymbol</td>
+        <td>RemediatedSignifier</td>
+        <td>RitualSymbol</td>
+        <td>Specifies the ritual symbols contained in a remediated signifier, such as a mantra, emoji, or visual marker.</td>
+      </tr>
+      <tr>
+        <td class="mono">remediates</td>
+        <td>RemediatedSignifier</td>
+        <td>Archetype</td>
+        <td>Connects a digital signifier to the archetype that it reframes or transforms.</td>
+      </tr>
+      <tr>
+        <td class="mono">transformedVia</td>
+        <td>CyberRitualCase</td>
+        <td>RemediationStrategy</td>
+        <td>Identifies the remediation strategy through which symbolic material is adapted in the case.</td>
+      </tr>
+      <tr>
+        <td class="mono">resolvesIntoAffect</td>
+        <td>CyberRitualCase</td>
+        <td>AffectiveOutcome</td>
+        <td>Connects the cyber-ritual case to its emotional or psychological resolution.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p style="font-size:.8rem;line-height:1.7;color:var(--muted);margin-top:-.6rem;margin-bottom:1.2rem;">
+    <strong>CREON alignment:</strong>
+    <code class="mono">containsSymbol</code>, <code class="mono">hasPerformativeAction</code>, and
+    <code class="mono">transformedVia</code> are subproperties of <code class="mono">creon:hasPart</code>;
+    <code class="mono">employsSignifier</code> is a subproperty of <code class="mono">creon:focusedOn</code>;
+    and <code class="mono">triggeredBy</code> is a subproperty of <code class="mono">creon:influencedBy</code>.
+  </p>
+
+  <h3 style="font-size:1rem;color:var(--accent);margin:1.6rem 0 .7rem;">Datatype Properties</h3>
+  <p style="font-size:.86rem;line-height:1.8;margin-bottom:.8rem;">
+    While object properties connect entities within the ontology, datatype properties attach literal information
+    directly to specific resources. They carry the facet values that allow a single dimension instance to be typed
+    along more than one axis - for example an archetype that is at once traditional and animal.
+  </p>
+
+  <div class="table-wrap">
+  <table class="prop-table">
+    <thead><tr><th>Property</th><th>Domain</th><th>Values</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="mono">hasSourceURL</td>
+        <td>creon:CreativitySituation</td>
+        <td>xsd:anyURI</td>
+        <td>
+          Records the original online source associated with a represented cyber-ritual situation,
+          preserving a link between the ontology and the digital material from which the case was derived.
+        </td>
+      </tr>
+  
+      <tr>
+        <td class="mono">hasTextContent</td>
+        <td>Mantra</td>
+        <td>xsd:string</td>
+        <td>
+          Stores the literal textual content of a mantra as a string, allowing its wording to be preserved
+          without modelling the text itself as a separate individual.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <figure class="onto-graph">
+    <img src="../assets/wishgraph_tbox_ontograf.png" alt="T-Box of WishGraph in Protege OntoGraf view, showing CyberRitualCase and its dimension classes with subclasses, plus the arc-type legend">
+  </figure>
+  <p class="fig-caption"><strong>Figure 2.2 — The WishGraph T-Box in Protege (OntoGraf view).</strong>
+    Classes and their subclasses are shown as nodes, with the arc-type legend on the right listing the object
+    properties that connect them. The imported <code class="mono">creon:</code> classes come from the reused
+    Creative Work ontology design pattern.</p>
+
+  <div class="closing-note">
+    <p>The final T-Box thus provides a structured semantic container for the project: a case-centered ontology in
+      which observable digital actions, contextual pressures, symbolic structures, remediation processes, and
+      affective outcomes can be represented within the same graph.</p>
+    <p>With the schema established, the next step is to populate it with concrete data. Knowledge Extraction
+      therefore moves from the terminological level of the ontology to its assertional level, transforming selected
+      cyber-wishing materials into A-Box instances that can subsequently be explored and queried.</p>
+  </div>
+</div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>
+    <strong>WishGraph Knowledge Representation</strong><br>
+    team beyoo (Yuming Lian, Yutong Li, Xinyi Guo)
+  </p>
+</footer>
+
+</div><!-- end main-content -->
+
+<script>
+// ── Sidebar Toggle ──
+function toggleSidebar() {
+  document.body.classList.toggle('sidebar-collapsed');
+}
+
+// ── Active nav link highlight on scroll ──
+const sections = document.querySelectorAll('section[id], div[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.remove('active');
+    if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

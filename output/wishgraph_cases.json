@@ -1,0 +1,828 @@
+{
+  "fields": [
+    "CyberRitualCase",
+    "Platform",
+    "Subject",
+    "PerformativeAction",
+    "PostingAction",
+    "CommentingAction",
+    "SecularPressure",
+    "MundanePressure",
+    "ExistentialPressure",
+    "RemediatedSignifier",
+    "ImageSignifier",
+    "VideoSignifier",
+    "RitualSymbol",
+    "Mantra",
+    "Emoji",
+    "VisualOrAuditoryMarker",
+    "Archetype",
+    "TraditionalArchetype",
+    "ModernArchetype",
+    "Animal",
+    "SecularCommodity",
+    "RemediationStrategy",
+    "DigitalTransposition",
+    "SacredAmplification",
+    "SacredHybridization",
+    "SecularIdolDeification",
+    "SymbolicEnchantment",
+    "AffectiveOutcome"
+  ],
+  "cases": [
+    {
+      "idx": 1,
+      "id": "Case_CatWish",
+      "name": "Cat-Wish Exam Blessing",
+      "platform": "Xiaohongshu",
+      "subject": "ExamWishPoster",
+      "action": "Posting_ExamWish",
+      "pressure": "ExamPressure",
+      "pressureType": "Mundane",
+      "signifier": "ExamCatImg",
+      "signifierType": "Image",
+      "ritual": [
+        "KnittedKasaya",
+        "LotusCushion"
+      ],
+      "archetype": [
+        "Cat",
+        "Mahayana"
+      ],
+      "archetypeType": "Traditional / Animal",
+      "strategy": "CatBuddha",
+      "strategyType": "Sacred Hybridization",
+      "outcome": "MemeTherapy",
+      "full": [
+        [
+          "Case ID",
+          "Case_CatWish"
+        ],
+        [
+          "Platform",
+          "Xiaohongshu"
+        ],
+        [
+          "Subject (Person)",
+          "ExamWishPoster"
+        ],
+        [
+          "Performative Action",
+          "Posting_ExamWish"
+        ],
+        [
+          "↳ Posting Action",
+          "Posting_ExamWish"
+        ],
+        [
+          "Secular Pressure",
+          "ExamPressure"
+        ],
+        [
+          "↳ Mundane Pressure",
+          "ExamPressure"
+        ],
+        [
+          "Remediated Signifier",
+          "ExamCatImg"
+        ],
+        [
+          "↳ Image Signifier",
+          "ExamCatImg"
+        ],
+        [
+          "Ritual Symbol",
+          "KnittedKasaya; LotusCushion"
+        ],
+        [
+          "↳ Visual / Auditory Marker",
+          "KnittedKasaya; LotusCushion"
+        ],
+        [
+          "Archetype",
+          "Cat; Mahayana"
+        ],
+        [
+          "↳ Traditional Archetype",
+          "Mahayana"
+        ],
+        [
+          "↳ Animal",
+          "Cat"
+        ],
+        [
+          "Remediation Strategy",
+          "CatBuddha"
+        ],
+        [
+          "↳ Sacred Hybridization",
+          "CatBuddha"
+        ],
+        [
+          "Affective Outcome",
+          "MemeTherapy"
+        ]
+      ]
+    },
+    {
+      "idx": 2,
+      "id": "Case_DigitalEnlightenment",
+      "name": "Digital Enlightenment",
+      "platform": "Tiktok",
+      "subject": "DigitalEnlightenmentPoster",
+      "action": "Posting_BuddhaTeaching",
+      "pressure": "ExistentialPressure_ModernAnxiety",
+      "pressureType": "Existential",
+      "signifier": "PsychedelicBuddhaVideo",
+      "signifierType": "Video",
+      "ritual": [
+        "LotusCushion",
+        "PsychedelicAura"
+      ],
+      "archetype": [
+        "Mahayana"
+      ],
+      "archetypeType": "Traditional",
+      "strategy": "PsychedelicAestheticRemediation",
+      "strategyType": "Sacred Amplification",
+      "outcome": "InnerPeace",
+      "full": [
+        [
+          "Case ID",
+          "Case_DigitalEnlightenment"
+        ],
+        [
+          "Platform",
+          "Tiktok"
+        ],
+        [
+          "Subject (Person)",
+          "DigitalEnlightenmentPoster"
+        ],
+        [
+          "Performative Action",
+          "Posting_BuddhaTeaching"
+        ],
+        [
+          "↳ Posting Action",
+          "Posting_BuddhaTeaching"
+        ],
+        [
+          "Secular Pressure",
+          "ExistentialPressure_ModernAnxiety"
+        ],
+        [
+          "↳ Existential Pressure",
+          "ExistentialPressure_ModernAnxiety"
+        ],
+        [
+          "Remediated Signifier",
+          "PsychedelicBuddhaVideo"
+        ],
+        [
+          "↳ Video Signifier",
+          "PsychedelicBuddhaVideo"
+        ],
+        [
+          "Ritual Symbol",
+          "LotusCushion; PsychedelicAura"
+        ],
+        [
+          "↳ Visual / Auditory Marker",
+          "LotusCushion; PsychedelicAura"
+        ],
+        [
+          "Archetype",
+          "Mahayana"
+        ],
+        [
+          "↳ Traditional Archetype",
+          "Mahayana"
+        ],
+        [
+          "Remediation Strategy",
+          "PsychedelicAestheticRemediation"
+        ],
+        [
+          "↳ Sacred Amplification",
+          "PsychedelicAestheticRemediation"
+        ],
+        [
+          "Affective Outcome",
+          "InnerPeace"
+        ]
+      ]
+    },
+    {
+      "idx": 3,
+      "id": "Case_HealthWish",
+      "name": "Health Wish",
+      "platform": "Xiaohongshu",
+      "subject": "HealthWishPoster",
+      "action": "Posting_HealthWish",
+      "pressure": "HealthProblem",
+      "pressureType": "Existential",
+      "signifier": "BlueBuddhaImg",
+      "signifierType": "Image",
+      "ritual": [],
+      "archetype": [
+        "MedicineBuddha"
+      ],
+      "archetypeType": "Traditional",
+      "strategy": "RestoreOriginal",
+      "strategyType": "Digital Transposition",
+      "outcome": "HealthRecovery",
+      "full": [
+        [
+          "Case ID",
+          "Case_HealthWish"
+        ],
+        [
+          "Platform",
+          "Xiaohongshu"
+        ],
+        [
+          "Subject (Person)",
+          "HealthWishPoster"
+        ],
+        [
+          "Performative Action",
+          "Posting_HealthWish"
+        ],
+        [
+          "↳ Posting Action",
+          "Posting_HealthWish"
+        ],
+        [
+          "Secular Pressure",
+          "HealthProblem"
+        ],
+        [
+          "↳ Existential Pressure",
+          "HealthProblem"
+        ],
+        [
+          "Remediated Signifier",
+          "BlueBuddhaImg"
+        ],
+        [
+          "↳ Image Signifier",
+          "BlueBuddhaImg"
+        ],
+        [
+          "Archetype",
+          "MedicineBuddha"
+        ],
+        [
+          "↳ Traditional Archetype",
+          "MedicineBuddha"
+        ],
+        [
+          "Remediation Strategy",
+          "RestoreOriginal"
+        ],
+        [
+          "↳ Digital Transposition",
+          "RestoreOriginal"
+        ],
+        [
+          "Affective Outcome",
+          "HealthRecovery"
+        ]
+      ]
+    },
+    {
+      "idx": 4,
+      "id": "Case_InstagramTraditionalPrayer",
+      "name": "Instagram Traditional Prayer",
+      "platform": "Instagram",
+      "subject": "TraditionalPrayerPoster",
+      "action": "Posting_NewYearPrayer",
+      "pressure": "MundanePressure_FutureUncertainty",
+      "pressureType": "Mundane",
+      "signifier": "TraditionalBuddhaPostImage",
+      "signifierType": "Image",
+      "ritual": [],
+      "archetype": [
+        "MedicineBuddha"
+      ],
+      "archetypeType": "Traditional",
+      "strategy": "RestoreOriginal",
+      "strategyType": "Digital Transposition",
+      "outcome": "NewYearVibes",
+      "full": [
+        [
+          "Case ID",
+          "Case_InstagramTraditionalPrayer"
+        ],
+        [
+          "Platform",
+          "Instagram"
+        ],
+        [
+          "Subject (Person)",
+          "TraditionalPrayerPoster"
+        ],
+        [
+          "Performative Action",
+          "Posting_NewYearPrayer"
+        ],
+        [
+          "↳ Posting Action",
+          "Posting_NewYearPrayer"
+        ],
+        [
+          "Secular Pressure",
+          "MundanePressure_FutureUncertainty"
+        ],
+        [
+          "↳ Mundane Pressure",
+          "MundanePressure_FutureUncertainty"
+        ],
+        [
+          "Remediated Signifier",
+          "TraditionalBuddhaPostImage"
+        ],
+        [
+          "↳ Image Signifier",
+          "TraditionalBuddhaPostImage"
+        ],
+        [
+          "Archetype",
+          "MedicineBuddha"
+        ],
+        [
+          "↳ Traditional Archetype",
+          "MedicineBuddha"
+        ],
+        [
+          "Remediation Strategy",
+          "RestoreOriginal"
+        ],
+        [
+          "↳ Digital Transposition",
+          "RestoreOriginal"
+        ],
+        [
+          "Affective Outcome",
+          "NewYearVibes"
+        ]
+      ]
+    },
+    {
+      "idx": 5,
+      "id": "Case_InstagramWealth",
+      "name": "Instagram Wealth Manifesting",
+      "platform": "Instagram",
+      "subject": "MaterialisticUser; WealthClaimCommenter",
+      "action": "Commenting_ClaimWealth; Posting_WealthManifesting",
+      "pressure": "MundanePressure_StatusAnxiety",
+      "pressureType": "Mundane",
+      "signifier": "SportsCarManifestingVideo",
+      "signifierType": "Video",
+      "ritual": [
+        "Emoji_PrayingHands",
+        "LoFiBeatAndSlowMo",
+        "Mantra_ClaimEnergy"
+      ],
+      "archetype": [
+        "LuxurySportsCar"
+      ],
+      "archetypeType": "Secular Commodity",
+      "strategy": "Remediation_LuxuryCar",
+      "strategyType": "Symbolic Enchantment",
+      "outcome": "FinancialFreedom",
+      "full": [
+        [
+          "Case ID",
+          "Case_InstagramWealth"
+        ],
+        [
+          "Platform",
+          "Instagram"
+        ],
+        [
+          "Subject (Person)",
+          "MaterialisticUser; WealthClaimCommenter"
+        ],
+        [
+          "Performative Action",
+          "Commenting_ClaimWealth; Posting_WealthManifesting"
+        ],
+        [
+          "↳ Posting Action",
+          "Posting_WealthManifesting"
+        ],
+        [
+          "↳ Commenting Action",
+          "Commenting_ClaimWealth"
+        ],
+        [
+          "Secular Pressure",
+          "MundanePressure_StatusAnxiety"
+        ],
+        [
+          "↳ Mundane Pressure",
+          "MundanePressure_StatusAnxiety"
+        ],
+        [
+          "Remediated Signifier",
+          "SportsCarManifestingVideo"
+        ],
+        [
+          "↳ Video Signifier",
+          "SportsCarManifestingVideo"
+        ],
+        [
+          "Ritual Symbol",
+          "Emoji_PrayingHands; LoFiBeatAndSlowMo; Mantra_ClaimEnergy"
+        ],
+        [
+          "↳ Mantra",
+          "Mantra_ClaimEnergy"
+        ],
+        [
+          "↳ Emoji",
+          "Emoji_PrayingHands"
+        ],
+        [
+          "↳ Visual / Auditory Marker",
+          "LoFiBeatAndSlowMo"
+        ],
+        [
+          "Archetype",
+          "LuxurySportsCar"
+        ],
+        [
+          "↳ Secular Commodity",
+          "LuxurySportsCar"
+        ],
+        [
+          "Remediation Strategy",
+          "Remediation_LuxuryCar"
+        ],
+        [
+          "↳ Symbolic Enchantment",
+          "Remediation_LuxuryCar"
+        ],
+        [
+          "Affective Outcome",
+          "FinancialFreedom"
+        ]
+      ]
+    },
+    {
+      "idx": 6,
+      "id": "Case_ManifestingKardashian",
+      "name": "Kardashian Manifesting Spell",
+      "platform": "Xiaohongshu",
+      "subject": "KardashianManifestingPoster",
+      "action": "Posting_ManifestingSpell",
+      "pressure": "CareerWealth",
+      "pressureType": "Mundane",
+      "signifier": "KrisJennerMemeImg",
+      "signifierType": "Image",
+      "ritual": [
+        "ManifestingMantraText"
+      ],
+      "archetype": [
+        "KrisJennerPopIcon"
+      ],
+      "archetypeType": "Modern",
+      "strategy": "PopIdolGod",
+      "strategyType": "Secular Idol Deification",
+      "outcome": "WealthDelusion",
+      "full": [
+        [
+          "Case ID",
+          "Case_ManifestingKardashian"
+        ],
+        [
+          "Platform",
+          "Xiaohongshu"
+        ],
+        [
+          "Subject (Person)",
+          "KardashianManifestingPoster"
+        ],
+        [
+          "Performative Action",
+          "Posting_ManifestingSpell"
+        ],
+        [
+          "↳ Posting Action",
+          "Posting_ManifestingSpell"
+        ],
+        [
+          "Secular Pressure",
+          "CareerWealth"
+        ],
+        [
+          "↳ Mundane Pressure",
+          "CareerWealth"
+        ],
+        [
+          "Remediated Signifier",
+          "KrisJennerMemeImg"
+        ],
+        [
+          "↳ Image Signifier",
+          "KrisJennerMemeImg"
+        ],
+        [
+          "Ritual Symbol",
+          "ManifestingMantraText"
+        ],
+        [
+          "↳ Mantra",
+          "ManifestingMantraText"
+        ],
+        [
+          "Archetype",
+          "KrisJennerPopIcon"
+        ],
+        [
+          "↳ Modern Archetype",
+          "KrisJennerPopIcon"
+        ],
+        [
+          "Remediation Strategy",
+          "PopIdolGod"
+        ],
+        [
+          "↳ Secular Idol Deification",
+          "PopIdolGod"
+        ],
+        [
+          "Affective Outcome",
+          "WealthDelusion"
+        ]
+      ]
+    },
+    {
+      "idx": 7,
+      "id": "Case_SubliminalRomance",
+      "name": "Subliminal Romance",
+      "platform": "Bilibili",
+      "subject": "RomanceSeekingUser",
+      "action": "Posting_SubliminalVideo",
+      "pressure": "MundanePressure_RomanticAnxiety",
+      "pressureType": "Mundane",
+      "signifier": "SubliminalButterflyVideo",
+      "signifierType": "Video",
+      "ritual": [
+        "GlitterAesthetic",
+        "SubliminalAudioFrequency"
+      ],
+      "archetype": [
+        "Butterfly"
+      ],
+      "archetypeType": "Animal",
+      "strategy": "ButterflyGod",
+      "strategyType": "Sacred Hybridization",
+      "outcome": "RomanticAttraction",
+      "full": [
+        [
+          "Case ID",
+          "Case_SubliminalRomance"
+        ],
+        [
+          "Platform",
+          "Bilibili"
+        ],
+        [
+          "Subject (Person)",
+          "RomanceSeekingUser"
+        ],
+        [
+          "Performative Action",
+          "Posting_SubliminalVideo"
+        ],
+        [
+          "↳ Posting Action",
+          "Posting_SubliminalVideo"
+        ],
+        [
+          "Secular Pressure",
+          "MundanePressure_RomanticAnxiety"
+        ],
+        [
+          "↳ Mundane Pressure",
+          "MundanePressure_RomanticAnxiety"
+        ],
+        [
+          "Remediated Signifier",
+          "SubliminalButterflyVideo"
+        ],
+        [
+          "↳ Video Signifier",
+          "SubliminalButterflyVideo"
+        ],
+        [
+          "Ritual Symbol",
+          "GlitterAesthetic; SubliminalAudioFrequency"
+        ],
+        [
+          "↳ Visual / Auditory Marker",
+          "GlitterAesthetic; SubliminalAudioFrequency"
+        ],
+        [
+          "Archetype",
+          "Butterfly"
+        ],
+        [
+          "↳ Animal",
+          "Butterfly"
+        ],
+        [
+          "Remediation Strategy",
+          "ButterflyGod"
+        ],
+        [
+          "↳ Sacred Hybridization",
+          "ButterflyGod"
+        ],
+        [
+          "Affective Outcome",
+          "RomanticAttraction"
+        ]
+      ]
+    },
+    {
+      "idx": 8,
+      "id": "Case_XWealthManifesting",
+      "name": "X Wealth Manifesting",
+      "platform": "XPlatform",
+      "subject": "ManifestPoster",
+      "action": "Posting_Manifest2026",
+      "pressure": "MundanePressure_WealthDesire",
+      "pressureType": "Mundane",
+      "signifier": "CashManifestingVideo",
+      "signifierType": "Video",
+      "ritual": [
+        "Emoji_RedHeart"
+      ],
+      "archetype": [
+        "StackOfCash"
+      ],
+      "archetypeType": "Secular Commodity",
+      "strategy": "Remediation_CashFetishization",
+      "strategyType": "Symbolic Enchantment",
+      "outcome": "Prosperity",
+      "full": [
+        [
+          "Case ID",
+          "Case_XWealthManifesting"
+        ],
+        [
+          "Platform",
+          "XPlatform"
+        ],
+        [
+          "Subject (Person)",
+          "ManifestPoster"
+        ],
+        [
+          "Performative Action",
+          "Posting_Manifest2026"
+        ],
+        [
+          "↳ Posting Action",
+          "Posting_Manifest2026"
+        ],
+        [
+          "Secular Pressure",
+          "MundanePressure_WealthDesire"
+        ],
+        [
+          "↳ Mundane Pressure",
+          "MundanePressure_WealthDesire"
+        ],
+        [
+          "Remediated Signifier",
+          "CashManifestingVideo"
+        ],
+        [
+          "↳ Video Signifier",
+          "CashManifestingVideo"
+        ],
+        [
+          "Ritual Symbol",
+          "Emoji_RedHeart"
+        ],
+        [
+          "↳ Emoji",
+          "Emoji_RedHeart"
+        ],
+        [
+          "Archetype",
+          "StackOfCash"
+        ],
+        [
+          "↳ Secular Commodity",
+          "StackOfCash"
+        ],
+        [
+          "Remediation Strategy",
+          "Remediation_CashFetishization"
+        ],
+        [
+          "↳ Symbolic Enchantment",
+          "Remediation_CashFetishization"
+        ],
+        [
+          "Affective Outcome",
+          "Prosperity"
+        ]
+      ]
+    },
+    {
+      "idx": 9,
+      "id": "Case_XiaohongshuCET6Comment",
+      "name": "CET-6 Manifestation Comment",
+      "platform": "Xiaohongshu",
+      "subject": "CET6Commenter",
+      "action": "Commenting_CET6Manifestation",
+      "pressure": "ExamPressure",
+      "pressureType": "Mundane",
+      "signifier": "KrisJennerReplyImage",
+      "signifierType": "Image",
+      "ritual": [
+        "Mantra_CET6Success"
+      ],
+      "archetype": [
+        "KrisJennerPopIcon"
+      ],
+      "archetypeType": "Modern",
+      "strategy": "PopIdolGod",
+      "strategyType": "Secular Idol Deification",
+      "outcome": "AcademicSuccess",
+      "full": [
+        [
+          "Case ID",
+          "Case_XiaohongshuCET6Comment"
+        ],
+        [
+          "Platform",
+          "Xiaohongshu"
+        ],
+        [
+          "Subject (Person)",
+          "CET6Commenter"
+        ],
+        [
+          "Performative Action",
+          "Commenting_CET6Manifestation"
+        ],
+        [
+          "↳ Commenting Action",
+          "Commenting_CET6Manifestation"
+        ],
+        [
+          "Secular Pressure",
+          "ExamPressure"
+        ],
+        [
+          "↳ Mundane Pressure",
+          "ExamPressure"
+        ],
+        [
+          "Remediated Signifier",
+          "KrisJennerReplyImage"
+        ],
+        [
+          "↳ Image Signifier",
+          "KrisJennerReplyImage"
+        ],
+        [
+          "Ritual Symbol",
+          "Mantra_CET6Success"
+        ],
+        [
+          "↳ Mantra",
+          "Mantra_CET6Success"
+        ],
+        [
+          "Archetype",
+          "KrisJennerPopIcon"
+        ],
+        [
+          "↳ Modern Archetype",
+          "KrisJennerPopIcon"
+        ],
+        [
+          "Remediation Strategy",
+          "PopIdolGod"
+        ],
+        [
+          "↳ Secular Idol Deification",
+          "PopIdolGod"
+        ],
+        [
+          "Affective Outcome",
+          "AcademicSuccess"
+        ]
+      ]
+    }
+  ]
+}

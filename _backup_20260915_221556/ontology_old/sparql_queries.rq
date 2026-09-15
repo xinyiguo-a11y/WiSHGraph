@@ -1,0 +1,85 @@
+# WishGraph — SPARQL competency-question queries
+# Run against ontology/wishgraph_full.ttl (T-Box + A-Box)
+
+############################################################
+# CQ1 — Performative action, subject and platform
+############################################################
+# CQ1 -- who performs which ritual action, and where?
+SELECT ?case
+       (GROUP_CONCAT(DISTINCT ?subjectLabel; separator=", ") AS ?subjects)
+       (GROUP_CONCAT(DISTINCT ?actionLabel;  separator=", ") AS ?actions)
+       ?platformLabel
+WHERE {
+    ?case a wg:CyberRitualCase ;
+          wg:hasSubject            ?subject ;
+          wg:hasPerformativeAction ?action ;
+          wg:circulatesOnPlatform  ?platform .
+    ?subject  rdfs:label ?subjectLabel .
+    ?action   rdfs:label ?actionLabel .
+    ?platform rdfs:label ?platformLabel .
+}
+GROUP BY ?case ?platformLabel
+ORDER BY ?case
+
+############################################################
+# CQ2 — Trigger / pressure
+############################################################
+# CQ2 -- which secular pressure triggers each case, and its type?
+SELECT ?case ?pressureLabel ?pressureType
+WHERE {
+    ?case a wg:CyberRitualCase ;
+          wg:hasSecularPressure ?pressure .
+    ?pressure rdfs:label      ?pressureLabel ;
+              wg:pressureType ?pressureType .
+}
+ORDER BY ?case
+
+############################################################
+# CQ3 — Transformation and affective outcome
+############################################################
+# CQ3 -- remediation strategy to affective outcome
+SELECT ?case ?strategyLabel ?strategyType ?outcomeLabel
+WHERE {
+    ?case a wg:CyberRitualCase ;
+          wg:hasRemediationStrategy ?strategy ;
+          wg:resultsInOutcome       ?outcome .
+    ?strategy rdfs:label      ?strategyLabel ;
+              wg:strategyType ?strategyType .
+    ?outcome  rdfs:label      ?outcomeLabel .
+}
+ORDER BY ?case
+
+############################################################
+# CQ4 — Signifier and ritual symbol
+############################################################
+# CQ4 -- remediated signifier and the ritual symbols it carries
+SELECT ?case ?signifierLabel ?signifierType
+       (GROUP_CONCAT(?symbolLabel; separator=" | ") AS ?ritualSymbols)
+WHERE {
+    ?case a wg:CyberRitualCase ;
+          wg:usesRemediatedSignifier ?signifier .
+    ?signifier rdfs:label       ?signifierLabel ;
+               wg:signifierType ?signifierType .
+    OPTIONAL {
+        ?case wg:usesRitualSymbol ?symbol .
+        ?symbol rdfs:label ?symbolLabel .
+    }
+}
+GROUP BY ?case ?signifierLabel ?signifierType
+ORDER BY ?case
+
+############################################################
+# CQ5 — Archetype and archetype type
+############################################################
+# CQ5 -- archetype and its type
+SELECT ?case
+       (GROUP_CONCAT(DISTINCT ?archetypeLabel; separator=", ") AS ?archetypes)
+       (GROUP_CONCAT(DISTINCT ?archetypeType;  separator=", ") AS ?archetypeTypes)
+WHERE {
+    ?case a wg:CyberRitualCase ;
+          wg:hasArchetype ?archetype .
+    ?archetype rdfs:label       ?archetypeLabel ;
+               wg:archetypeType ?archetypeType .
+}
+GROUP BY ?case
+ORDER BY ?case

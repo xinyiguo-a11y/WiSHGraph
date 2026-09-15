@@ -1,0 +1,461 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# WishGraph — A-Box (assertional level)
+#
+# Nine cyber-ritual cases, each linked to its dimension instances through the
+# object properties declared in the T-Box. Dimension instances are typed with
+# the appropriate sub-class, which is how the "type" facets are expressed.
+# ─────────────────────────────────────────────────────────────────────────────
+
+@prefix cw: <http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#> .
+@prefix creon: <http://www.ontologydesignpatterns.org/ont/creativity/creon.owl#> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+############################################################
+# Cyber-ritual cases
+############################################################
+
+cw:Case_CatWish a cw:CyberRitualCase , owl:NamedIndividual ;
+    rdfs:label "Cat Buddha Exam Wish Case"@en ;
+    rdfs:comment "A cyber-wishing case in which a cat image is remediated as a playful Buddha-like signifier for exam-related luck."@en ;
+    cw:circulatesOn cw:Xiaohongshu ;
+    cw:employsSignifier cw:ExamCatImg ;
+    cw:hasPerformativeAction cw:Posting_ExamWish ;
+    cw:hasSourceURL "https://www.xiaohongshu.com/discovery/item/693bc74a000000001e001f5f?app_platform=ios&app_version=9.43.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBxZ9OO6FHDZAC6bxBge4uuFBBINfXhzd33UQImzxY7l0=&author_share=1&xhsshare=WeixinSession&shareRedId=Nz05RjxGSE87N0g2SzwxNzszOT03NjY8&apptime=1787486216&share_id=e84712495d1b4f83acd2ed1b1675171f&code=8Fv4fdynoTF" ;
+    cw:resolvesIntoAffect cw:MemeTherapy ;
+    cw:transformedVia cw:CatBuddha ;
+    cw:triggeredBy cw:ExamPressure .
+
+cw:Case_DigitalEnlightenment a cw:CyberRitualCase , owl:NamedIndividual ;
+    rdfs:label "Digital Enlightenment Case"@en ;
+    rdfs:comment "A cyber-ritual case where a user posts a highly aestheticized Buddha video to seek and share spiritual teachings and inner peace."@en ;
+    cw:circulatesOn cw:Tiktok ;
+    cw:employsSignifier cw:PsychedelicBuddhaVideo ;
+    cw:hasPerformativeAction cw:Posting_BuddhaTeaching ;
+    cw:resolvesIntoAffect cw:InnerPeace ;
+    cw:transformedVia cw:PsychedelicAestheticRemediation ;
+    cw:triggeredBy cw:ExistentialPressure_ModernAnxiety .
+
+cw:Case_HealthWish a cw:CyberRitualCase , owl:NamedIndividual ;
+    rdfs:label "Medicine Buddha Health Wish Case"@en ;
+    rdfs:comment "A cyber-wishing case in which a user posts or engages with a Medicine Buddha image in response to health-related anxiety."@en ;
+    cw:circulatesOn cw:Xiaohongshu ;
+    cw:employsSignifier cw:BlueBuddhaImg ;
+    cw:hasPerformativeAction cw:Posting_HealthWish ;
+    cw:resolvesIntoAffect cw:HealthRecovery ;
+    cw:transformedVia cw:RestoreOriginal ;
+    cw:triggeredBy cw:HealthProblem .
+
+cw:Case_InstagramTraditionalPrayer a cw:CyberRitualCase , owl:NamedIndividual ;
+    rdfs:label "Instagram Traditional Buddha Prayer Case"@en ;
+    rdfs:comment "A cyber-ritual case where a user posts a traditional, unedited image of Buddha on Instagram to pray for positive energy and good news for the upcoming year."@en ;
+    cw:circulatesOn cw:Instagram ;
+    cw:employsSignifier cw:TraditionalBuddhaPostImage ;
+    cw:hasPerformativeAction cw:Posting_NewYearPrayer ;
+    cw:resolvesIntoAffect cw:NewYearVibes ;
+    cw:transformedVia cw:RestoreOriginal ;
+    cw:triggeredBy cw:MundanePressure_FutureUncertainty .
+
+cw:Case_InstagramWealth a cw:CyberRitualCase , owl:NamedIndividual ;
+    rdfs:label "Instagram Wealth Manifesting Case"@en ;
+    rdfs:comment "A cyber-ritual case where a user posts a highly aestheticized sports car video to manifest financial freedom and relieve status anxiety."@en ;
+    cw:circulatesOn cw:Instagram ;
+    cw:employsSignifier cw:SportsCarManifestingVideo ;
+    cw:hasPerformativeAction cw:Commenting_ClaimWealth , cw:Posting_WealthManifesting ;
+    cw:resolvesIntoAffect cw:FinancialFreedom ;
+    cw:transformedVia cw:Remediation_LuxuryCar ;
+    cw:triggeredBy cw:MundanePressure_StatusAnxiety .
+
+cw:Case_ManifestingKardashian a cw:CyberRitualCase , owl:NamedIndividual ;
+    rdfs:label "Manifesting Kardashian Case"@en ;
+    rdfs:comment "A cyber-ritual case where a user posts a Kris Jenner meme to manifest wealth, career success, and multi-identities."@en ;
+    cw:circulatesOn cw:Xiaohongshu ;
+    cw:employsSignifier cw:KrisJennerMemeImg ;
+    cw:hasPerformativeAction cw:Posting_ManifestingSpell ;
+    cw:resolvesIntoAffect cw:WealthDelusion ;
+    cw:transformedVia cw:PopIdolGod ;
+    cw:triggeredBy cw:CareerWealth .
+
+cw:Case_SubliminalRomance a cw:CyberRitualCase , owl:NamedIndividual ;
+    rdfs:label "Subliminal Romance Case"@en ;
+    rdfs:comment "A cyber-ritual case where a user engages with a subliminal butterfly video on Bilibili to attract high-quality romantic relationships."@en ;
+    cw:circulatesOn cw:Bilibili ;
+    cw:employsSignifier cw:SubliminalButterflyVideo ;
+    cw:hasPerformativeAction cw:Posting_SubliminalVideo ;
+    cw:resolvesIntoAffect cw:RomanticAttraction ;
+    cw:transformedVia cw:ButterflyGod ;
+    cw:triggeredBy cw:MundanePressure_RomanticAnxiety .
+
+cw:Case_XWealthManifesting a cw:CyberRitualCase , owl:NamedIndividual ;
+    rdfs:label "X Wealth Manifesting Case"@en ;
+    rdfs:comment "The comprehensive cyber-ritual case encapsulating the manifestation of high wealth and premium lifestyles on X platform."@en ;
+    cw:circulatesOn cw:XPlatform ;
+    cw:employsSignifier cw:CashManifestingVideo ;
+    cw:hasPerformativeAction cw:Posting_Manifest2026 ;
+    cw:resolvesIntoAffect cw:Prosperity ;
+    cw:transformedVia cw:Remediation_CashFetishization ;
+    cw:triggeredBy cw:MundanePressure_WealthDesire .
+
+cw:Case_XiaohongshuCET6Comment a cw:CyberRitualCase , owl:NamedIndividual ;
+    rdfs:label "Xiaohongshu CET-6 Comment Case"@en ;
+    rdfs:comment "A micro-ritual case where a user comments with a Kris Jenner image and a manifesting text to pass an English exam."@en ;
+    cw:circulatesOn cw:Xiaohongshu ;
+    cw:employsSignifier cw:KrisJennerReplyImage ;
+    cw:hasPerformativeAction cw:Commenting_CET6Manifestation ;
+    cw:resolvesIntoAffect cw:AcademicSuccess ;
+    cw:transformedVia cw:PopIdolGod ;
+    cw:triggeredBy cw:ExamPressure .
+
+############################################################
+# Dimension instances
+############################################################
+
+# ── Platform ──
+
+cw:Bilibili a cw:Platform , owl:NamedIndividual ;
+    rdfs:label "Bilibili Platform"@en ;
+    rdfs:comment "A video-sharing platform where subculture and subliminal manifesting videos circulate."@en .
+
+cw:Instagram a cw:Platform , owl:NamedIndividual ;
+    rdfs:label "Instagram Platform"@en ;
+    rdfs:comment "A highly visual social media platform emphasizing lifestyle, aesthetics, and material success."@en .
+
+cw:Tiktok a cw:Platform , owl:NamedIndividual ;
+    rdfs:label "Douyin Platform"@en ;
+    rdfs:comment "A short-video digital environment where visual and spiritual trends circulate."@en .
+
+cw:XPlatform a cw:Platform , owl:NamedIndividual ;
+    rdfs:label "X Platform"@en ;
+    rdfs:comment "The microblogging digital platform (formerly Twitter) where the financial manifestation video post circulates."@en .
+
+cw:Xiaohongshu a cw:Platform , owl:NamedIndividual ;
+    rdfs:label "Xiaohongshu Platform"@en ;
+    rdfs:comment "A Chinese social media and lifestyle-sharing platform where several cyber-wishing cases circulate."@en .
+
+# ── Subject ──
+
+cw:CET6Commenter a cw:Subject , owl:NamedIndividual ;
+    rdfs:label "Commenter Anhui Student"@en ;
+    rdfs:comment "A Xiaohongshu user from Anhui seeking to pass the CET-6 English exam through cyber-manifestation."@en .
+
+cw:DigitalEnlightenmentPoster a cw:Subject , owl:NamedIndividual ;
+    rdfs:label "Panda Chakra User"@en ;
+    rdfs:comment "A digital user sharing highly aestheticized spiritual content to explore the Buddha's teachings."@en .
+
+cw:ExamWishPoster a cw:Subject , owl:NamedIndividual ;
+    rdfs:label "Exam-Wishing User"@en ;
+    rdfs:comment "A subject who performs an exam-oriented cyber-wishing action by engaging with a Cat Buddha image."@en .
+
+cw:HealthWishPoster a cw:Subject , owl:NamedIndividual ;
+    rdfs:label "Health-Wishing User"@en ;
+    rdfs:comment "A subject who performs a health-oriented cyber-wishing action by engaging with a Medicine Buddha image."@en .
+
+cw:KardashianManifestingPoster a cw:Subject , owl:NamedIndividual ;
+    rdfs:label "Ambitious User"@en ;
+    rdfs:comment "A Xiaohongshu user participating in the manifesting trend to seek wealth and career success."@en .
+
+cw:ManifestPoster a cw:Subject , owl:NamedIndividual ;
+    rdfs:label "User Shally"@en ;
+    rdfs:comment "The individual user S.H.A.L.L.Y (@shallysin) on X who publishes the video to manifest luxury and success."@en .
+
+cw:MaterialisticUser a cw:Subject , owl:NamedIndividual ;
+    rdfs:label "Materialistic User"@en ;
+    rdfs:comment "An Instagram user focusing on manifesting extreme financial wealth and luxury lifestyles."@en .
+
+cw:RomanceSeekingUser a cw:Subject , owl:NamedIndividual ;
+    rdfs:label "Romance Seeking User"@en ;
+    rdfs:comment "A Bilibili user seeking to enhance their attractiveness and manifest high-quality romantic relationships."@en .
+
+cw:TraditionalPrayerPoster a cw:Subject , owl:NamedIndividual ;
+    rdfs:label "Devout Instagram User"@en ;
+    rdfs:comment "An Instagram user who acts with genuine religious reverence, turning to traditional icons for future assurance."@en .
+
+cw:WealthClaimCommenter a cw:Subject , owl:NamedIndividual ;
+    rdfs:label "Commenter Rammyy"@en ;
+    rdfs:comment "An Instagram user commenting on the sports car video to claim the wealth frequency."@en .
+
+# ── AffectiveOutcome ──
+
+cw:AcademicSuccess a cw:AffectiveOutcome , owl:NamedIndividual ;
+    rdfs:label "Sincere Hope for Academic Success"@en ;
+    rdfs:comment "The psychological resolution providing the user with confidence and reduced anxiety regarding an upcoming language exam."@en .
+
+cw:FinancialFreedom a cw:AffectiveOutcome , owl:NamedIndividual ;
+    rdfs:label "Hope for Financial Freedom"@en ;
+    rdfs:comment "The affective outcome of feeling motivated and destined to achieve extreme wealth."@en .
+
+cw:HealthRecovery a cw:AffectiveOutcome , owl:NamedIndividual ;
+    rdfs:label "Hope for Health Recovery"@en ;
+    rdfs:comment "An affective outcome representing the hoped-for recovery or protection of health after engaging in a cyber-wishing practice."@en .
+
+cw:InnerPeace a cw:AffectiveOutcome , owl:NamedIndividual ;
+    rdfs:label "Sincere Hope for Inner Peace"@en ;
+    rdfs:comment "A genuine psychological and spiritual resolution seeking mental tranquility and enlightenment."@en .
+
+cw:MemeTherapy a cw:AffectiveOutcome , owl:NamedIndividual ;
+    rdfs:label "Meme Therapy"@en ;
+    rdfs:comment "An ironic comfort outcome in which humor, cuteness, and meme-based absurdity provide temporary relief from everyday pressure."@en .
+
+cw:NewYearVibes a cw:AffectiveOutcome , owl:NamedIndividual ;
+    rdfs:label "Sincere Hope for New Year Vibes"@en ;
+    rdfs:comment "A genuine emotional resolution producing psychological solace, hope, and feelings of being blessed for the year 2025."@en .
+
+cw:Prosperity a cw:AffectiveOutcome , owl:NamedIndividual ;
+    rdfs:label "Sincere Hope for Prosperity"@en ;
+    rdfs:comment "A genuine emotional and psychological resolution derived from the ritual, bringing hope and motivational comfort regarding personal wealth."@en .
+
+cw:RomanticAttraction a cw:AffectiveOutcome , owl:NamedIndividual ;
+    rdfs:label "Sincere Hope for Romantic Attraction"@en ;
+    rdfs:comment "A genuine psychological outcome providing the user with hope, confidence, and positive anticipation of romance."@en .
+
+cw:WealthDelusion a cw:AffectiveOutcome , owl:NamedIndividual ;
+    rdfs:label "Ironic Comfort of Wealth Delusion"@en ;
+    rdfs:comment "A sense of empowerment and relief gained through the playful, meme-based delusion of being as rich and successful as a Kardashian."@en .
+
+# ── unclassified individuals ──
+
+cw:BlueBuddhaImg a cw:ImageSignifier , owl:NamedIndividual ;
+    rdfs:label "Blue Buddha Image"@en ;
+    rdfs:comment "A digital image of Medicine Buddha used as the central signifier in a health-oriented cyber-wishing case."@en ;
+    cw:remediates cw:MedicineBuddha .
+
+cw:Butterfly a cw:Animal , owl:NamedIndividual ;
+    rdfs:label "Traditional Butterfly Symbol"@en ;
+    rdfs:comment "The traditional archetype of the butterfly, historically representing transformation, beauty, and love."@en .
+
+cw:ButterflyGod a cw:SacredHybridization , owl:NamedIndividual ;
+    rdfs:label "Butterfly Subliminal Remediation"@en ;
+    rdfs:comment "A hybrid strategy that memeifies an animal (butterfly) into a romantic totem and digitally augments it with subliminal audio and glitter aesthetics."@en .
+
+cw:ButterflySubliminal a cw:SacredAmplification , owl:NamedIndividual ;
+    rdfs:label "Butterfly Subliminal Strategy"@en ;
+    rdfs:comment "A sacred digital augmentation strategy that combines butterfly symbolism with subliminal or sensory effects to support romantic manifestation."@en .
+
+cw:CareerWealth a cw:MundanePressure , owl:NamedIndividual ;
+    rdfs:label "Career and Wealth Pressure"@en ;
+    rdfs:comment "Everyday worldly anxieties regarding financial stability, career achievement, and social status."@en .
+
+cw:CashManifestingVideo a cw:VideoSignifier , owl:NamedIndividual ;
+    rdfs:label "Cash Manifesting Video"@en ;
+    rdfs:comment "The digital remediated video signifier displaying the luxury atmosphere and cash to act as the core icon of the ritual."@en ;
+    cw:containsSymbol cw:Emoji_RedHeart ;
+    cw:remediates cw:StackOfCash .
+
+cw:Cat a cw:Animal , owl:NamedIndividual ;
+    rdfs:label "Cat Archetype"@en ;
+    rdfs:comment "A domestic animal archetype used as the source figure for a playful Buddha-like digital signifier."@en .
+
+cw:CatBuddha a cw:SacredHybridization , owl:NamedIndividual ;
+    rdfs:label "Cat Buddha Remediation"@en ;
+    rdfs:comment "An animal memeification strategy in which a cat is visually and symbolically transformed into a Buddha-like wishing figure."@en .
+
+cw:Commenting_CET6Manifestation a cw:CommentingAction , owl:NamedIndividual ;
+    rdfs:label "Commenting CET-6 Manifestation"@en ;
+    rdfs:comment "The performative digital act of replying to a manifesting post with a specific text and a pop-idol image to hijack or share the ritual's power."@en ;
+    creon:hasPart cw:KrisJennerReplyImage , cw:Mantra_CET6Success ;
+    cw:performedBy cw:CET6Commenter .
+
+cw:Commenting_ClaimWealth a cw:CommentingAction , owl:NamedIndividual ;
+    rdfs:label "Commenting Claim Wealth"@en ;
+    rdfs:comment "The performative act of typing a manifesting mantra and emojis in the comment section to participate in the cyber-ritual."@en ;
+    creon:hasPart cw:Emoji_PrayingHands , cw:Mantra_ClaimEnergy ;
+    cw:performedBy cw:WealthClaimCommenter .
+
+cw:Emoji_PrayingHands a cw:Emoji , owl:NamedIndividual ;
+    rdfs:label "Praying Hands Emoji"@en ;
+    rdfs:comment "The '🙏🙏🙏🙏' emoji used as a digital ritual gesture to physically type out reverence and receive positive energy."@en .
+
+cw:Emoji_RedHeart a cw:Emoji , owl:NamedIndividual ;
+    rdfs:label "Red Heart Emoji Symbol"@en ;
+    rdfs:comment "The '❤️' emoji used alongside manifestation text to amplify the positive emotional attachment and intentionality of the wish."@en .
+
+cw:ExamCatImg a cw:ImageSignifier , owl:NamedIndividual ;
+    rdfs:label "Exam Cat Image"@en ;
+    rdfs:comment "A remediated cat image that functions as a digital wishing signifier for academic success or exam luck."@en ;
+    cw:containsSymbol cw:KnittedKasaya , cw:LotusCushion ;
+    cw:remediates cw:Cat , cw:Mahayana .
+
+cw:ExamPressure a cw:MundanePressure , owl:NamedIndividual ;
+    rdfs:label "Exam Pressure"@en ;
+    rdfs:comment "A mundane pressure related to academic exams, certification tests, or performance evaluation."@en .
+
+cw:ExistentialPressure_ModernAnxiety a cw:ExistentialPressure , owl:NamedIndividual ;
+    rdfs:label "Modern Anxiety and Existential Pressure"@en ;
+    rdfs:comment "Deep life anxieties and spiritual voids generated by the complexities of contemporary society."@en .
+
+cw:GlitterAesthetic a cw:VisualOrAuditoryMarker , owl:NamedIndividual ;
+    rdfs:label "Glitter Aesthetic"@en ;
+    rdfs:comment "Sparkling visual effects used as a digital marker to signify magical energy and attraction."@en .
+
+cw:HealthProblem a cw:ExistentialPressure , owl:NamedIndividual ;
+    rdfs:label "Health Problem"@en ;
+    rdfs:comment "An existential pressure involving illness, bodily vulnerability, or concern for personal or family health."@en .
+
+cw:KnittedKasaya a cw:VisualOrAuditoryMarker , owl:NamedIndividual ;
+    rdfs:label "Knitted Kasaya"@en ;
+    rdfs:comment "A ritual symbol referring to a robe-like visual marker that gives the cat image a Buddhist or monk-like appearance."@en .
+
+cw:KrisJennerMemeImg a cw:ImageSignifier , owl:NamedIndividual ;
+    rdfs:label "Kris Jenner Meme Image"@en ;
+    rdfs:comment "A meme image featuring Kris Jenner in various professional outfits, used as a digital signifier for wealth and success."@en ;
+    cw:containsSymbol cw:ManifestingMantraText ;
+    cw:remediates cw:KrisJennerPopIcon .
+
+cw:KrisJennerPopIcon a cw:ModernArchetype , owl:NamedIndividual ;
+    rdfs:label "Kris Jenner Pop Icon"@en ;
+    rdfs:comment "The modern pop-culture archetype representing extreme wealth, successful motherhood, and a multifaceted career."@en .
+
+cw:KrisJennerReplyImage a cw:ImageSignifier , owl:NamedIndividual ;
+    rdfs:label "Kris Jenner Reply Image"@en ;
+    rdfs:comment "An image of Kris Jenner deployed within a comment section as a targeted digital totem for exam success."@en ;
+    cw:containsSymbol cw:Mantra_CET6Success ;
+    cw:remediates cw:KrisJennerPopIcon .
+
+cw:LoFiBeatAndSlowMo a cw:VisualOrAuditoryMarker , owl:NamedIndividual ;
+    rdfs:label "Lo-Fi Beat and Slow Motion"@en ;
+    rdfs:comment "Auditory and visual aesthetic markers used to elevate a mundane car video into a hypnotic, ritualistic experience."@en .
+
+cw:LotusCushion a cw:VisualOrAuditoryMarker , owl:NamedIndividual ;
+    rdfs:label "Lotus Cushion"@en ;
+    rdfs:comment "A ritual symbol based on the lotus seat motif, used to mark a figure as sacred, meditative, or Buddha-like."@en .
+
+cw:LuxurySportsCar a cw:SecularCommodity , owl:NamedIndividual ;
+    rdfs:label "Luxury Sports Car"@en ;
+    rdfs:comment "The real-world secular commodity serving as the ultimate symbol of success."@en .
+
+cw:Mahayana a cw:TraditionalArchetype , owl:NamedIndividual ;
+    rdfs:label "Mahayana Buddhist Archetype"@en ;
+    rdfs:comment "A traditional Buddhist archetype providing visual and conceptual motifs such as lotus seats, robes, meditative posture, and sacred aura."@en .
+
+cw:ManifestingMantraText a cw:Mantra , owl:NamedIndividual ;
+    rdfs:label "Manifesting Mantra Text"@en ;
+    rdfs:comment "The textual incantation used in the post, such as 'I'm a mother, a millionaire...', acting as a modern ritual symbol."@en .
+
+cw:Mantra_CET6Success a cw:Mantra , owl:NamedIndividual ;
+    rdfs:label "CET-6 Success Mantra"@en ;
+    rdfs:comment "The textual spell 'Manifest, successfully pass CET-6 English exam' used in the comment to lock in academic luck."@en ;
+    cw:hasTextContent "Manifest, successfully pass CET-6 English exam" .
+
+cw:Mantra_ClaimEnergy a cw:Mantra , owl:NamedIndividual ;
+    rdfs:label "Claim Energy Mantra"@en ;
+    rdfs:comment "The textual spell 'I claim this positive energy' used to verbally manifest and lock in the desire."@en ;
+    cw:hasTextContent "I claim this positive energy" .
+
+cw:MedicineBuddha a cw:TraditionalArchetype , owl:NamedIndividual ;
+    rdfs:label "Medicine Buddha"@en ;
+    rdfs:comment "A traditional Buddhist healing figure remediated into digital images for health-oriented cyber-wishing practices."@en .
+
+cw:MundanePressure_FutureUncertainty a cw:MundanePressure , owl:NamedIndividual ;
+    rdfs:label "Future Uncertainty Pressure"@en ;
+    rdfs:comment "The real-world secular pressure and existential anxiety related to the turn of the year, driving individuals to seek good news and stable comfort."@en .
+
+cw:MundanePressure_RomanticAnxiety a cw:MundanePressure , owl:NamedIndividual ;
+    rdfs:label "Romantic Anxiety"@en ;
+    rdfs:comment "Everyday worldly pressures and desires regarding finding love, personal attractiveness, and relationship quality."@en .
+
+cw:MundanePressure_StatusAnxiety a cw:MundanePressure , owl:NamedIndividual ;
+    rdfs:label "Social Status Anxiety"@en ;
+    rdfs:comment "Anxiety driven by consumerism, peer pressure, and the desire for upward social mobility."@en .
+
+cw:MundanePressure_WealthDesire a cw:MundanePressure , owl:NamedIndividual ;
+    rdfs:label "Wealth Desire Pressure"@en ;
+    rdfs:comment "The secular, mundane drive and socio-economic pressure to achieve financial success, luxury consumption, and upward mobility."@en .
+
+cw:PopIdolGod a cw:SecularIdolDeification , owl:NamedIndividual ;
+    rdfs:label "Playful Remediation of Pop Idol"@en ;
+    rdfs:comment "The strategy of using secular pop-culture idols and their quotes humorously as wishing targets."@en .
+
+cw:Posting_BuddhaTeaching a cw:PostingAction , owl:NamedIndividual ;
+    rdfs:label "Posting Buddha Teaching"@en ;
+    rdfs:comment "The performative act of publishing a visually enhanced video discussing the powerful teachings of the Buddha."@en ;
+    cw:performedBy cw:DigitalEnlightenmentPoster .
+
+cw:Posting_ExamWish a cw:PostingAction , owl:NamedIndividual ;
+    rdfs:label "Posting Exam Wish"@en ;
+    rdfs:comment "The performative action of posting or sharing a digital signifier to express a wish for exam success."@en ;
+    cw:performedBy cw:ExamWishPoster .
+
+cw:Posting_HealthWish a cw:PostingAction , owl:NamedIndividual ;
+    rdfs:label "Posting Health Wish"@en ;
+    rdfs:comment "The performative action of posting or sharing a Medicine Buddha image to express a wish for health recovery or protection."@en ;
+    cw:performedBy cw:HealthWishPoster .
+
+cw:Posting_Manifest2026 a cw:PostingAction , owl:NamedIndividual ;
+    rdfs:label "Posting Manifest 2026 Action"@en ;
+    rdfs:comment "The performative digital action of uploading the video with the textual affirmation 'Manifest #2026 like this' on social media."@en ;
+    cw:performedBy cw:ManifestPoster .
+
+cw:Posting_ManifestingSpell a cw:PostingAction , owl:NamedIndividual ;
+    rdfs:label "Posting Manifesting Spell"@en ;
+    rdfs:comment "The performative act of publishing the Kris Jenner meme with a specific text to invoke the manifesting effect."@en ;
+    cw:performedBy cw:KardashianManifestingPoster .
+
+cw:Posting_NewYearPrayer a cw:PostingAction , owl:NamedIndividual ;
+    rdfs:label "Posting New Year Prayer Action"@en ;
+    rdfs:comment "The performative action of publishing an unaltered image of Buddha on Instagram, appended with a sincere caption praying for blessings."@en ;
+    cw:performedBy cw:TraditionalPrayerPoster .
+
+cw:Posting_SubliminalVideo a cw:PostingAction , owl:NamedIndividual ;
+    rdfs:label "Posting Subliminal Video"@en ;
+    rdfs:comment "The performative act of publishing or engaging with a subliminal butterfly video to activate its romantic attraction power."@en ;
+    cw:performedBy cw:RomanceSeekingUser .
+
+cw:Posting_WealthManifesting a cw:PostingAction , owl:NamedIndividual ;
+    rdfs:label "Posting Wealth Manifesting"@en ;
+    rdfs:comment "The performative act of sharing or saving videos of luxury cars and cash to align with the 'wealth frequency'."@en ;
+    cw:performedBy cw:MaterialisticUser .
+
+cw:PsychedelicAestheticRemediation a cw:SacredAmplification , owl:NamedIndividual ;
+    rdfs:label "Psychedelic Aesthetic Remediation"@en ;
+    rdfs:comment "A remediation strategy that utilizes AI generation, vibrant colors, and psychedelic aesthetics to reframe traditional sacred figures."@en .
+
+cw:PsychedelicAura a cw:VisualOrAuditoryMarker , owl:NamedIndividual ;
+    rdfs:label "Psychedelic Aura"@en ;
+    rdfs:comment "A vibrant, multi-colored glowing halo used as a digital marker to signify divine presence and energy."@en .
+
+cw:PsychedelicBuddhaVideo a cw:VideoSignifier , owl:NamedIndividual ;
+    rdfs:label "Psychedelic Buddha Video"@en ;
+    rdfs:comment "A highly stylized, AI-generated video representation of the Buddha, serving as the core digital signifier."@en ;
+    cw:containsSymbol cw:LotusCushion , cw:PsychedelicAura ;
+    cw:remediates cw:Mahayana .
+
+cw:Remediation_CashFetishization a cw:SymbolicEnchantment , owl:NamedIndividual ;
+    rdfs:label "Cash Fetishization Strategy"@en ;
+    rdfs:comment "The remediation strategy of elevating tangible physical currency into a magical digital totem to project desires of wealth."@en .
+
+cw:Remediation_LuxuryCar a cw:SymbolicEnchantment , owl:NamedIndividual ;
+    rdfs:label "Luxury Car Fetishization"@en ;
+    rdfs:comment "The specific application of commodity fetishization strategy to a sports car video."@en .
+
+cw:RestoreOriginal a cw:DigitalTransposition , owl:NamedIndividual ;
+    rdfs:label "Restoring Original Sacred Form"@en ;
+    rdfs:comment "A fidelity remediation strategy that preserves or restores the traditional sacred form of a religious archetype in digital circulation."@en .
+
+cw:SportsCarManifestingVideo a cw:VideoSignifier , owl:NamedIndividual ;
+    rdfs:label "Sports Car Manifesting Video"@en ;
+    rdfs:comment "The digital signifier, a highly edited video of a sports car, used as a focal point for manifesting wealth."@en ;
+    cw:containsSymbol cw:LoFiBeatAndSlowMo ;
+    cw:remediates cw:LuxurySportsCar .
+
+cw:StackOfCash a cw:SecularCommodity , owl:NamedIndividual ;
+    rdfs:label "Stack of Cash Commodity Archetype"@en ;
+    rdfs:comment "The real-world secular commodity (a thick stack of physical money) representing absolute purchasing power and material success."@en .
+
+cw:SubliminalAudioFrequency a cw:VisualOrAuditoryMarker , owl:NamedIndividual ;
+    rdfs:label "Subliminal Audio Frequency"@en ;
+    rdfs:comment "Hidden audio affirmations and specific Hz frequencies functioning as modern auditory ritual symbols."@en .
+
+cw:SubliminalButterflyVideo a cw:VideoSignifier , owl:NamedIndividual ;
+    rdfs:label "Subliminal Butterfly Video"@en ;
+    rdfs:comment "A digital video using butterflies, sparkles, and subliminal audio as a signifier for romantic attraction."@en ;
+    cw:containsSymbol cw:GlitterAesthetic , cw:SubliminalAudioFrequency ;
+    cw:remediates cw:Butterfly .
+
+cw:TraditionalBuddhaPostImage a cw:ImageSignifier , owl:NamedIndividual ;
+    rdfs:label "Traditional Buddha Post Image"@en ;
+    rdfs:comment "The digital signifier represented by the image file 4838e97ae9cc206de722be86dd817783.jpg, maintaining a faithful and unedited depiction of Buddha."@en ;
+    cw:remediates cw:MedicineBuddha .

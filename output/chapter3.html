@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 3: Knowledge Extraction - WishGraph</title>
+<style>
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --gold: #c9943a;
+  --gold-light: #f0d085;
+  --red: #c0392b;
+  --deep: #1a0a00;
+  --ink: #2c1a0e;
+  --bg: #fdf6e8;
+  --card-bg: #fffcf4;
+  --muted: #7a6652;
+  --border: #e8d5a3;
+  --accent: #8b2500;
+  --tag-bg: #fef3d0;
+  --tag-border: #d4aa50;
+  --nav-bg: #1a0a00;
+  --sidebar-w: 240px;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.7;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Sidebar Navigation ── */
+#sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--nav-bg);
+  border-right: 2px solid var(--gold);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 200;
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+#sidebar.collapsed {
+  transform: translateX(calc(-1 * var(--sidebar-w) + 36px));
+}
+.sidebar-logo {
+  padding: 1.2rem 1rem 0.8rem;
+  border-bottom: 1px solid rgba(201,148,58,0.3);
+}
+.sidebar-logo h1 {
+  font-size: 1.1rem; color: var(--gold-light);
+  letter-spacing: 0.06em;
+}
+.sidebar-logo p {
+  font-size: 0.65rem; color: var(--muted);
+  font-family: Arial, sans-serif;
+  margin-top: 0.2rem;
+}
+.nav-section {
+  padding: 0.8rem 0 0;
+}
+.nav-section-label {
+  font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em;
+  color: rgba(201,148,58,0.5); padding: 0 1rem 0.3rem;
+  font-family: Arial, sans-serif;
+}
+.nav-link {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  color: #c4a35a; text-decoration: none;
+  font-family: Arial, sans-serif; font-size: 0.8rem;
+  border-left: 3px solid transparent;
+  transition: all 0.2s;
+  line-height: 1.3;
+}
+.nav-link:hover, .nav-link.active {
+  color: var(--gold-light);
+  background: rgba(201,148,58,0.08);
+  border-left-color: var(--gold);
+}
+.nav-link.current { color: var(--gold-light); background: rgba(201,148,58,0.15); border-left-color: var(--gold); }
+.nav-link .nav-icon {
+  font-size: 0.9rem; min-width: 1.2rem; text-align: center;
+}
+.nav-link .nav-step {
+  font-size: 0.6rem; background: rgba(201,148,58,0.25);
+  color: var(--gold-light); border-radius: 3px;
+  padding: 0.1rem 0.35rem; margin-left: auto;
+  font-weight: bold; white-space: nowrap;
+}
+
+/* Toggle button */
+#sidebar-toggle {
+  position: fixed; top: 14px; left: calc(var(--sidebar-w) - 18px);
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--gold); border: 2px solid var(--nav-bg);
+  color: white; font-size: 0.75rem; cursor: pointer;
+  z-index: 300; display: flex; align-items: center; justify-content: center;
+  transition: left 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+body.sidebar-collapsed #sidebar-toggle {
+  left: 18px;
+  transform: rotate(180deg);
+}
+body.sidebar-collapsed #sidebar { transform: translateX(calc(-1 * var(--sidebar-w) + 36px)); }
+body.sidebar-collapsed #main-content { margin-left: 36px; }
+
+/* ── Main Content ── */
+#main-content {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  transition: margin-left 0.3s ease;
+  min-width: 0;
+}
+
+/* ── Hero ── */
+.hero {
+  background: linear-gradient(135deg, #1a0a00 0%, #3d1a00 50%, #5c2800 100%);
+  color: #f9e8c0;
+  text-align: center;
+  padding: 4rem 2rem 3rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: "☸";
+  position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+  font-size: 12rem; opacity: 0.04; color: var(--gold);
+  pointer-events: none;
+}
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  color: var(--gold-light);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+}
+.hero .subtitle {
+  font-size: 1.05rem; color: #d4b870;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+.hero .desc {
+  max-width: 700px; margin: 0 auto;
+  font-size: 0.95rem; color: #c9b08a; line-height: 1.8;
+}
+.badge-row {
+  display: flex; justify-content: center; gap: 1rem;
+  margin-top: 1.5rem; flex-wrap: wrap;
+}
+.badge {
+  background: rgba(201,148,58,0.18); border: 1px solid var(--gold);
+  color: var(--gold-light); border-radius: 20px;
+  padding: 0.25rem 0.9rem; font-size: 0.78rem;
+  font-family: 'Arial', sans-serif;
+}
+
+/* ── Introduction Block ── */
+.intro-block {
+  background: linear-gradient(135deg, #2c1a0e 0%, #1a0a00 100%);
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  color: #e8d5a3;
+}
+.intro-block h3 {
+  color: var(--gold-light); font-size: 1rem; margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+.role-card {
+  background: rgba(201,148,58,0.08);
+  border: 1px solid rgba(201,148,58,0.3);
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+}
+.role-card .role-tag {
+  font-size: 0.68rem; background: var(--gold);
+  color: white; border-radius: 4px;
+  padding: 0.1rem 0.5rem; display: inline-block;
+  margin-bottom: 0.4rem; font-family: Arial, sans-serif;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.role-card p {
+  font-size: 0.78rem; color: #c9b08a;
+  font-family: Arial, sans-serif; line-height: 1.5;
+}
+
+/* ── Section Layout ── */
+.section {
+  max-width: 1060px; margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+.section-title {
+  font-size: 1.5rem; color: var(--accent);
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 0.5rem; margin-bottom: 1.8rem;
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.section-title .num {
+  background: var(--gold); color: white;
+  width: 2rem; height: 2rem; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.9rem; font-weight: bold;
+}
+.step-label {
+  font-size: 0.65rem; background: rgba(139,37,0,0.1);
+  color: var(--accent); border: 1px solid rgba(139,37,0,0.25);
+  border-radius: 4px; padding: 0.1rem 0.5rem;
+  font-family: Arial, sans-serif; text-transform: uppercase;
+  letter-spacing: 0.06em; margin-left: 0.3rem;
+}
+
+/* ── Ontology Structure ── */
+.onto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem; margin-bottom: 2rem;
+}
+.onto-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--gold);
+  border-radius: 8px; padding: 1rem;
+  transition: box-shadow 0.2s;
+}
+.onto-card:hover { box-shadow: 0 4px 16px rgba(201,148,58,0.18); }
+.onto-card h3 { font-size: 0.9rem; color: var(--accent); margin-bottom: 0.4rem; }
+.onto-card p { font-size: 0.78rem; color: var(--muted); line-height: 1.5; font-family: Arial, sans-serif; }
+.onto-card .class-uri {
+  font-size: 0.7rem; color: var(--gold); font-family: monospace;
+  background: var(--tag-bg); padding: 0.1rem 0.4rem;
+  border-radius: 3px; margin-bottom: 0.4rem; display: inline-block;
+}
+
+/* ── CSV Dataset Table ── */
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%; border-collapse: collapse;
+  font-size: 0.78rem; font-family: Arial, sans-serif;
+}
+thead tr { background: var(--nav-bg); color: var(--gold-light); }
+thead th { padding: 0.7rem 0.8rem; text-align: left; font-weight: 600; }
+tbody tr { border-bottom: 1px solid var(--border); }
+tbody tr:nth-child(even) { background: #fdf4e0; }
+tbody tr:hover { background: #fef7e6; }
+tbody td { padding: 0.55rem 0.8rem; vertical-align: top; }
+.tag {
+  display: inline-block;
+  background: var(--tag-bg); border: 1px solid var(--tag-border);
+  color: var(--ink); border-radius: 12px;
+  padding: 0.1rem 0.5rem; font-size: 0.68rem;
+  margin: 1px 2px; white-space: nowrap;
+}
+.person-badge {
+  background: #2d0000; color: #f0d085;
+  padding: 0.2rem 0.6rem; border-radius: 4px;
+  font-weight: bold; font-size: 0.72rem;
+}
+
+/* ── Case Cards ── */
+.case-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.2rem;
+}
+.case-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 1.2rem;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.case-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+.case-card .case-num {
+  position: absolute; top: -10px; left: 1rem;
+  background: var(--gold); color: white;
+  font-size: 0.7rem; font-weight: bold;
+  padding: 0.15rem 0.6rem; border-radius: 10px;
+  font-family: Arial, sans-serif;
+}
+.case-card h3 {
+  font-size: 1rem; color: var(--accent);
+  margin: 0.5rem 0 0.3rem;
+}
+.case-card .pressure {
+  font-size: 0.78rem; color: var(--muted);
+  font-style: italic; margin-bottom: 0.8rem;
+  font-family: Arial, sans-serif;
+}
+.case-field { margin-bottom: 0.5rem; }
+.case-field .field-label {
+  font-size: 0.68rem; font-weight: bold; text-transform: uppercase;
+  color: var(--gold); letter-spacing: 0.05em;
+  font-family: Arial, sans-serif;
+}
+.case-field .field-value {
+  font-size: 0.8rem; color: var(--ink);
+  font-family: Arial, sans-serif;
+}
+.source-link {
+  display: inline-block; margin-top: 0.5rem;
+  font-size: 0.7rem; color: var(--gold);
+  text-decoration: none; font-family: Arial, sans-serif;
+}
+.source-link:hover { text-decoration: underline; }
+
+/* ── RDF / Turtle viewer ── */
+.code-block {
+  background: #1e1410;
+  border: 1px solid #4a3000;
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  overflow-x: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 0.76rem;
+  color: #d4c8a0;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+.code-block .c-prefix { color: #7ec8e3; }
+.code-block .c-uri { color: #f0d085; }
+.code-block .c-class { color: #c3e88d; }
+.code-block .c-prop { color: #82aaff; }
+.code-block .c-lit { color: #f78c6c; }
+.code-block .c-comment { color: #546e7a; font-style: italic; }
+
+/* ── SPARQL ── */
+.cq-block {
+  background: var(--card-bg);
+  border-left: 4px solid var(--gold);
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.2rem; margin-bottom: 1.5rem;
+}
+.cq-block h3 { font-size: 1rem; color: var(--accent); margin-bottom: 0.3rem; }
+.cq-block p { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.7rem; font-family: Arial, sans-serif; }
+
+/* ── Workflow Diagram ── */
+.workflow {
+  display: flex; align-items: stretch; gap: 0;
+  flex-wrap: wrap; margin: 1.5rem 0;
+}
+.wf-step {
+  flex: 1; min-width: 130px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 1rem;
+  text-align: center; position: relative;
+}
+.wf-step .wf-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
+.wf-step h4 { font-size: 0.82rem; color: var(--accent); margin-bottom: 0.2rem; }
+.wf-step p { font-size: 0.72rem; color: var(--muted); font-family: Arial, sans-serif; }
+.wf-arrow {
+  display: flex; align-items: center;
+  color: var(--gold); font-size: 1.5rem; padding: 0 0.3rem;
+  align-self: center;
+}
+
+/* ── Property Table ── */
+.prop-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.prop-table th {
+  background: #2c1a0e; color: var(--gold-light);
+  padding: 0.6rem 0.8rem; text-align: left;
+  font-family: Arial, sans-serif; font-size: 0.8rem;
+}
+.prop-table td { padding: 0.5rem 0.8rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; font-family: Arial, sans-serif; }
+.prop-table tr:hover { background: #fdf4e0; }
+.mono { font-family: 'Courier New', monospace; color: var(--accent); font-size: 0.78rem; }
+
+/* ── Meme Gallery ── */
+.meme-gallery-intro {
+  font-size: 0.88rem; color: var(--muted); font-family: Arial, sans-serif;
+  margin-bottom: 1.5rem; line-height: 1.7;
+  background: var(--card-bg); border-left: 4px solid var(--gold);
+  padding: 0.8rem 1rem; border-radius: 0 8px 8px 0;
+}
+.meme-group {
+  margin-bottom: 2.5rem;
+}
+.meme-group-title {
+  font-size: 0.95rem; font-weight: bold; color: var(--accent);
+  margin-bottom: 0.8rem; padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: Arial, sans-serif;
+}
+.meme-group-title .meme-badge {
+  background: var(--accent); color: white;
+  font-size: 0.62rem; padding: 0.1rem 0.45rem;
+  border-radius: 4px; text-transform: uppercase;
+}
+.meme-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.meme-item {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+}
+.meme-item img {
+  width: 100%; display: block;
+  max-height: 360px; object-fit: contain;
+  background: #f5f0e8;
+}
+.meme-item .meme-caption {
+  padding: 0.5rem 0.7rem;
+  font-size: 0.72rem; color: var(--muted);
+  font-family: Arial, sans-serif;
+  border-top: 1px solid var(--border);
+}
+.meme-item .meme-caption strong {
+  color: var(--accent); font-size: 0.75rem;
+}
+
+/* ── AI Prompt Section ── */
+.prompt-intro {
+  font-size: 0.88rem; color: var(--muted); font-family: Arial, sans-serif;
+  margin-bottom: 1.5rem; line-height: 1.7;
+  background: linear-gradient(135deg, #fffcf4, #fef8e8);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 1rem 1.2rem;
+}
+.prompt-logic {
+  display: flex; gap: 0.5rem; align-items: center;
+  margin: 0.8rem 0; flex-wrap: wrap;
+}
+.prompt-logic .pl-step {
+  background: var(--nav-bg); color: var(--gold-light);
+  padding: 0.3rem 0.8rem; border-radius: 20px;
+  font-size: 0.75rem; font-family: Arial, sans-serif;
+  font-weight: bold;
+}
+.prompt-logic .pl-arrow {
+  color: var(--gold); font-size: 1rem; font-weight: bold;
+}
+
+.prompt-round {
+  margin-bottom: 3rem;
+}
+.prompt-round-label {
+  font-size: 1rem; font-weight: bold; color: var(--accent);
+  margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: Arial, sans-serif;
+}
+.prompt-round-label .pr-num {
+  background: var(--gold); color: white;
+  width: 1.8rem; height: 1.8rem; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: bold;
+}
+.prompt-round-label .pr-title {
+  font-size: 0.78rem; background: rgba(139,37,0,0.08);
+  color: var(--accent); border: 1px solid rgba(139,37,0,0.2);
+  border-radius: 4px; padding: 0.2rem 0.6rem;
+  font-weight: normal;
+}
+
+.prompt-tricolumn {
+  display: grid;
+  grid-template-columns: 260px 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.ptc-col {
+  display: flex; flex-direction: column;
+}
+.ptc-col:not(:last-child) {
+  border-right: 1px solid var(--border);
+}
+
+.ptc-header {
+  background: var(--nav-bg); color: var(--gold-light);
+  padding: 0.6rem 1rem;
+  font-size: 0.75rem; font-weight: bold;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  letter-spacing: 0.04em;
+  display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+}
+
+.ptc-body {
+  flex: 1;
+  background: var(--card-bg);
+  padding: 0.8rem;
+}
+
+/* Meme image column */
+.ptc-meme-img {
+  width: 100%; display: block;
+  object-fit: contain;
+  background: #f5f0e8;
+  max-height: 400px;
+}
+
+/* Prompt text column */
+.ptc-prompt-text {
+  font-size: 0.78rem; color: var(--ink);
+  font-family: Arial, sans-serif; line-height: 1.7;
+  height: 100%;
+}
+.ptc-prompt-text .pq-label {
+  font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--gold); font-weight: bold; margin-bottom: 0.5rem;
+  display: block;
+}
+.ptc-prompt-text .pq-content {
+  font-size: 0.8rem; color: var(--ink); line-height: 1.7;
+}
+.ptc-prompt-text .pq-sub {
+  margin-top: 0.6rem; padding-top: 0.6rem;
+  border-top: 1px dashed var(--border);
+}
+.pq-ask {
+  background: rgba(201,148,58,0.08);
+  border: 1px solid rgba(201,148,58,0.3);
+  border-radius: 6px; padding: 0.5rem 0.7rem;
+  font-size: 0.78rem; color: var(--ink);
+  font-family: Arial, sans-serif; line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+/* AI output column */
+.ptc-ai-output {
+  font-size: 0.75rem; font-family: 'Courier New', monospace;
+  line-height: 1.6; height: 100%;
+}
+.ai-screenshot {
+  width: 100%; display: block;
+  border-radius: 4px; overflow: hidden;
+  object-fit: contain;
+  max-height: 480px;
+}
+
+/* ── Footer ── */
+footer {
+  background: var(--nav-bg); color: #7a6652;
+  text-align: center; padding: 1.5rem;
+  font-size: 0.8rem; font-family: Arial, sans-serif;
+  border-top: 2px solid #3d1a00;
+}
+footer a { color: var(--gold); }
+footer strong { color: var(--gold-light); }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  #sidebar { transform: translateX(-100%); }
+  body.sidebar-open #sidebar { transform: translateX(0); }
+  #main-content { margin-left: 0; }
+  body.sidebar-collapsed #main-content { margin-left: 0; }
+  .prompt-tricolumn { grid-template-columns: 1fr; }
+  .ptc-col:not(:last-child) { border-right: none; border-bottom: 1px solid var(--border); }
+  .meme-pair { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .wf-arrow { display: none; }
+  .wf-step { min-width: 100%; }
+}
+
+/* ── Chapter 3 v2: dimension legend ── */
+.dim-legend {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+  gap: 0.9rem; margin-bottom: 1.8rem;
+}
+.dim-card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-left: 3px solid var(--gold); border-radius: 8px;
+  padding: 0.85rem 1rem;
+  transition: transform .25s cubic-bezier(.2,.7,.3,1), box-shadow .25s ease;
+}
+.dim-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(201,148,58,.16); }
+.dim-card h4 {
+  font-size: .78rem; color: var(--accent); font-family: Arial, sans-serif;
+  margin-bottom: .35rem; letter-spacing: .02em;
+}
+.dim-card p { font-size: .72rem; color: var(--muted); font-family: Arial, sans-serif; line-height: 1.55; }
+.dim-card code {
+  font-size: .67rem; background: var(--tag-bg); color: var(--gold);
+  border-radius: 3px; padding: .05rem .3rem; margin-right: .15rem;
+  display: inline-block; line-height: 1.6;
+}
+
+/* ── Chapter 3 v2: ritual case cards ── */
+.ritual-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(345px, 1fr)); gap: 1.3rem; }
+.ritual-card {
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+  padding: 1.2rem 1.2rem 1rem; position: relative; overflow: hidden;
+  transition: transform .3s cubic-bezier(.2,.7,.3,1), box-shadow .3s ease, border-color .3s ease;
+  opacity: 0; transform: translateY(14px);
+  animation: rcIn .5s cubic-bezier(.2,.7,.3,1) forwards;
+}
+@keyframes rcIn { to { opacity: 1; transform: translateY(0); } }
+.ritual-card::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--red));
+  opacity: .85;
+}
+.ritual-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(60,30,0,.13); border-color: var(--tag-border); }
+.ritual-card .rc-platform {
+  position: absolute; top: 1.05rem; right: 1.1rem;
+  font-family: Arial, sans-serif; font-size: .65rem;
+  background: rgba(139,37,0,.07); border: 1px solid rgba(139,37,0,.2);
+  color: var(--accent); border-radius: 20px; padding: .14rem .6rem;
+  letter-spacing: .03em;
+}
+.ritual-card .rc-num {
+  display: inline-block; font-family: Arial, sans-serif; font-size: .63rem;
+  font-weight: bold; color: #fff; background: var(--gold);
+  border-radius: 20px; padding: .13rem .55rem; letter-spacing: .06em;
+}
+.ritual-card h3 { font-size: .98rem; color: var(--accent); margin: .5rem 0 .18rem; line-height: 1.35; }
+.ritual-card .rc-id { font-family: 'Courier New', monospace; font-size: .68rem; color: var(--gold); }
+
+.rc-flow { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem; margin: .8rem 0 .95rem; }
+.rc-node {
+  font-family: Arial, sans-serif; font-size: .67rem;
+  background: #fdf4e0; border: 1px solid var(--border);
+  border-radius: 6px; padding: .22rem .5rem; color: var(--ink);
+  transition: background .2s ease;
+}
+.ritual-card:hover .rc-node { background: #fdf0d6; }
+.rc-arrow { color: var(--gold); font-size: .78rem; }
+
+.rc-rows { display: grid; gap: .5rem; }
+.rc-row { display: grid; grid-template-columns: 108px 1fr; gap: .55rem; align-items: start; }
+.rc-row .k {
+  font-family: Arial, sans-serif; font-size: .63rem; text-transform: uppercase;
+  letter-spacing: .05em; color: var(--gold); padding-top: .18rem;
+}
+.rc-row .v { font-family: Arial, sans-serif; font-size: .77rem; color: var(--ink); line-height: 1.5; }
+.chip {
+  display: inline-block; font-family: Arial, sans-serif; font-size: .62rem;
+  border-radius: 10px; padding: .06rem .45rem; margin-left: .3rem;
+  background: rgba(139,37,0,.07); border: 1px solid rgba(139,37,0,.18);
+  color: var(--accent); white-space: nowrap;
+}
+.chip.gold { background: rgba(201,148,58,.14); border-color: var(--tag-border); color: #8a6420; }
+
+.rc-toggle { margin-top: .9rem; padding-top: .65rem; border-top: 1px dashed var(--border); }
+.rc-toggle button {
+  background: none; border: none; cursor: pointer; padding: 0;
+  font-family: Arial, sans-serif; font-size: .72rem; color: var(--gold);
+  display: flex; align-items: center; gap: .35rem; transition: color .2s ease;
+}
+.rc-toggle button:hover { color: var(--accent); }
+.rc-toggle .chev { display: inline-block; transition: transform .3s ease; }
+.rc-toggle.open .chev { transform: rotate(90deg); }
+.rc-full {
+  overflow: hidden; max-height: 0; opacity: 0;
+  transition: max-height .45s cubic-bezier(.2,.7,.3,1), opacity .3s ease;
+}
+.rc-toggle.open + .rc-full { max-height: 1100px; opacity: 1; }
+.rc-full-inner { padding-top: .7rem; display: grid; gap: .28rem; }
+.rc-full-inner .fr { display: grid; grid-template-columns: 132px 1fr; gap: .5rem; font-family: Arial, sans-serif; font-size: .7rem; line-height: 1.5; }
+.rc-full-inner .fr .fk { color: var(--gold); }
+.rc-full-inner .fr .fv { color: var(--muted); }
+
+/* ── Chapter 3 v2: SPARQL answers ── */
+.cq-zh {
+  font-size: .78rem !important; color: var(--muted) !important;
+  font-style: italic; margin-top: -.35rem !important;
+}
+.cq-props { font-size: .72rem; font-family: 'Courier New', monospace; color: var(--gold); margin-bottom: .7rem; }
+.answer-block { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-top: .9rem; background: var(--card-bg); }
+.answer-head {
+  background: linear-gradient(90deg, #2c1a0e, #3d1a00);
+  color: var(--gold-light); font-family: Arial, sans-serif; font-size: .68rem;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: .45rem .85rem; display: flex; justify-content: space-between; align-items: center;
+}
+.answer-head .rows {
+  background: rgba(240,208,133,.18); border-radius: 10px;
+  padding: .05rem .5rem; font-size: .63rem; letter-spacing: 0; text-transform: none;
+}
+.answer-block table { margin: 0; font-size: .74rem; }
+.answer-block thead tr { background: #fdf4e0; color: var(--accent); }
+.answer-block thead th { padding: .5rem .7rem; font-size: .67rem; letter-spacing: .04em; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+.answer-block tbody td { padding: .45rem .7rem; }
+.answer-block tbody tr:hover { background: #fffaf0; }
+.answer-block td .mono { font-size: .71rem; }
+.answer-note {
+  font-size: .78rem; color: var(--muted); font-family: Arial, sans-serif;
+  margin-top: .7rem; line-height: 1.7;
+  border-left: 3px solid var(--gold-light); padding-left: .75rem;
+}
+.answer-note strong { color: var(--accent); }
+
+/* ── Chapter 3 v2: dimension legend ── */
+.dim-legend {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+  gap: 0.9rem; margin-bottom: 1.8rem;
+}
+.dim-card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-left: 3px solid var(--gold); border-radius: 8px;
+  padding: 0.85rem 1rem;
+  transition: transform .25s cubic-bezier(.2,.7,.3,1), box-shadow .25s ease;
+}
+.dim-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(201,148,58,.16); }
+.dim-card h4 {
+  font-size: .78rem; color: var(--accent); font-family: Arial, sans-serif;
+  margin-bottom: .35rem; letter-spacing: .02em;
+}
+.dim-card p { font-size: .72rem; color: var(--muted); font-family: Arial, sans-serif; line-height: 1.55; }
+.dim-card code {
+  font-size: .67rem; background: var(--tag-bg); color: var(--gold);
+  border-radius: 3px; padding: .05rem .3rem; margin-right: .15rem;
+  display: inline-block; line-height: 1.6;
+}
+
+/* ── Chapter 3 v2: dataset table tuning ── */
+#csv-table { font-size: .72rem; }
+#csv-table thead th, #csv-table tbody td { padding: .5rem .55rem; }
+.table-scroll-hint {
+  font-size: .7rem; color: var(--muted); font-family: Arial, sans-serif;
+  margin-top: .5rem; display: flex; align-items: center; gap: .35rem;
+}
+
+/* ── Chapter 3 v2: ritual case cards ── */
+.ritual-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(345px, 1fr)); gap: 1.3rem; }
+.ritual-card {
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+  padding: 1.2rem 1.2rem 1rem; position: relative; overflow: hidden;
+  transition: transform .3s cubic-bezier(.2,.7,.3,1), box-shadow .3s ease, border-color .3s ease;
+  opacity: 0; transform: translateY(14px);
+  animation: rcIn .5s cubic-bezier(.2,.7,.3,1) forwards;
+}
+@keyframes rcIn { to { opacity: 1; transform: translateY(0); } }
+.ritual-card::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--red));
+  opacity: .85;
+}
+.ritual-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(60,30,0,.13); border-color: var(--tag-border); }
+.ritual-card .rc-platform {
+  position: absolute; top: 1.05rem; right: 1.1rem;
+  font-family: Arial, sans-serif; font-size: .65rem;
+  background: rgba(139,37,0,.07); border: 1px solid rgba(139,37,0,.2);
+  color: var(--accent); border-radius: 20px; padding: .14rem .6rem;
+  letter-spacing: .03em;
+}
+.ritual-card .rc-num {
+  display: inline-block; font-family: Arial, sans-serif; font-size: .63rem;
+  font-weight: bold; color: #fff; background: var(--gold);
+  border-radius: 20px; padding: .13rem .55rem; letter-spacing: .06em;
+}
+.ritual-card h3 { font-size: .98rem; color: var(--accent); margin: .5rem 0 .18rem; line-height: 1.35; }
+.ritual-card .rc-id { font-family: 'Courier New', monospace; font-size: .68rem; color: var(--gold); }
+
+.rc-flow { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem; margin: .8rem 0 .95rem; }
+.rc-node {
+  font-family: Arial, sans-serif; font-size: .67rem;
+  background: #fdf4e0; border: 1px solid var(--border);
+  border-radius: 6px; padding: .22rem .5rem; color: var(--ink);
+  transition: background .2s ease;
+}
+.ritual-card:hover .rc-node { background: #fdf0d6; }
+.rc-arrow { color: var(--gold); font-size: .78rem; }
+
+.rc-rows { display: grid; gap: .5rem; }
+.rc-row { display: grid; grid-template-columns: 108px 1fr; gap: .55rem; align-items: start; }
+.rc-row .k {
+  font-family: Arial, sans-serif; font-size: .63rem; text-transform: uppercase;
+  letter-spacing: .05em; color: var(--gold); padding-top: .18rem;
+}
+.rc-row .v { font-family: Arial, sans-serif; font-size: .77rem; color: var(--ink); line-height: 1.5; }
+.chip {
+  display: inline-block; font-family: Arial, sans-serif; font-size: .62rem;
+  border-radius: 10px; padding: .06rem .45rem; margin-left: .3rem;
+  background: rgba(139,37,0,.07); border: 1px solid rgba(139,37,0,.18);
+  color: var(--accent); white-space: nowrap;
+}
+.chip.gold { background: rgba(201,148,58,.14); border-color: var(--tag-border); color: #8a6420; }
+
+.rc-toggle { margin-top: .9rem; padding-top: .65rem; border-top: 1px dashed var(--border); }
+.rc-toggle button {
+  background: none; border: none; cursor: pointer; padding: 0;
+  font-family: Arial, sans-serif; font-size: .72rem; color: var(--gold);
+  display: flex; align-items: center; gap: .35rem; transition: color .2s ease;
+}
+.rc-toggle button:hover { color: var(--accent); }
+.rc-toggle .chev { display: inline-block; transition: transform .3s ease; }
+.rc-toggle.open .chev { transform: rotate(90deg); }
+.rc-full {
+  overflow: hidden; max-height: 0; opacity: 0;
+  transition: max-height .45s cubic-bezier(.2,.7,.3,1), opacity .3s ease;
+}
+.rc-toggle.open + .rc-full { max-height: 1100px; opacity: 1; }
+.rc-full-inner { padding-top: .7rem; display: grid; gap: .28rem; }
+.rc-full-inner .fr { display: grid; grid-template-columns: 132px 1fr; gap: .5rem; font-family: Arial, sans-serif; font-size: .7rem; line-height: 1.5; }
+.rc-full-inner .fr .fk { color: var(--gold); }
+.rc-full-inner .fr .fv { color: var(--muted); }
+
+/* ── Chapter 3 v2: SPARQL answers ── */
+.cq-zh {
+  font-size: .78rem !important; color: var(--muted) !important;
+  font-style: italic; margin-top: -.35rem !important;
+}
+.cq-props { font-size: .72rem; font-family: 'Courier New', monospace; color: var(--gold); margin-bottom: .7rem; }
+.answer-block { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-top: .9rem; background: var(--card-bg); }
+.answer-head {
+  background: linear-gradient(90deg, #2c1a0e, #3d1a00);
+  color: var(--gold-light); font-family: Arial, sans-serif; font-size: .68rem;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: .45rem .85rem; display: flex; justify-content: space-between; align-items: center;
+}
+.answer-head .rows {
+  background: rgba(240,208,133,.18); border-radius: 10px;
+  padding: .05rem .5rem; font-size: .63rem; letter-spacing: 0; text-transform: none;
+}
+.answer-block table { margin: 0; font-size: .74rem; }
+.answer-block thead tr { background: #fdf4e0; color: var(--accent); }
+.answer-block thead th { padding: .5rem .7rem; font-size: .67rem; letter-spacing: .04em; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+.answer-block tbody td { padding: .45rem .7rem; }
+.answer-block tbody tr:hover { background: #fffaf0; }
+.answer-block td .mono { font-size: .71rem; }
+.answer-note {
+  font-size: .78rem; color: var(--muted); font-family: Arial, sans-serif;
+  margin-top: .7rem; line-height: 1.7;
+  border-left: 3px solid var(--gold-light); padding-left: .75rem;
+}
+.answer-note strong { color: var(--accent); }
+/* WG-SECTIONS-PATCH */
+  /* subsection number pill */
+  .section-title .num.pill {
+    width: auto; min-width: 2.9rem; border-radius: 1.3rem;
+    padding: 0 .6rem; font-size: .78rem; letter-spacing: .02em;
+  }
+  /* subtitle chip (sentence case) */
+  .step-label.sub {
+    text-transform: none; letter-spacing: 0; font-size: .74rem;
+    padding: .14rem .6rem;
+  }
+  /* hero keyword chips as links */
+  .badge-row a.badge {
+    text-decoration: none; display: inline-block;
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .badge-row a.badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0,0,0,.30);
+    border-color: var(--gold-light);
+  }
+  /* reserved slot — content still to be added */
+  .todo-slot {
+    border: 2px dashed rgba(139,37,0,.22);
+    border-radius: 12px; min-height: 7rem;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(201,148,58,.05);
+  }
+  .todo-label {
+    font-size: .78rem; color: var(--muted);
+    font-family: Arial, sans-serif; letter-spacing: .04em;
+  }
+  /* reserved slot — figure still to be added */
+  .fig-slot {
+    border: 2px dashed rgba(139,37,0,.22);
+    border-radius: 12px; aspect-ratio: 16 / 9;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(201,148,58,.05); margin-top: 2rem;
+  }
+  /* ontology figure */
+  .onto-graph {
+    margin: 0 0 1.2rem; padding: 0;
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; background: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,.05);
+    animation: ogIn .7s ease both;
+    transition: box-shadow .3s ease, transform .3s ease;
+  }
+  .onto-graph:hover { box-shadow: 0 10px 26px rgba(0,0,0,.13); transform: translateY(-2px); }
+  @keyframes ogIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  .onto-graph img { display: block; width: 100%; height: auto; }
+  .onto-graph figcaption {
+    font-size: .82rem; color: var(--muted); font-family: Arial, sans-serif;
+    padding: .9rem 1.1rem; border-top: 1px solid var(--border); line-height: 1.6;
+    background: #fffdf8;
+  }
+  .onto-graph figcaption code { font-size: .78rem; }
+  /* colour legend under the figure */
+  .legend-row {
+    display: flex; flex-wrap: wrap; gap: .45rem .9rem;
+    font-size: .76rem; color: var(--muted); font-family: Arial, sans-serif;
+    margin-bottom: 1.2rem;
+  }
+  .legend-row .lg { display: inline-flex; align-items: center; gap: .38rem; }
+  .legend-row .dot {
+    width: .62rem; height: .62rem; border-radius: 50%;
+    display: inline-block; border: 1px solid rgba(0,0,0,.18);
+  }
+  .legend-row .dot.box { background: #fff; border: 1px solid #4a4a4a; border-radius: 2px; }
+  .legend-row .dot.arrow { background: var(--gold); border: 0; border-radius: 2px; height: .16rem; width: .95rem; }
+  .legend-row .dot.sel { background: #fff; border: 2px solid #4caf50; border-radius: 2px; }
+  /* full-dataset disclosure */
+  .full-data {
+    margin-top: 1.6rem; border: 1px solid var(--border);
+    border-radius: 10px; background: #fffdf8; overflow: hidden;
+  }
+  .full-data > summary {
+    cursor: pointer; list-style: none; padding: .8rem 1.1rem;
+    font-size: .84rem; font-weight: bold; color: var(--accent);
+    font-family: Arial, sans-serif; display: flex; align-items: center; gap: .5rem;
+    transition: background .25s ease;
+  }
+  .full-data > summary::-webkit-details-marker { display: none; }
+  .full-data > summary:hover { background: rgba(201,148,58,.10); }
+  .full-data .fd-chev { transition: transform .28s ease; font-size: .75rem; color: var(--gold); }
+  .full-data[open] .fd-chev { transform: rotate(90deg); }
+  .full-data .table-wrap { border-top: 1px solid var(--border); padding: 0 .4rem .4rem; }
+  #full-table { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; font-size: .7rem; }
+  #full-table th {
+    background: #4a3728; color: #f5e6c8; font-weight: bold;
+    padding: .5rem .55rem; text-align: left; white-space: nowrap;
+  }
+  #full-table td {
+    border-bottom: 1px solid #efe6d8; padding: .45rem .55rem;
+    vertical-align: top; min-width: 8.5rem; max-width: 17rem; line-height: 1.45;
+  }
+  #full-table tbody tr:nth-child(even) { background: rgba(201,148,58,.05); }
+/* /WG-SECTIONS-PATCH */
+</style>
+</head><body>
+
+<!-- Sidebar Toggle Button -->
+<button id="sidebar-toggle" onclick="toggleSidebar()" title="Toggle Sidebar">◀</button>
+
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <h1>☸ WishGraph</h1>
+    <p>Cyber-Wishing Knowledge Graph</p>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Overview</div>
+    <a class="nav-link" href="../index.html">
+      <span class="nav-icon">📑</span>
+      <span>Home Page</span>
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Chapters</div>
+    <a class="nav-link" href="chapter1.html">
+      <span class="nav-icon">📋</span>
+      <span>Research Framework</span>
+      <span class="nav-step">Ch1</span>
+    </a>
+    <a class="nav-link" href="chapter2.html">
+      <span class="nav-icon">🧠</span>
+      <span>Knowledge Representation</span>
+      <span class="nav-step">Ch2</span>
+    </a>
+    <a class="nav-link current" href="chapter3.html">
+      <span class="nav-icon">🔍</span>
+      <span>Knowledge Extraction</span>
+      <span class="nav-step">Ch3</span>
+    </a>
+  </div>
+</nav>
+
+<div id="main-content">
+
+<!-- Hero -->
+<div class="hero" id="overview">
+  <h1>WishGraph</h1>
+  <div class="subtitle">Chapter 3: Knowledge Extraction</div>
+  <div class="desc">
+    This chapter documents the knowledge-extraction work: collected meme evidence turned into a
+    structured dataset across 28 ontology dimensions, its instantiation as an RDF knowledge graph
+    (A-Box), and the SPARQL queries that test the ontology against the competency questions.
+  </div>
+  <div class="badge-row">
+    <a class="badge" href="#sec31">3.1 Data and Extraction</a>
+    <a class="badge" href="#sec32">3.2 A-Box and Knowledge Graph</a>
+    <a class="badge" href="#sec33">3.3 SPARQL and Findings</a>
+  </div>
+</div>
+
+<!-- 3.1 Data and Extraction -->
+<section id="sec31">
+<div class="section">
+  <h2 class="section-title"><span class="num pill">3.1</span> Data and Extraction
+    <span class="step-label sub">Raw materials → structured data</span></h2>
+<p style="font-size:0.88rem;color:var(--muted);font-family:Arial,sans-serif;margin-bottom:1.6rem;">
+    The five competency questions were reformulated as SPARQL queries and executed against the
+    A-Box. Every query below is followed by its actual result set, so the chapter doubles as
+    evidence that the ontology is queryable rather than merely descriptive. The queries run
+    against the <code>cw:</code> namespace of the T-Box
+    (<code>http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#</code>) and read each
+    dimension’s <em>type</em> from the sub-class the instance is typed with, so every table
+    below can be reproduced in Protégé or in any endpoint holding
+    <code>ontology/wishgraph_full.ttl</code>.
+  </p>
+
+  <div class="dim-legend">
+    <div class="dim-card">
+      <h4>1 · Case Identity</h4>
+      <p><code>CyberRitualCase</code></p>
+    </div>
+    <div class="dim-card">
+      <h4>2 · Platform</h4>
+      <p><code>Platform</code></p>
+    </div>
+    <div class="dim-card">
+      <h4>3 · Subject (Person)</h4>
+      <p><code>Subject</code></p>
+    </div>
+    <div class="dim-card">
+      <h4>4 · Performative Action</h4>
+      <p><code>PerformativeAction</code><code>PostingAction</code><code>CommentingAction</code></p>
+    </div>
+    <div class="dim-card">
+      <h4>5 · Secular Pressure</h4>
+      <p><code>SecularPressure</code><code>MundanePressure</code><code>ExistentialPressure</code></p>
+    </div>
+    <div class="dim-card">
+      <h4>6 · Remediated Signifier</h4>
+      <p><code>RemediatedSignifier</code><code>ImageSignifier</code><code>VideoSignifier</code></p>
+    </div>
+    <div class="dim-card">
+      <h4>7 · Ritual Symbol</h4>
+      <p><code>RitualSymbol</code><code>Mantra</code><code>Emoji</code><code>VisualOrAuditoryMarker</code></p>
+    </div>
+    <div class="dim-card">
+      <h4>8 · Archetype</h4>
+      <p><code>Archetype</code><code>TraditionalArchetype</code><code>ModernArchetype</code><code>Animal</code><code>SecularCommodity</code></p>
+    </div>
+    <div class="dim-card">
+      <h4>9 · Remediation Strategy</h4>
+      <p><code>RemediationStrategy</code><code>DigitalTransposition</code><code>SacredAmplification</code><code>SacredHybridization</code><code>SecularIdolDeification</code><code>SymbolicEnchantment</code></p>
+    </div>
+    <div class="dim-card">
+      <h4>10 · Affective Outcome</h4>
+      <p><code>AffectiveOutcome</code></p>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+  <table id="csv-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Case</th>
+        <th>Platform</th>
+        <th>Subject</th>
+        <th>Performative Action</th>
+        <th>Secular Pressure</th>
+        <th>Remediated Signifier</th>
+        <th>Archetype</th>
+        <th>Remediation Strategy</th>
+        <th>Affective Outcome</th>
+      </tr>
+    </thead>
+    <tbody id="csv-tbody"></tbody>
+  </table>
+  </div>
+    <p class="table-scroll-hint">↔ Scroll horizontally to see all ten dimensions.</p>
+
+  <details class="full-data">
+    <summary><span class="fd-chev">▸</span> Full dataset — all 28 dimensions (9 cases × 28 columns)</summary>
+    <div class="table-wrap">
+      <table id="full-table">
+        <thead id="full-thead"></thead>
+        <tbody id="full-tbody"></tbody>
+      </table>
+    </div>
+  </details>
+</div>
+</section>
+
+<!-- 3.2 A-Box and Knowledge Graph -->
+<section id="sec32" style="background:#fff9f0;">
+<div class="section">
+  <h2 class="section-title"><span class="num pill">3.2</span> A-Box and Knowledge Graph
+    <span class="step-label sub">Structured data → RDF instances → knowledge graph</span></h2>
+
+  <figure class="onto-graph">
+    <img src="../assets/wishgraph_ontology_graph.jpg"
+         alt="Protégé OntoGraf view of the instantiated WishGraph A-Box" loading="lazy">
+    <figcaption>
+      <strong>Figure 3.1 — A-Box instantiation in Protégé (OntoGraf view).</strong>
+      The graph for one case. The node in the middle is the case <code>Cat Buddha Exam Wish Case</code>;
+      the boxes around it are the dimension values attached to it — <code>Xiaohongshu</code> (platform),
+      <code>Exam-Wishing User</code> (subject), <code>Posting Exam Wish</code> (performative action),
+      <code>Exam Pressure</code> (secular pressure), <code>Exam Cat Image</code> (remediated signifier),
+      <code>Cat Buddha Remediation</code> (remediation strategy) and <code>Meme Therapy</code> (affective outcome).
+    </figcaption>
+  </figure>
+  <div class="legend-row">
+    <span class="lg"><i class="dot box"></i>a class, or an instance of one</span>
+    <span class="lg"><i class="dot arrow"></i>an object property (the arrow)</span>
+    <span class="lg"><i class="dot sel"></i>the entity open in Protégé — here <code>Sacred Hybridization</code></span>
+  </div>
+</div>
+</section>
+
+<!-- 3.3 SPARQL and Findings -->
+<section id="sec33">
+<div class="section">
+  <h2 class="section-title"><span class="num pill">3.3</span> SPARQL and Findings
+    <span class="step-label sub">Query the graph and interpret the results</span></h2>
+
+  <p style="font-size:0.88rem;color:var(--muted);font-family:Arial,sans-serif;margin-bottom:1.6rem;">
+    The five competency questions were reformulated as SPARQL queries and executed against the
+    A-Box. Every query below is followed by its actual result set, so the chapter doubles as
+    evidence that the ontology is queryable rather than merely descriptive.
+  </p>
+
+    <div class="cq-block">
+    <h3>CQ1 — Performative Action, Subject and Platform</h3>
+    <p>What performative actions are carried out in each cyber-ritual case, who performs them, and on which platform does the case circulate?</p>
+    <p class="cq-zh">每一个案例中发生了什么 performative action？由谁执行？案例在哪个平台流通？</p>
+    <div class="cq-props">cw:hasPerformativeAction · cw:performedBy · cw:circulatesOn</div>
+    <div class="code-block"><span class="c-comment"># CQ1 -- which performative actions are carried out, by whom, and on which platform?</span>
+<span class="c-prop">SELECT</span> <span class="c-uri">?case</span>
+       (<span class="c-prop">GROUP_CONCAT</span>(<span class="c-prop">DISTINCT</span> <span class="c-prop">CONCAT</span>(<span class="c-uri">?actionLabel</span>, <span class="c-lit">" by "</span>, <span class="c-uri">?agentLabel</span>); separator=<span class="c-lit">"; "</span>) <span class="c-prop">AS</span> <span class="c-uri">?actions</span>)
+       <span class="c-uri">?platformLabel</span>
+<span class="c-prop">WHERE</span> {
+    <span class="c-uri">?case</span> a <span class="c-class">cw:CyberRitualCase</span> ;
+          <span class="c-class">cw:hasPerformativeAction</span> <span class="c-uri">?action</span> ;
+          <span class="c-class">cw:circulatesOn</span>          <span class="c-uri">?platform</span> .
+    <span class="c-uri">?action</span>   <span class="c-class">cw:performedBy</span> <span class="c-uri">?agent</span> ;
+              <span class="c-prop">rdfs:label</span>     <span class="c-uri">?actionLabel</span> .
+    <span class="c-uri">?agent</span>    <span class="c-prop">rdfs:label</span>     <span class="c-uri">?agentLabel</span> .
+    <span class="c-uri">?platform</span> <span class="c-prop">rdfs:label</span>     <span class="c-uri">?platformLabel</span> .
+}
+<span class="c-prop">GROUP</span> <span class="c-prop">BY</span> <span class="c-uri">?case</span> <span class="c-uri">?platformLabel</span>
+<span class="c-prop">ORDER</span> <span class="c-prop">BY</span> <span class="c-uri">?case</span></div>
+    <div class="answer-block">
+      <div class="answer-head"><span>Query Result</span><span class="rows">9 rows</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Case</th><th>Performative Action (performed by)</th><th>Platform</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">Case_CatWish</td><td style="font-size:0.75rem;">Posting Exam Wish by Exam-Wishing User</td><td style="font-size:0.75rem;">Xiaohongshu Platform</td></tr>
+          <tr><td class="mono">Case_DigitalEnlightenment</td><td style="font-size:0.75rem;">Posting Buddha Teaching by Panda Chakra User</td><td style="font-size:0.75rem;">Douyin Platform</td></tr>
+          <tr><td class="mono">Case_HealthWish</td><td style="font-size:0.75rem;">Posting Health Wish by Health-Wishing User</td><td style="font-size:0.75rem;">Xiaohongshu Platform</td></tr>
+          <tr><td class="mono">Case_InstagramTraditionalPrayer</td><td style="font-size:0.75rem;">Posting New Year Prayer Action by Devout Instagram User</td><td style="font-size:0.75rem;">Instagram Platform</td></tr>
+          <tr><td class="mono">Case_InstagramWealth</td><td style="font-size:0.75rem;">Commenting Claim Wealth by Commenter Rammyy; Posting Wealth Manifesting by Materialistic User</td><td style="font-size:0.75rem;">Instagram Platform</td></tr>
+          <tr><td class="mono">Case_ManifestingKardashian</td><td style="font-size:0.75rem;">Posting Manifesting Spell by Ambitious User</td><td style="font-size:0.75rem;">Xiaohongshu Platform</td></tr>
+          <tr><td class="mono">Case_SubliminalRomance</td><td style="font-size:0.75rem;">Posting Subliminal Video by Romance Seeking User</td><td style="font-size:0.75rem;">Bilibili Platform</td></tr>
+          <tr><td class="mono">Case_XWealthManifesting</td><td style="font-size:0.75rem;">Posting Manifest 2026 Action by User Shally</td><td style="font-size:0.75rem;">X Platform</td></tr>
+          <tr><td class="mono">Case_XiaohongshuCET6Comment</td><td style="font-size:0.75rem;">Commenting CET-6 Manifestation by Commenter Anhui Student</td><td style="font-size:0.75rem;">Xiaohongshu Platform</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <p class="answer-note"><strong>Read-out.</strong> The query separates <strong>posting</strong> rituals (creating the wishing artefact) from <strong>commenting</strong> rituals (joining an existing wish thread): seven cases are posted, while the two commenting cases are the only ones where the ritual act is a reply. Xiaohongshu hosts four of the nine cases, which matches its role as the densest site of everyday cyber-wishing in the corpus. <code>Case_InstagramWealth</code> is the only case carrying two actions performed by two different subjects — a materialistic user posting a wealth-manifesting video and a commenter claiming that wealth in the comments. That split is exactly why <code>cw:performedBy</code> is modelled on the <em>action</em> rather than on the case: one case can host more than one ritual role.</p>
+  </div>
+
+  <div class="cq-block">
+    <h3>CQ2 — Trigger / Pressure</h3>
+    <p>Which secular pressure triggers each cyber-ritual case, and what type of pressure is it?</p>
+    <p class="cq-zh">每个网络祈愿案例由什么 secular pressure 触发？该压力属于什么类型？</p>
+    <div class="cq-props">cw:triggeredBy · cw:SecularPressure 的子类</div>
+    <div class="code-block"><span class="c-comment"># CQ2 -- which secular pressure triggers each case, and what type of pressure is it?</span>
+<span class="c-prop">SELECT</span> <span class="c-uri">?case</span> <span class="c-uri">?pressureLabel</span> <span class="c-uri">?pressureTypeLabel</span>
+<span class="c-prop">WHERE</span> {
+    <span class="c-uri">?case</span> a <span class="c-class">cw:CyberRitualCase</span> ;
+          <span class="c-class">cw:triggeredBy</span> <span class="c-uri">?pressure</span> .
+    <span class="c-uri">?pressure</span> <span class="c-prop">rdfs:label</span> <span class="c-uri">?pressureLabel</span> ;
+              a <span class="c-uri">?pressureType</span> .
+    <span class="c-uri">?pressureType</span> <span class="c-prop">rdfs:subClassOf</span>* <span class="c-class">cw:SecularPressure</span> ;
+                  <span class="c-prop">rdfs:label</span>       <span class="c-uri">?pressureTypeLabel</span> .
+    <span class="c-prop">FILTER</span> (<span class="c-uri">?pressureType</span> != <span class="c-class">cw:SecularPressure</span>)
+}
+<span class="c-prop">ORDER</span> <span class="c-prop">BY</span> <span class="c-uri">?case</span></div>
+    <div class="answer-block">
+      <div class="answer-head"><span>Query Result</span><span class="rows">9 rows</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Case</th><th>Secular Pressure</th><th>Pressure Type</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">Case_CatWish</td><td style="font-size:0.75rem;">Exam Pressure</td><td style="font-size:0.75rem;">Mundane Pressure</td></tr>
+          <tr><td class="mono">Case_DigitalEnlightenment</td><td style="font-size:0.75rem;">Modern Anxiety and Existential Pressure</td><td style="font-size:0.75rem;">Existential Pressure</td></tr>
+          <tr><td class="mono">Case_HealthWish</td><td style="font-size:0.75rem;">Health Problem</td><td style="font-size:0.75rem;">Existential Pressure</td></tr>
+          <tr><td class="mono">Case_InstagramTraditionalPrayer</td><td style="font-size:0.75rem;">Future Uncertainty Pressure</td><td style="font-size:0.75rem;">Mundane Pressure</td></tr>
+          <tr><td class="mono">Case_InstagramWealth</td><td style="font-size:0.75rem;">Social Status Anxiety</td><td style="font-size:0.75rem;">Mundane Pressure</td></tr>
+          <tr><td class="mono">Case_ManifestingKardashian</td><td style="font-size:0.75rem;">Career and Wealth Pressure</td><td style="font-size:0.75rem;">Mundane Pressure</td></tr>
+          <tr><td class="mono">Case_SubliminalRomance</td><td style="font-size:0.75rem;">Romantic Anxiety</td><td style="font-size:0.75rem;">Mundane Pressure</td></tr>
+          <tr><td class="mono">Case_XWealthManifesting</td><td style="font-size:0.75rem;">Wealth Desire Pressure</td><td style="font-size:0.75rem;">Mundane Pressure</td></tr>
+          <tr><td class="mono">Case_XiaohongshuCET6Comment</td><td style="font-size:0.75rem;">Exam Pressure</td><td style="font-size:0.75rem;">Mundane Pressure</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <p class="answer-note"><strong>Read-out.</strong> Only two cases are triggered by an <strong>existential</strong> pressure — modern anxiety and illness. The remaining seven respond to <strong>mundane</strong> pressures: exam pressure (twice), future uncertainty, status anxiety, career and wealth, romantic anxiety, and wealth desire. Cyber-ritual wishing in this corpus is therefore predominantly a response to <em>everyday</em> precarity rather than to mortality or cosmic doubt. Note that the same pressure class recurs across ritual formats: Exam Pressure triggers both a posting ritual (<code>Case_CatWish</code>) and a commenting ritual (<code>Case_XiaohongshuCET6Comment</code>). The pressure <em>type</em> is not stored as a literal string — it is read from the sub-class the pressure instance is typed with, so the answer is derived from the class hierarchy rather than duplicated in the data.</p>
+  </div>
+
+  <div class="cq-block">
+    <h3>CQ3 — Transformation and Affective Outcome</h3>
+    <p>Which remediation strategy transforms each cyber-ritual case, and what outcome does the case resolve into?</p>
+    <p class="cq-zh">每个案例使用了什么 remediation strategy，又最终产生了什么 affective outcome？</p>
+    <div class="cq-props">cw:transformedVia · cw:resolvesIntoAffect</div>
+    <div class="code-block"><span class="c-comment"># CQ3 -- which remediation strategy transforms the case, and what does it resolve into?</span>
+<span class="c-prop">SELECT</span> <span class="c-uri">?case</span> <span class="c-uri">?strategyLabel</span> <span class="c-uri">?strategyTypeLabel</span> <span class="c-uri">?outcomeLabel</span>
+<span class="c-prop">WHERE</span> {
+    <span class="c-uri">?case</span> a <span class="c-class">cw:CyberRitualCase</span> ;
+          <span class="c-class">cw:transformedVia</span>     <span class="c-uri">?strategy</span> ;
+          <span class="c-class">cw:resolvesIntoAffect</span> <span class="c-uri">?outcome</span> .
+    <span class="c-uri">?strategy</span> <span class="c-prop">rdfs:label</span> <span class="c-uri">?strategyLabel</span> ;
+              a <span class="c-uri">?strategyType</span> .
+    <span class="c-uri">?strategyType</span> <span class="c-prop">rdfs:subClassOf</span>* <span class="c-class">cw:RemediationStrategy</span> ;
+                  <span class="c-prop">rdfs:label</span>       <span class="c-uri">?strategyTypeLabel</span> .
+    <span class="c-prop">FILTER</span> (<span class="c-uri">?strategyType</span> != <span class="c-class">cw:RemediationStrategy</span>)
+    <span class="c-uri">?outcome</span> <span class="c-prop">rdfs:label</span> <span class="c-uri">?outcomeLabel</span> .
+}
+<span class="c-prop">ORDER</span> <span class="c-prop">BY</span> <span class="c-uri">?case</span></div>
+    <div class="answer-block">
+      <div class="answer-head"><span>Query Result</span><span class="rows">9 rows</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Case</th><th>Remediation Strategy</th><th>Strategy Type</th><th>Affective Outcome</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">Case_CatWish</td><td style="font-size:0.75rem;">Cat Buddha Remediation</td><td style="font-size:0.75rem;">Sacred Hybridization Remediation</td><td style="font-size:0.75rem;">Meme Therapy</td></tr>
+          <tr><td class="mono">Case_DigitalEnlightenment</td><td style="font-size:0.75rem;">Psychedelic Aesthetic Remediation</td><td style="font-size:0.75rem;">Sacred Amplification Remediation</td><td style="font-size:0.75rem;">Sincere Hope for Inner Peace</td></tr>
+          <tr><td class="mono">Case_HealthWish</td><td style="font-size:0.75rem;">Restoring Original Sacred Form</td><td style="font-size:0.75rem;">Digital Transposition Remediation</td><td style="font-size:0.75rem;">Hope for Health Recovery</td></tr>
+          <tr><td class="mono">Case_InstagramTraditionalPrayer</td><td style="font-size:0.75rem;">Restoring Original Sacred Form</td><td style="font-size:0.75rem;">Digital Transposition Remediation</td><td style="font-size:0.75rem;">Sincere Hope for New Year Vibes</td></tr>
+          <tr><td class="mono">Case_InstagramWealth</td><td style="font-size:0.75rem;">Luxury Car Fetishization</td><td style="font-size:0.75rem;">Symbolic Enchantment Remediation</td><td style="font-size:0.75rem;">Hope for Financial Freedom</td></tr>
+          <tr><td class="mono">Case_ManifestingKardashian</td><td style="font-size:0.75rem;">Playful Remediation of Pop Idol</td><td style="font-size:0.75rem;">Secular Idol Deification Remediation</td><td style="font-size:0.75rem;">Ironic Comfort of Wealth Delusion</td></tr>
+          <tr><td class="mono">Case_SubliminalRomance</td><td style="font-size:0.75rem;">Butterfly Subliminal Remediation</td><td style="font-size:0.75rem;">Sacred Hybridization Remediation</td><td style="font-size:0.75rem;">Sincere Hope for Romantic Attraction</td></tr>
+          <tr><td class="mono">Case_XWealthManifesting</td><td style="font-size:0.75rem;">Cash Fetishization Strategy</td><td style="font-size:0.75rem;">Symbolic Enchantment Remediation</td><td style="font-size:0.75rem;">Sincere Hope for Prosperity</td></tr>
+          <tr><td class="mono">Case_XiaohongshuCET6Comment</td><td style="font-size:0.75rem;">Playful Remediation of Pop Idol</td><td style="font-size:0.75rem;">Secular Idol Deification Remediation</td><td style="font-size:0.75rem;">Sincere Hope for Academic Success</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <p class="answer-note"><strong>Read-out.</strong> Five remediation types are attested, and together they form a gradient of distance from the original sacred source. <strong>Digital Transposition</strong> (twice) restores the traditional icon essentially unchanged. <strong>Sacred Amplification</strong> and <strong>Sacred Hybridization</strong> (three cases) keep the sacred frame but re-encode it aesthetically or cross it with a non-sacred figure. <strong>Secular Idol Deification</strong> and <strong>Symbolic Enchantment</strong> (four cases) replace the deity outright with a pop icon, a sports car or a stack of cash. The outcome vocabulary tracks the same gradient: restorative strategies resolve into domain-specific reassurance (health, the new year), while the deifying and enchanting strategies resolve into self-persuasive states such as <em>Ironic Comfort of Wealth Delusion</em> or <em>Hope for Financial Freedom</em>.</p>
+  </div>
+
+  <div class="cq-block">
+    <h3>CQ4 — Signifier and Ritual Symbol</h3>
+    <p>Which remediated signifier is employed in each cyber-ritual case, and which ritual symbols does it contain?</p>
+    <p class="cq-zh">每个网络祈愿案例使用了什么被再媒介化的 signifier？该 signifier 包含哪些 ritual symbols？</p>
+    <div class="cq-props">cw:employsSignifier · cw:containsSymbol</div>
+    <div class="code-block"><span class="c-comment"># CQ4 -- which remediated signifier is employed, and which ritual symbols does it contain?</span>
+<span class="c-prop">SELECT</span> <span class="c-uri">?case</span> <span class="c-uri">?signifierLabel</span> <span class="c-uri">?signifierTypeLabel</span>
+       (<span class="c-prop">GROUP_CONCAT</span>(<span class="c-uri">?symbolLabel</span>; separator=<span class="c-lit">" | "</span>) <span class="c-prop">AS</span> <span class="c-uri">?ritualSymbols</span>)
+<span class="c-prop">WHERE</span> {
+    <span class="c-uri">?case</span> a <span class="c-class">cw:CyberRitualCase</span> ;
+          <span class="c-class">cw:employsSignifier</span> <span class="c-uri">?signifier</span> .
+    <span class="c-uri">?signifier</span> <span class="c-prop">rdfs:label</span> <span class="c-uri">?signifierLabel</span> ;
+               a <span class="c-uri">?signifierType</span> .
+    <span class="c-uri">?signifierType</span> <span class="c-prop">rdfs:subClassOf</span>* <span class="c-class">cw:RemediatedSignifier</span> ;
+                   <span class="c-prop">rdfs:label</span>       <span class="c-uri">?signifierTypeLabel</span> .
+    <span class="c-prop">FILTER</span> (<span class="c-uri">?signifierType</span> != <span class="c-class">cw:RemediatedSignifier</span>)
+    <span class="c-prop">OPTIONAL</span> {
+        <span class="c-uri">?signifier</span> <span class="c-class">cw:containsSymbol</span> <span class="c-uri">?symbol</span> .
+        <span class="c-uri">?symbol</span>    <span class="c-prop">rdfs:label</span>        <span class="c-uri">?symbolLabel</span> .
+    }
+}
+<span class="c-prop">GROUP</span> <span class="c-prop">BY</span> <span class="c-uri">?case</span> <span class="c-uri">?signifierLabel</span> <span class="c-uri">?signifierTypeLabel</span>
+<span class="c-prop">ORDER</span> <span class="c-prop">BY</span> <span class="c-uri">?case</span></div>
+    <div class="answer-block">
+      <div class="answer-head"><span>Query Result</span><span class="rows">9 rows</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Case</th><th>Remediated Signifier</th><th>Signifier Type</th><th>Ritual Symbols</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">Case_CatWish</td><td style="font-size:0.75rem;">Exam Cat Image</td><td style="font-size:0.75rem;">Image Signifier</td><td style="font-size:0.75rem;">Knitted Kasaya | Lotus Cushion</td></tr>
+          <tr><td class="mono">Case_DigitalEnlightenment</td><td style="font-size:0.75rem;">Psychedelic Buddha Video</td><td style="font-size:0.75rem;">Video Signifier</td><td style="font-size:0.75rem;">Lotus Cushion | Psychedelic Aura</td></tr>
+          <tr><td class="mono">Case_HealthWish</td><td style="font-size:0.75rem;">Blue Buddha Image</td><td style="font-size:0.75rem;">Image Signifier</td><td style="font-size:0.75rem;">—</td></tr>
+          <tr><td class="mono">Case_InstagramTraditionalPrayer</td><td style="font-size:0.75rem;">Traditional Buddha Post Image</td><td style="font-size:0.75rem;">Image Signifier</td><td style="font-size:0.75rem;">—</td></tr>
+          <tr><td class="mono">Case_InstagramWealth</td><td style="font-size:0.75rem;">Sports Car Manifesting Video</td><td style="font-size:0.75rem;">Video Signifier</td><td style="font-size:0.75rem;">Lo-Fi Beat and Slow Motion</td></tr>
+          <tr><td class="mono">Case_ManifestingKardashian</td><td style="font-size:0.75rem;">Kris Jenner Meme Image</td><td style="font-size:0.75rem;">Image Signifier</td><td style="font-size:0.75rem;">Manifesting Mantra Text</td></tr>
+          <tr><td class="mono">Case_SubliminalRomance</td><td style="font-size:0.75rem;">Subliminal Butterfly Video</td><td style="font-size:0.75rem;">Video Signifier</td><td style="font-size:0.75rem;">Glitter Aesthetic | Subliminal Audio Frequency</td></tr>
+          <tr><td class="mono">Case_XWealthManifesting</td><td style="font-size:0.75rem;">Cash Manifesting Video</td><td style="font-size:0.75rem;">Video Signifier</td><td style="font-size:0.75rem;">Red Heart Emoji Symbol</td></tr>
+          <tr><td class="mono">Case_XiaohongshuCET6Comment</td><td style="font-size:0.75rem;">Kris Jenner Reply Image</td><td style="font-size:0.75rem;">Image Signifier</td><td style="font-size:0.75rem;">CET-6 Success Mantra</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <p class="answer-note"><strong>Read-out.</strong> Signifier type tracks the platform economy: still <strong>images</strong> cluster on Xiaohongshu and Instagram, where they are easy to save, re-post and keep as a phone wallpaper, while <strong>videos</strong> dominate Douyin, Bilibili and X, where motion and audio carry the ritual charge. Ritual symbols are not decoration — they are the load-bearing vocabulary of the practice: a knitted kasaya, a lotus cushion, a manifesting mantra, a red-heart emoji. Two cases (<code>Case_HealthWish</code> and <code>Case_InstagramTraditionalPrayer</code>) carry no ritual symbol at all, and both are Digital Transposition cases, in which sacredness is inherited from the source rather than produced by remediation. Note the modelling decision: symbols hang off the <em>signifier</em>, not off the case, because the same case can circulate several symbols at once.</p>
+  </div>
+
+  <div class="cq-block">
+    <h3>CQ5 — Archetype and Archetype Type</h3>
+    <p>For each cyber-ritual case, which archetype is remediated by its signifier, and what type of archetype is it?</p>
+    <p class="cq-zh">对于每个网络祈愿案例，其 signifier 重新表现了什么 archetype？该 archetype 属于什么类型？</p>
+    <div class="cq-props">cw:employsSignifier · cw:remediates · cw:Archetype 的子类</div>
+    <div class="code-block"><span class="c-comment"># CQ5 -- which archetype is remediated by the signifier, and what type is it?</span>
+<span class="c-prop">SELECT</span> <span class="c-uri">?case</span>
+       (<span class="c-prop">GROUP_CONCAT</span>(<span class="c-prop">DISTINCT</span> <span class="c-uri">?archetypeLabel</span>;     separator=<span class="c-lit">", "</span>) <span class="c-prop">AS</span> <span class="c-uri">?archetypes</span>)
+       (<span class="c-prop">GROUP_CONCAT</span>(<span class="c-prop">DISTINCT</span> <span class="c-uri">?archetypeTypeLabel</span>; separator=<span class="c-lit">", "</span>) <span class="c-prop">AS</span> <span class="c-uri">?archetypeTypes</span>)
+<span class="c-prop">WHERE</span> {
+    <span class="c-uri">?case</span> a <span class="c-class">cw:CyberRitualCase</span> ;
+          <span class="c-class">cw:employsSignifier</span> <span class="c-uri">?signifier</span> .
+    <span class="c-uri">?signifier</span> <span class="c-class">cw:remediates</span> <span class="c-uri">?archetype</span> .
+    <span class="c-uri">?archetype</span> <span class="c-prop">rdfs:label</span> <span class="c-uri">?archetypeLabel</span> ;
+               a <span class="c-uri">?archetypeType</span> .
+    <span class="c-uri">?archetypeType</span> <span class="c-prop">rdfs:subClassOf</span>* <span class="c-class">cw:Archetype</span> ;
+                   <span class="c-prop">rdfs:label</span>       <span class="c-uri">?archetypeTypeLabel</span> .
+    <span class="c-prop">FILTER</span> (<span class="c-uri">?archetypeType</span> != <span class="c-class">cw:Archetype</span>)
+}
+<span class="c-prop">GROUP</span> <span class="c-prop">BY</span> <span class="c-uri">?case</span>
+<span class="c-prop">ORDER</span> <span class="c-prop">BY</span> <span class="c-uri">?case</span></div>
+    <div class="answer-block">
+      <div class="answer-head"><span>Query Result</span><span class="rows">9 rows</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Case</th><th>Archetype</th><th>Archetype Type</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">Case_CatWish</td><td style="font-size:0.75rem;">Cat Archetype, Mahayana Buddhist Archetype</td><td style="font-size:0.75rem;">Animal Archetype, Traditional Archetype</td></tr>
+          <tr><td class="mono">Case_DigitalEnlightenment</td><td style="font-size:0.75rem;">Mahayana Buddhist Archetype</td><td style="font-size:0.75rem;">Traditional Archetype</td></tr>
+          <tr><td class="mono">Case_HealthWish</td><td style="font-size:0.75rem;">Medicine Buddha</td><td style="font-size:0.75rem;">Traditional Archetype</td></tr>
+          <tr><td class="mono">Case_InstagramTraditionalPrayer</td><td style="font-size:0.75rem;">Medicine Buddha</td><td style="font-size:0.75rem;">Traditional Archetype</td></tr>
+          <tr><td class="mono">Case_InstagramWealth</td><td style="font-size:0.75rem;">Luxury Sports Car</td><td style="font-size:0.75rem;">Secular Commodity Archetype</td></tr>
+          <tr><td class="mono">Case_ManifestingKardashian</td><td style="font-size:0.75rem;">Kris Jenner Pop Icon</td><td style="font-size:0.75rem;">Modern Archetype</td></tr>
+          <tr><td class="mono">Case_SubliminalRomance</td><td style="font-size:0.75rem;">Traditional Butterfly Symbol</td><td style="font-size:0.75rem;">Animal Archetype</td></tr>
+          <tr><td class="mono">Case_XWealthManifesting</td><td style="font-size:0.75rem;">Stack of Cash Commodity Archetype</td><td style="font-size:0.75rem;">Secular Commodity Archetype</td></tr>
+          <tr><td class="mono">Case_XiaohongshuCET6Comment</td><td style="font-size:0.75rem;">Kris Jenner Pop Icon</td><td style="font-size:0.75rem;">Modern Archetype</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <p class="answer-note"><strong>Read-out.</strong> Four archetype types are attested: <strong>Traditional</strong> (Mahayana Buddhism, Medicine Buddha), <strong>Animal</strong> (the cat, the butterfly), <strong>Modern</strong> (Kris Jenner as a meme-pop icon) and <strong>Secular Commodity</strong> (the luxury sports car, the stack of cash). The last two are the analytical payoff of the ontology: they mark the moment when the sacred slot is filled not by a deity but by <em>capital</em>. <code>Case_CatWish</code> is the only hybrid case, remediating an animal archetype and a traditional one through a single image — precisely the <code>cw:SacredHybridization</code> that its strategy instance is typed with. As in CQ2, the archetype type is read from the class hierarchy rather than from a literal.</p>
+  </div>
+</div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>
+    <strong>WishGraph Knowledge Representation</strong><br>
+    team beyoo (Yuming Lian, Yutong Li, Xinyi Guo)
+  </p>
+</footer>
+
+</div><!-- end main-content -->
+
+<script>
+// ── Sidebar Toggle ──
+function toggleSidebar() {
+  document.body.classList.toggle('sidebar-collapsed');
+}
+
+// ── Active nav link highlight on scroll ──
+const sections = document.querySelectorAll('section[id], div[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.remove('active');
+    if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+  });
+});
+
+// ── Helpers ──
+function pretty(s) {
+  if (!s) return '';
+  return String(s)
+    .replace(/_/g, ' ')
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function prettyList(v) {
+  if (!v) return '\u2014';
+  return String(v).split(';').map(x => x.trim()).filter(Boolean).map(pretty).join(' \u00b7 ');
+}
+
+// ── Dimension legend used by the full-dimension expander ──
+const FIELDS = [["CyberRitualCase", "Case ID"], ["Platform", "Platform"], ["Subject", "Subject (Person)"], ["PerformativeAction", "Performative Action"], ["PostingAction", "↳ Posting Action"], ["CommentingAction", "↳ Commenting Action"], ["SecularPressure", "Secular Pressure"], ["MundanePressure", "↳ Mundane Pressure"], ["ExistentialPressure", "↳ Existential Pressure"], ["RemediatedSignifier", "Remediated Signifier"], ["ImageSignifier", "↳ Image Signifier"], ["VideoSignifier", "↳ Video Signifier"], ["RitualSymbol", "Ritual Symbol"], ["Mantra", "↳ Mantra"], ["Emoji", "↳ Emoji"], ["VisualOrAuditoryMarker", "↳ Visual / Auditory Marker"], ["Archetype", "Archetype"], ["TraditionalArchetype", "↳ Traditional Archetype"], ["ModernArchetype", "↳ Modern Archetype"], ["Animal", "↳ Animal"], ["SecularCommodity", "↳ Secular Commodity"], ["RemediationStrategy", "Remediation Strategy"], ["DigitalTransposition", "↳ Digital Transposition"], ["SacredAmplification", "↳ Sacred Amplification"], ["SacredHybridization", "↳ Sacred Hybridization"], ["SecularIdolDeification", "↳ Secular Idol Deification"], ["SymbolicEnchantment", "↳ Symbolic Enchantment"], ["AffectiveOutcome", "Affective Outcome"]];
+const CASES = [{"idx": 1, "id": "Case_CatWish", "name": "Cat-Wish Exam Blessing", "platform": "Xiaohongshu", "subject": "ExamWishPoster", "action": "Posting_ExamWish", "pressure": "ExamPressure", "pressureType": "Mundane", "signifier": "ExamCatImg", "signifierType": "Image", "ritual": ["KnittedKasaya", "LotusCushion"], "archetype": ["Cat", "Mahayana"], "archetypeType": "Traditional / Animal", "strategy": "CatBuddha", "strategyType": "Sacred Hybridization", "outcome": "MemeTherapy", "full": [["Case ID", "Case_CatWish"], ["Platform", "Xiaohongshu"], ["Subject (Person)", "ExamWishPoster"], ["Performative Action", "Posting_ExamWish"], ["↳ Posting Action", "Posting_ExamWish"], ["Secular Pressure", "ExamPressure"], ["↳ Mundane Pressure", "ExamPressure"], ["Remediated Signifier", "ExamCatImg"], ["↳ Image Signifier", "ExamCatImg"], ["Ritual Symbol", "KnittedKasaya; LotusCushion"], ["↳ Visual / Auditory Marker", "KnittedKasaya; LotusCushion"], ["Archetype", "Cat; Mahayana"], ["↳ Traditional Archetype", "Mahayana"], ["↳ Animal", "Cat"], ["Remediation Strategy", "CatBuddha"], ["↳ Sacred Hybridization", "CatBuddha"], ["Affective Outcome", "MemeTherapy"]]}, {"idx": 2, "id": "Case_DigitalEnlightenment", "name": "Digital Enlightenment", "platform": "Tiktok", "subject": "DigitalEnlightenmentPoster", "action": "Posting_BuddhaTeaching", "pressure": "ExistentialPressure_ModernAnxiety", "pressureType": "Existential", "signifier": "PsychedelicBuddhaVideo", "signifierType": "Video", "ritual": ["LotusCushion", "PsychedelicAura"], "archetype": ["Mahayana"], "archetypeType": "Traditional", "strategy": "PsychedelicAestheticRemediation", "strategyType": "Sacred Amplification", "outcome": "InnerPeace", "full": [["Case ID", "Case_DigitalEnlightenment"], ["Platform", "Tiktok"], ["Subject (Person)", "DigitalEnlightenmentPoster"], ["Performative Action", "Posting_BuddhaTeaching"], ["↳ Posting Action", "Posting_BuddhaTeaching"], ["Secular Pressure", "ExistentialPressure_ModernAnxiety"], ["↳ Existential Pressure", "ExistentialPressure_ModernAnxiety"], ["Remediated Signifier", "PsychedelicBuddhaVideo"], ["↳ Video Signifier", "PsychedelicBuddhaVideo"], ["Ritual Symbol", "LotusCushion; PsychedelicAura"], ["↳ Visual / Auditory Marker", "LotusCushion; PsychedelicAura"], ["Archetype", "Mahayana"], ["↳ Traditional Archetype", "Mahayana"], ["Remediation Strategy", "PsychedelicAestheticRemediation"], ["↳ Sacred Amplification", "PsychedelicAestheticRemediation"], ["Affective Outcome", "InnerPeace"]]}, {"idx": 3, "id": "Case_HealthWish", "name": "Health Wish", "platform": "Xiaohongshu", "subject": "HealthWishPoster", "action": "Posting_HealthWish", "pressure": "HealthProblem", "pressureType": "Existential", "signifier": "BlueBuddhaImg", "signifierType": "Image", "ritual": [], "archetype": ["MedicineBuddha"], "archetypeType": "Traditional", "strategy": "RestoreOriginal", "strategyType": "Digital Transposition", "outcome": "HealthRecovery", "full": [["Case ID", "Case_HealthWish"], ["Platform", "Xiaohongshu"], ["Subject (Person)", "HealthWishPoster"], ["Performative Action", "Posting_HealthWish"], ["↳ Posting Action", "Posting_HealthWish"], ["Secular Pressure", "HealthProblem"], ["↳ Existential Pressure", "HealthProblem"], ["Remediated Signifier", "BlueBuddhaImg"], ["↳ Image Signifier", "BlueBuddhaImg"], ["Archetype", "MedicineBuddha"], ["↳ Traditional Archetype", "MedicineBuddha"], ["Remediation Strategy", "RestoreOriginal"], ["↳ Digital Transposition", "RestoreOriginal"], ["Affective Outcome", "HealthRecovery"]]}, {"idx": 4, "id": "Case_InstagramTraditionalPrayer", "name": "Instagram Traditional Prayer", "platform": "Instagram", "subject": "TraditionalPrayerPoster", "action": "Posting_NewYearPrayer", "pressure": "MundanePressure_FutureUncertainty", "pressureType": "Mundane", "signifier": "TraditionalBuddhaPostImage", "signifierType": "Image", "ritual": [], "archetype": ["MedicineBuddha"], "archetypeType": "Traditional", "strategy": "RestoreOriginal", "strategyType": "Digital Transposition", "outcome": "NewYearVibes", "full": [["Case ID", "Case_InstagramTraditionalPrayer"], ["Platform", "Instagram"], ["Subject (Person)", "TraditionalPrayerPoster"], ["Performative Action", "Posting_NewYearPrayer"], ["↳ Posting Action", "Posting_NewYearPrayer"], ["Secular Pressure", "MundanePressure_FutureUncertainty"], ["↳ Mundane Pressure", "MundanePressure_FutureUncertainty"], ["Remediated Signifier", "TraditionalBuddhaPostImage"], ["↳ Image Signifier", "TraditionalBuddhaPostImage"], ["Archetype", "MedicineBuddha"], ["↳ Traditional Archetype", "MedicineBuddha"], ["Remediation Strategy", "RestoreOriginal"], ["↳ Digital Transposition", "RestoreOriginal"], ["Affective Outcome", "NewYearVibes"]]}, {"idx": 5, "id": "Case_InstagramWealth", "name": "Instagram Wealth Manifesting", "platform": "Instagram", "subject": "MaterialisticUser; WealthClaimCommenter", "action": "Commenting_ClaimWealth; Posting_WealthManifesting", "pressure": "MundanePressure_StatusAnxiety", "pressureType": "Mundane", "signifier": "SportsCarManifestingVideo", "signifierType": "Video", "ritual": ["Emoji_PrayingHands", "LoFiBeatAndSlowMo", "Mantra_ClaimEnergy"], "archetype": ["LuxurySportsCar"], "archetypeType": "Secular Commodity", "strategy": "Remediation_LuxuryCar", "strategyType": "Symbolic Enchantment", "outcome": "FinancialFreedom", "full": [["Case ID", "Case_InstagramWealth"], ["Platform", "Instagram"], ["Subject (Person)", "MaterialisticUser; WealthClaimCommenter"], ["Performative Action", "Commenting_ClaimWealth; Posting_WealthManifesting"], ["↳ Posting Action", "Posting_WealthManifesting"], ["↳ Commenting Action", "Commenting_ClaimWealth"], ["Secular Pressure", "MundanePressure_StatusAnxiety"], ["↳ Mundane Pressure", "MundanePressure_StatusAnxiety"], ["Remediated Signifier", "SportsCarManifestingVideo"], ["↳ Video Signifier", "SportsCarManifestingVideo"], ["Ritual Symbol", "Emoji_PrayingHands; LoFiBeatAndSlowMo; Mantra_ClaimEnergy"], ["↳ Mantra", "Mantra_ClaimEnergy"], ["↳ Emoji", "Emoji_PrayingHands"], ["↳ Visual / Auditory Marker", "LoFiBeatAndSlowMo"], ["Archetype", "LuxurySportsCar"], ["↳ Secular Commodity", "LuxurySportsCar"], ["Remediation Strategy", "Remediation_LuxuryCar"], ["↳ Symbolic Enchantment", "Remediation_LuxuryCar"], ["Affective Outcome", "FinancialFreedom"]]}, {"idx": 6, "id": "Case_ManifestingKardashian", "name": "Kardashian Manifesting Spell", "platform": "Xiaohongshu", "subject": "KardashianManifestingPoster", "action": "Posting_ManifestingSpell", "pressure": "CareerWealth", "pressureType": "Mundane", "signifier": "KrisJennerMemeImg", "signifierType": "Image", "ritual": ["ManifestingMantraText"], "archetype": ["KrisJennerPopIcon"], "archetypeType": "Modern", "strategy": "PopIdolGod", "strategyType": "Secular Idol Deification", "outcome": "WealthDelusion", "full": [["Case ID", "Case_ManifestingKardashian"], ["Platform", "Xiaohongshu"], ["Subject (Person)", "KardashianManifestingPoster"], ["Performative Action", "Posting_ManifestingSpell"], ["↳ Posting Action", "Posting_ManifestingSpell"], ["Secular Pressure", "CareerWealth"], ["↳ Mundane Pressure", "CareerWealth"], ["Remediated Signifier", "KrisJennerMemeImg"], ["↳ Image Signifier", "KrisJennerMemeImg"], ["Ritual Symbol", "ManifestingMantraText"], ["↳ Mantra", "ManifestingMantraText"], ["Archetype", "KrisJennerPopIcon"], ["↳ Modern Archetype", "KrisJennerPopIcon"], ["Remediation Strategy", "PopIdolGod"], ["↳ Secular Idol Deification", "PopIdolGod"], ["Affective Outcome", "WealthDelusion"]]}, {"idx": 7, "id": "Case_SubliminalRomance", "name": "Subliminal Romance", "platform": "Bilibili", "subject": "RomanceSeekingUser", "action": "Posting_SubliminalVideo", "pressure": "MundanePressure_RomanticAnxiety", "pressureType": "Mundane", "signifier": "SubliminalButterflyVideo", "signifierType": "Video", "ritual": ["GlitterAesthetic", "SubliminalAudioFrequency"], "archetype": ["Butterfly"], "archetypeType": "Animal", "strategy": "ButterflyGod", "strategyType": "Sacred Hybridization", "outcome": "RomanticAttraction", "full": [["Case ID", "Case_SubliminalRomance"], ["Platform", "Bilibili"], ["Subject (Person)", "RomanceSeekingUser"], ["Performative Action", "Posting_SubliminalVideo"], ["↳ Posting Action", "Posting_SubliminalVideo"], ["Secular Pressure", "MundanePressure_RomanticAnxiety"], ["↳ Mundane Pressure", "MundanePressure_RomanticAnxiety"], ["Remediated Signifier", "SubliminalButterflyVideo"], ["↳ Video Signifier", "SubliminalButterflyVideo"], ["Ritual Symbol", "GlitterAesthetic; SubliminalAudioFrequency"], ["↳ Visual / Auditory Marker", "GlitterAesthetic; SubliminalAudioFrequency"], ["Archetype", "Butterfly"], ["↳ Animal", "Butterfly"], ["Remediation Strategy", "ButterflyGod"], ["↳ Sacred Hybridization", "ButterflyGod"], ["Affective Outcome", "RomanticAttraction"]]}, {"idx": 8, "id": "Case_XWealthManifesting", "name": "X Wealth Manifesting", "platform": "XPlatform", "subject": "ManifestPoster", "action": "Posting_Manifest2026", "pressure": "MundanePressure_WealthDesire", "pressureType": "Mundane", "signifier": "CashManifestingVideo", "signifierType": "Video", "ritual": ["Emoji_RedHeart"], "archetype": ["StackOfCash"], "archetypeType": "Secular Commodity", "strategy": "Remediation_CashFetishization", "strategyType": "Symbolic Enchantment", "outcome": "Prosperity", "full": [["Case ID", "Case_XWealthManifesting"], ["Platform", "XPlatform"], ["Subject (Person)", "ManifestPoster"], ["Performative Action", "Posting_Manifest2026"], ["↳ Posting Action", "Posting_Manifest2026"], ["Secular Pressure", "MundanePressure_WealthDesire"], ["↳ Mundane Pressure", "MundanePressure_WealthDesire"], ["Remediated Signifier", "CashManifestingVideo"], ["↳ Video Signifier", "CashManifestingVideo"], ["Ritual Symbol", "Emoji_RedHeart"], ["↳ Emoji", "Emoji_RedHeart"], ["Archetype", "StackOfCash"], ["↳ Secular Commodity", "StackOfCash"], ["Remediation Strategy", "Remediation_CashFetishization"], ["↳ Symbolic Enchantment", "Remediation_CashFetishization"], ["Affective Outcome", "Prosperity"]]}, {"idx": 9, "id": "Case_XiaohongshuCET6Comment", "name": "CET-6 Manifestation Comment", "platform": "Xiaohongshu", "subject": "CET6Commenter", "action": "Commenting_CET6Manifestation", "pressure": "ExamPressure", "pressureType": "Mundane", "signifier": "KrisJennerReplyImage", "signifierType": "Image", "ritual": ["Mantra_CET6Success"], "archetype": ["KrisJennerPopIcon"], "archetypeType": "Modern", "strategy": "PopIdolGod", "strategyType": "Secular Idol Deification", "outcome": "AcademicSuccess", "full": [["Case ID", "Case_XiaohongshuCET6Comment"], ["Platform", "Xiaohongshu"], ["Subject (Person)", "CET6Commenter"], ["Performative Action", "Commenting_CET6Manifestation"], ["↳ Commenting Action", "Commenting_CET6Manifestation"], ["Secular Pressure", "ExamPressure"], ["↳ Mundane Pressure", "ExamPressure"], ["Remediated Signifier", "KrisJennerReplyImage"], ["↳ Image Signifier", "KrisJennerReplyImage"], ["Ritual Symbol", "Mantra_CET6Success"], ["↳ Mantra", "Mantra_CET6Success"], ["Archetype", "KrisJennerPopIcon"], ["↳ Modern Archetype", "KrisJennerPopIcon"], ["Remediation Strategy", "PopIdolGod"], ["↳ Secular Idol Deification", "PopIdolGod"], ["Affective Outcome", "AcademicSuccess"]]}];
+
+// ── Dataset table ──
+const tbody = document.getElementById('csv-tbody');
+CASES.forEach(c => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td style="font-weight:bold;color:var(--gold)">${c.idx}</td>
+    <td><span class="person-badge">${esc(c.name)}</span>
+        <div class="mono" style="font-size:0.66rem;margin-top:0.25rem;color:var(--muted)">${esc(c.id)}</div></td>
+    <td><span class="tag">${esc(c.platform)}</span></td>
+    <td style="font-size:0.75rem">${esc(prettyList(c.subject))}</td>
+    <td style="font-size:0.75rem">${esc(prettyList(c.action))}</td>
+    <td style="font-size:0.75rem">${esc(prettyList(c.pressure))}
+        <span class="chip">${esc(c.pressureType)}</span></td>
+    <td style="font-size:0.75rem">${esc(prettyList(c.signifier))}
+        <span class="chip gold">${esc(c.signifierType)}</span></td>
+    <td style="font-size:0.75rem">${esc(prettyList(c.archetype))}
+        <span class="chip">${esc(c.archetypeType)}</span></td>
+    <td style="font-size:0.75rem">${esc(prettyList(c.strategy))}
+        <span class="chip gold">${esc(c.strategyType)}</span></td>
+    <td style="font-size:0.75rem">${esc(prettyList(c.outcome))}</td>`;
+  tbody.appendChild(tr);
+});
+
+// ── Full dataset table (all 28 dimensions) ──
+const ftbody = document.getElementById('full-tbody');
+if (ftbody) {
+  const fthead = document.getElementById('full-thead');
+  fthead.innerHTML = '<tr><th>#</th>' +
+    FIELDS.map(f => `<th>${esc(f[1])}</th>`).join('') + '</tr>';
+  CASES.forEach(c => {
+    const m = new Map(c.full.map(([k, v]) => [k, v]));
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="mono">${c.idx}</td>` + FIELDS.map(f => {
+      const v = m.get(f[1]);
+      if (!v) return '<td></td>';
+      // Case ID is kept verbatim, everything else is de-camel-cased for readability
+      return `<td>${f[1] === 'Case ID' ? esc(v) : esc(prettyList(v))}</td>`;
+    }).join('');
+    ftbody.appendChild(tr);
+  });
+}
+</script>
+</body>
+</html>

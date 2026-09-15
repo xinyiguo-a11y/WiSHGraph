@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 3: Knowledge Representation - WishGraph</title>
+<style>
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --gold: #c9943a;
+  --gold-light: #f0d085;
+  --red: #c0392b;
+  --deep: #1a0a00;
+  --ink: #2c1a0e;
+  --bg: #fdf6e8;
+  --card-bg: #fffcf4;
+  --muted: #7a6652;
+  --border: #e8d5a3;
+  --accent: #8b2500;
+  --tag-bg: #fef3d0;
+  --tag-border: #d4aa50;
+  --nav-bg: #1a0a00;
+  --sidebar-w: 240px;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.7;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Sidebar Navigation ── */
+#sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--nav-bg);
+  border-right: 2px solid var(--gold);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 200;
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+#sidebar.collapsed {
+  transform: translateX(calc(-1 * var(--sidebar-w) + 36px));
+}
+.sidebar-logo {
+  padding: 1.2rem 1rem 0.8rem;
+  border-bottom: 1px solid rgba(201,148,58,0.3);
+}
+.sidebar-logo h1 {
+  font-size: 1.1rem; color: var(--gold-light);
+  letter-spacing: 0.06em;
+}
+.sidebar-logo p {
+  font-size: 0.65rem; color: var(--muted);
+  font-family: Arial, sans-serif;
+  margin-top: 0.2rem;
+}
+.nav-section {
+  padding: 0.8rem 0 0;
+}
+.nav-section-label {
+  font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em;
+  color: rgba(201,148,58,0.5); padding: 0 1rem 0.3rem;
+  font-family: Arial, sans-serif;
+}
+.nav-link {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  color: #c4a35a; text-decoration: none;
+  font-family: Arial, sans-serif; font-size: 0.8rem;
+  border-left: 3px solid transparent;
+  transition: all 0.2s;
+  line-height: 1.3;
+}
+.nav-link:hover, .nav-link.active {
+  color: var(--gold-light);
+  background: rgba(201,148,58,0.08);
+  border-left-color: var(--gold);
+}
+.nav-link.current { color: var(--gold-light); background: rgba(201,148,58,0.15); border-left-color: var(--gold); }
+.nav-link .nav-icon {
+  font-size: 0.9rem; min-width: 1.2rem; text-align: center;
+}
+.nav-link .nav-step {
+  font-size: 0.6rem; background: rgba(201,148,58,0.25);
+  color: var(--gold-light); border-radius: 3px;
+  padding: 0.1rem 0.35rem; margin-left: auto;
+  font-weight: bold; white-space: nowrap;
+}
+
+/* Toggle button */
+#sidebar-toggle {
+  position: fixed; top: 14px; left: calc(var(--sidebar-w) - 18px);
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--gold); border: 2px solid var(--nav-bg);
+  color: white; font-size: 0.75rem; cursor: pointer;
+  z-index: 300; display: flex; align-items: center; justify-content: center;
+  transition: left 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+body.sidebar-collapsed #sidebar-toggle {
+  left: 18px;
+  transform: rotate(180deg);
+}
+body.sidebar-collapsed #sidebar { transform: translateX(calc(-1 * var(--sidebar-w) + 36px)); }
+body.sidebar-collapsed #main-content { margin-left: 36px; }
+
+/* ── Main Content ── */
+#main-content {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  transition: margin-left 0.3s ease;
+  min-width: 0;
+}
+
+/* ── Hero ── */
+.hero {
+  background: linear-gradient(135deg, #1a0a00 0%, #3d1a00 50%, #5c2800 100%);
+  color: #f9e8c0;
+  text-align: center;
+  padding: 4rem 2rem 3rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: "☸";
+  position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+  font-size: 12rem; opacity: 0.04; color: var(--gold);
+  pointer-events: none;
+}
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  color: var(--gold-light);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+}
+.hero .subtitle {
+  font-size: 1.05rem; color: #d4b870;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+.hero .desc {
+  max-width: 700px; margin: 0 auto;
+  font-size: 0.95rem; color: #c9b08a; line-height: 1.8;
+}
+.badge-row {
+  display: flex; justify-content: center; gap: 1rem;
+  margin-top: 1.5rem; flex-wrap: wrap;
+}
+.badge {
+  background: rgba(201,148,58,0.18); border: 1px solid var(--gold);
+  color: var(--gold-light); border-radius: 20px;
+  padding: 0.25rem 0.9rem; font-size: 0.78rem;
+  font-family: 'Arial', sans-serif;
+}
+
+/* ── Introduction Block ── */
+.intro-block {
+  background: linear-gradient(135deg, #2c1a0e 0%, #1a0a00 100%);
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  color: #e8d5a3;
+}
+.intro-block h3 {
+  color: var(--gold-light); font-size: 1rem; margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+.role-card {
+  background: rgba(201,148,58,0.08);
+  border: 1px solid rgba(201,148,58,0.3);
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+}
+.role-card .role-tag {
+  font-size: 0.68rem; background: var(--gold);
+  color: white; border-radius: 4px;
+  padding: 0.1rem 0.5rem; display: inline-block;
+  margin-bottom: 0.4rem; font-family: Arial, sans-serif;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.role-card p {
+  font-size: 0.78rem; color: #c9b08a;
+  font-family: Arial, sans-serif; line-height: 1.5;
+}
+
+/* ── Section Layout ── */
+.section {
+  max-width: 1060px; margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+.section-title {
+  font-size: 1.5rem; color: var(--accent);
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 0.5rem; margin-bottom: 1.8rem;
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.section-title .num {
+  background: var(--gold); color: white;
+  width: 2rem; height: 2rem; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.9rem; font-weight: bold;
+}
+.step-label {
+  font-size: 0.65rem; background: rgba(139,37,0,0.1);
+  color: var(--accent); border: 1px solid rgba(139,37,0,0.25);
+  border-radius: 4px; padding: 0.1rem 0.5rem;
+  font-family: Arial, sans-serif; text-transform: uppercase;
+  letter-spacing: 0.06em; margin-left: 0.3rem;
+}
+
+/* ── Ontology Structure ── */
+.onto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem; margin-bottom: 2rem;
+}
+.onto-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--gold);
+  border-radius: 8px; padding: 1rem;
+  transition: box-shadow 0.2s;
+}
+.onto-card:hover { box-shadow: 0 4px 16px rgba(201,148,58,0.18); }
+.onto-card h3 { font-size: 0.9rem; color: var(--accent); margin-bottom: 0.4rem; }
+.onto-card p { font-size: 0.78rem; color: var(--muted); line-height: 1.5; font-family: Arial, sans-serif; }
+.onto-card .class-uri {
+  font-size: 0.7rem; color: var(--gold); font-family: monospace;
+  background: var(--tag-bg); padding: 0.1rem 0.4rem;
+  border-radius: 3px; margin-bottom: 0.4rem; display: inline-block;
+}
+
+/* ── CSV Dataset Table ── */
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%; border-collapse: collapse;
+  font-size: 0.78rem; font-family: Arial, sans-serif;
+}
+thead tr { background: var(--nav-bg); color: var(--gold-light); }
+thead th { padding: 0.7rem 0.8rem; text-align: left; font-weight: 600; }
+tbody tr { border-bottom: 1px solid var(--border); }
+tbody tr:nth-child(even) { background: #fdf4e0; }
+tbody tr:hover { background: #fef7e6; }
+tbody td { padding: 0.55rem 0.8rem; vertical-align: top; }
+.tag {
+  display: inline-block;
+  background: var(--tag-bg); border: 1px solid var(--tag-border);
+  color: var(--ink); border-radius: 12px;
+  padding: 0.1rem 0.5rem; font-size: 0.68rem;
+  margin: 1px 2px; white-space: nowrap;
+}
+.person-badge {
+  background: #2d0000; color: #f0d085;
+  padding: 0.2rem 0.6rem; border-radius: 4px;
+  font-weight: bold; font-size: 0.72rem;
+}
+
+/* ── Case Cards ── */
+.case-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.2rem;
+}
+.case-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 1.2rem;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.case-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+.case-card .case-num {
+  position: absolute; top: -10px; left: 1rem;
+  background: var(--gold); color: white;
+  font-size: 0.7rem; font-weight: bold;
+  padding: 0.15rem 0.6rem; border-radius: 10px;
+  font-family: Arial, sans-serif;
+}
+.case-card h3 {
+  font-size: 1rem; color: var(--accent);
+  margin: 0.5rem 0 0.3rem;
+}
+.case-card .pressure {
+  font-size: 0.78rem; color: var(--muted);
+  font-style: italic; margin-bottom: 0.8rem;
+  font-family: Arial, sans-serif;
+}
+.case-field { margin-bottom: 0.5rem; }
+.case-field .field-label {
+  font-size: 0.68rem; font-weight: bold; text-transform: uppercase;
+  color: var(--gold); letter-spacing: 0.05em;
+  font-family: Arial, sans-serif;
+}
+.case-field .field-value {
+  font-size: 0.8rem; color: var(--ink);
+  font-family: Arial, sans-serif;
+}
+.source-link {
+  display: inline-block; margin-top: 0.5rem;
+  font-size: 0.7rem; color: var(--gold);
+  text-decoration: none; font-family: Arial, sans-serif;
+}
+.source-link:hover { text-decoration: underline; }
+
+/* ── RDF / Turtle viewer ── */
+.code-block {
+  background: #1e1410;
+  border: 1px solid #4a3000;
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  overflow-x: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 0.76rem;
+  color: #d4c8a0;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+.code-block .c-prefix { color: #7ec8e3; }
+.code-block .c-uri { color: #f0d085; }
+.code-block .c-class { color: #c3e88d; }
+.code-block .c-prop { color: #82aaff; }
+.code-block .c-lit { color: #f78c6c; }
+.code-block .c-comment { color: #546e7a; font-style: italic; }
+
+/* ── SPARQL ── */
+.cq-block {
+  background: var(--card-bg);
+  border-left: 4px solid var(--gold);
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.2rem; margin-bottom: 1.5rem;
+}
+.cq-block h3 { font-size: 1rem; color: var(--accent); margin-bottom: 0.3rem; }
+.cq-block p { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.7rem; font-family: Arial, sans-serif; }
+
+/* ── Workflow Diagram ── */
+.workflow {
+  display: flex; align-items: stretch; gap: 0;
+  flex-wrap: wrap; margin: 1.5rem 0;
+}
+.wf-step {
+  flex: 1; min-width: 130px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 1rem;
+  text-align: center; position: relative;
+}
+.wf-step .wf-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
+.wf-step h4 { font-size: 0.82rem; color: var(--accent); margin-bottom: 0.2rem; }
+.wf-step p { font-size: 0.72rem; color: var(--muted); font-family: Arial, sans-serif; }
+.wf-arrow {
+  display: flex; align-items: center;
+  color: var(--gold); font-size: 1.5rem; padding: 0 0.3rem;
+  align-self: center;
+}
+
+/* ── Property Table ── */
+.prop-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.prop-table th {
+  background: #2c1a0e; color: var(--gold-light);
+  padding: 0.6rem 0.8rem; text-align: left;
+  font-family: Arial, sans-serif; font-size: 0.8rem;
+}
+.prop-table td { padding: 0.5rem 0.8rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; font-family: Arial, sans-serif; }
+.prop-table tr:hover { background: #fdf4e0; }
+.mono { font-family: 'Courier New', monospace; color: var(--accent); font-size: 0.78rem; }
+
+/* ── Meme Gallery ── */
+.meme-gallery-intro {
+  font-size: 0.88rem; color: var(--muted); font-family: Arial, sans-serif;
+  margin-bottom: 1.5rem; line-height: 1.7;
+  background: var(--card-bg); border-left: 4px solid var(--gold);
+  padding: 0.8rem 1rem; border-radius: 0 8px 8px 0;
+}
+.meme-group {
+  margin-bottom: 2.5rem;
+}
+.meme-group-title {
+  font-size: 0.95rem; font-weight: bold; color: var(--accent);
+  margin-bottom: 0.8rem; padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: Arial, sans-serif;
+}
+.meme-group-title .meme-badge {
+  background: var(--accent); color: white;
+  font-size: 0.62rem; padding: 0.1rem 0.45rem;
+  border-radius: 4px; text-transform: uppercase;
+}
+.meme-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.meme-item {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+}
+.meme-item img {
+  width: 100%; display: block;
+  max-height: 360px; object-fit: contain;
+  background: #f5f0e8;
+}
+.meme-item .meme-caption {
+  padding: 0.5rem 0.7rem;
+  font-size: 0.72rem; color: var(--muted);
+  font-family: Arial, sans-serif;
+  border-top: 1px solid var(--border);
+}
+.meme-item .meme-caption strong {
+  color: var(--accent); font-size: 0.75rem;
+}
+
+/* ── AI Prompt Section ── */
+.prompt-intro {
+  font-size: 0.88rem; color: var(--muted); font-family: Arial, sans-serif;
+  margin-bottom: 1.5rem; line-height: 1.7;
+  background: linear-gradient(135deg, #fffcf4, #fef8e8);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 1rem 1.2rem;
+}
+.prompt-logic {
+  display: flex; gap: 0.5rem; align-items: center;
+  margin: 0.8rem 0; flex-wrap: wrap;
+}
+.prompt-logic .pl-step {
+  background: var(--nav-bg); color: var(--gold-light);
+  padding: 0.3rem 0.8rem; border-radius: 20px;
+  font-size: 0.75rem; font-family: Arial, sans-serif;
+  font-weight: bold;
+}
+.prompt-logic .pl-arrow {
+  color: var(--gold); font-size: 1rem; font-weight: bold;
+}
+
+.prompt-round {
+  margin-bottom: 3rem;
+}
+.prompt-round-label {
+  font-size: 1rem; font-weight: bold; color: var(--accent);
+  margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: Arial, sans-serif;
+}
+.prompt-round-label .pr-num {
+  background: var(--gold); color: white;
+  width: 1.8rem; height: 1.8rem; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: bold;
+}
+.prompt-round-label .pr-title {
+  font-size: 0.78rem; background: rgba(139,37,0,0.08);
+  color: var(--accent); border: 1px solid rgba(139,37,0,0.2);
+  border-radius: 4px; padding: 0.2rem 0.6rem;
+  font-weight: normal;
+}
+
+.prompt-tricolumn {
+  display: grid;
+  grid-template-columns: 260px 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.ptc-col {
+  display: flex; flex-direction: column;
+}
+.ptc-col:not(:last-child) {
+  border-right: 1px solid var(--border);
+}
+
+.ptc-header {
+  background: var(--nav-bg); color: var(--gold-light);
+  padding: 0.6rem 1rem;
+  font-size: 0.75rem; font-weight: bold;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  letter-spacing: 0.04em;
+  display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+}
+
+.ptc-body {
+  flex: 1;
+  background: var(--card-bg);
+  padding: 0.8rem;
+}
+
+/* Meme image column */
+.ptc-meme-img {
+  width: 100%; display: block;
+  object-fit: contain;
+  background: #f5f0e8;
+  max-height: 400px;
+}
+
+/* Prompt text column */
+.ptc-prompt-text {
+  font-size: 0.78rem; color: var(--ink);
+  font-family: Arial, sans-serif; line-height: 1.7;
+  height: 100%;
+}
+.ptc-prompt-text .pq-label {
+  font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--gold); font-weight: bold; margin-bottom: 0.5rem;
+  display: block;
+}
+.ptc-prompt-text .pq-content {
+  font-size: 0.8rem; color: var(--ink); line-height: 1.7;
+}
+.ptc-prompt-text .pq-sub {
+  margin-top: 0.6rem; padding-top: 0.6rem;
+  border-top: 1px dashed var(--border);
+}
+.pq-ask {
+  background: rgba(201,148,58,0.08);
+  border: 1px solid rgba(201,148,58,0.3);
+  border-radius: 6px; padding: 0.5rem 0.7rem;
+  font-size: 0.78rem; color: var(--ink);
+  font-family: Arial, sans-serif; line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+/* AI output column */
+.ptc-ai-output {
+  font-size: 0.75rem; font-family: 'Courier New', monospace;
+  line-height: 1.6; height: 100%;
+}
+.ai-screenshot {
+  width: 100%; display: block;
+  border-radius: 4px; overflow: hidden;
+  object-fit: contain;
+  max-height: 480px;
+}
+
+/* ── Footer ── */
+footer {
+  background: var(--nav-bg); color: #7a6652;
+  text-align: center; padding: 1.5rem;
+  font-size: 0.8rem; font-family: Arial, sans-serif;
+  border-top: 2px solid #3d1a00;
+}
+footer a { color: var(--gold); }
+footer strong { color: var(--gold-light); }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  #sidebar { transform: translateX(-100%); }
+  body.sidebar-open #sidebar { transform: translateX(0); }
+  #main-content { margin-left: 0; }
+  body.sidebar-collapsed #main-content { margin-left: 0; }
+  .prompt-tricolumn { grid-template-columns: 1fr; }
+  .ptc-col:not(:last-child) { border-right: none; border-bottom: 1px solid var(--border); }
+  .meme-pair { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .wf-arrow { display: none; }
+  .wf-step { min-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar Toggle Button -->
+<button id="sidebar-toggle" onclick="toggleSidebar()" title="Toggle Sidebar">◀</button>
+
+<!-- Sidebar Navigation -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <h1>☸ WishGraph</h1>
+    <p>Cyber-Wishing Knowledge Graph</p>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Overview</div>
+    <a class="nav-link" href="../index.html">
+      <span class="nav-icon">📑</span>
+      <span>Project Overview</span>
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Chapters</div>
+    <a class="nav-link" href="chapter1.html">
+      <span class="nav-icon">📋</span>
+      <span>Requirements & CQs</span>
+      <span class="nav-step">Ch1</span>
+    </a>
+    <a class="nav-link" href="chapter2.html">
+      <span class="nav-icon">🏗</span>
+      <span>T-Box Design</span>
+      <span class="nav-step">Ch2</span>
+    </a>
+    <a class="nav-link current" href="chapter3.html">
+      <span class="nav-icon">🧠</span>
+      <span>Knowledge Representation</span>
+      <span class="nav-step">Ch3</span>
+    </a>
+    <a class="nav-link" href="chapter4.html">
+      <span class="nav-icon">🔍</span>
+      <span>Knowledge Extraction</span>
+      <span class="nav-step">Ch4</span>
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">My Content</div>
+    <a class="nav-link" href="#introduction">
+      <span class="nav-icon">🏠</span>
+      <span>Introduction</span>
+    </a>
+    <a class="nav-link" href="#step1">
+      <span class="nav-icon">📖</span>
+      <span>Step 1: Background & CQs</span>
+    </a>
+    <a class="nav-link" href="#step2">
+      <span class="nav-icon">🏗</span>
+      <span>Step 2: T-Box Design</span>
+    </a>
+    <a class="nav-link" href="#step3">
+      <span class="nav-icon">🤖</span>
+      <span>Step 3: AI Extraction</span>
+    </a>
+    <a class="nav-link" href="#step4">
+      <span class="nav-icon">🔍</span>
+      <span>Step 4: SPARQL</span>
+    </a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div id="main-content">
+
+<!-- Hero -->
+<div class="hero" id="overview">
+  <h1>WishGraph</h1>
+  <div class="subtitle">Chapter 3: Knowledge Representation</div>
+  <div class="desc">
+    This chapter documents the AI-driven extraction process, meme data collection,
+    case instances, SPARQL queries, and RDF representations for the WishGraph knowledge graph.
+  </div>
+  <div class="badge-row">
+    <span class="badge">14 Cyber-Wishing Cases</span>
+    <span class="badge">12 Core Classes</span>
+    <span class="badge">11 Object Properties</span>
+    <span class="badge">6 Competency Questions</span>
+    <span class="badge">OWL 2 / Turtle</span>
+  </div>
+</div>
+
+<!-- Introduction Section -->
+<section id="introduction">
+<div class="section">
+  <h2 class="section-title"><span class="num">✦</span> Introduction <span class="step-label">My Contribution</span></h2>
+
+  <div class="intro-block">
+    <h3>📋 What I'm Responsible For in This Project</h3>
+    <div class="role-grid">
+      <div class="role-card">
+        <div class="role-tag">Part 1</div>
+        <p><strong style="color:#f0d085;">Multimodal Data Collection</strong><br>
+        Collecting meme images, social media screenshots, and comment-section evidence across 5 user groups to ground the ontology in real digital artefacts.</p>
+      </div>
+      <div class="role-card">
+        <div class="role-tag">Part 2</div>
+        <p><strong style="color:#f0d085;">AI Prompt Engineering</strong><br>
+        Designing a 3-layer extraction prompt (Identification → Relational Mapping → Logical Abstraction) to parse meme images into structured ontology data.</p>
+      </div>
+      <div class="role-card">
+        <div class="role-tag">Part 3</div>
+        <p><strong style="color:#f0d085;">Framework Organisation</strong><br>
+        Adapting Rhodes' 4P Creativity Model + Platform (5P) as the theoretical backbone, mapping each dimension to ontology classes and data fields.</p>
+      </div>
+      <div class="role-card">
+        <div class="role-tag">Part 4</div>
+        <p><strong style="color:#f0d085;">SPARQL Verification &amp; Analysis</strong><br>
+        Writing 6 Competency Question queries (CQ1–CQ6) against the A-Box to verify the ontology design and generate humanistic insights.</p>
+      </div>
+    </div>
+  </div>
+
+  <p style="font-size:0.88rem;color:var(--muted);font-family:Arial,sans-serif;line-height:1.8;max-width:850px;">
+    This page documents my portion of the WishGraph knowledge representation project. The workflow
+    moves through four sequential steps: establishing the theoretical framework and competency questions
+    (Step 1), designing the T-Box ontology skeleton (Step 2), using multimodal AI prompting to extract
+    A-Box instance data from collected meme images (Step 3), and finally querying the resulting graph
+    with SPARQL to surface humanistic insights (Step 4).
+  </p>
+</div>
+</section>
+
+<!-- Step 1: Background & CQs -->
+<section id="step1" style="background:#fff9f0;">
+<div class="section">
+  <h2 class="section-title"><span class="num">1</span> Step 1: Background &amp; CQs <span class="step-label">Theoretical Framework</span></h2>
+
+  <h3 style="font-size:1rem;color:var(--accent);margin-bottom:1rem;">The 5P Theoretical Framework</h3>
+  <div class="workflow">
+    <div class="wf-step">
+      <div class="wf-icon">👤</div>
+      <h4>Person</h4>
+      <p>Social actor facing uncertainty — student, gamer, jobseeker, couple…</p>
+    </div>
+    <div class="wf-arrow">→</div>
+    <div class="wf-step">
+      <div class="wf-icon">😰</div>
+      <h4>Press</h4>
+      <p>Motivating anxiety or desire: exam stress, job insecurity, gacha randomness…</p>
+    </div>
+    <div class="wf-arrow">→</div>
+    <div class="wf-step">
+      <div class="wf-icon">🙏</div>
+      <h4>Product</h4>
+      <p>Digital wishing object: meme, deity image, lucky wallpaper, divination tool…</p>
+    </div>
+    <div class="wf-arrow">→</div>
+    <div class="wf-step">
+      <div class="wf-icon">⚡</div>
+      <h4>Process</h4>
+      <p>Online action: reposting, commenting "99", changing avatar, online divination…</p>
+    </div>
+    <div class="wf-arrow">→</div>
+    <div class="wf-step">
+      <div class="wf-icon">📱</div>
+      <h4>Platform</h4>
+      <p>Digital environment shaping affordances: RedNote, Weibo, Bilibili, TikTok…</p>
+    </div>
+    <div class="wf-arrow">→</div>
+    <div class="wf-step">
+      <div class="wf-icon">💫</div>
+      <h4>Function</h4>
+      <p>Affective (anxiety relief, hope) &amp; Meme (virality, community bonding)</p>
+    </div>
+  </div>
+
+  <p style="font-size:0.88rem;color:var(--muted);font-family:Arial,sans-serif;max-width:850px;margin-bottom:1.5rem;">
+    This project adapts Rhodes' <strong>4P creativity model</strong> (Person, Process, Product, Press)
+    to the domain of cyber-wishing, adding <em>Platform</em> as a fifth dimension to capture how
+    platform affordances (comments, reposts, hashtags, recommendation algorithms) shape the form,
+    circulation and public reach of digital rituals.
+    Theoretical grounding draws on Digital Folklore (Howard 2008), Ritual Theory (Bell 1992; Turner 1969),
+    Meme Theory (Shifman 2014; Milner 2016) and Affective Practice (Ahmed 2004).
+  </p>
+
+  <!-- Additional supplementary note (from image 7) -->
+  <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.4rem;margin-bottom:1.5rem;">
+    <h4 style="font-size:0.88rem;color:var(--accent);margin-bottom:0.6rem;font-family:Arial,sans-serif;">
+      📌 CQ Alignment Note — Cross-Platform Symbol Distribution (CQ6 Addition)
+    </h4>
+    <p style="font-size:0.82rem;color:var(--ink);font-family:Arial,sans-serif;line-height:1.7;">
+      The existing 5 CQs already cover the 4P framework well. To deepen <strong>Step 4</strong>'s analytical power,
+      a sixth competency question has been added:
+    </p>
+    <div style="margin:0.8rem 0;padding:0.8rem 1rem;background:rgba(201,148,58,0.06);border-left:4px solid var(--gold);border-radius:0 6px 6px 0;">
+      <strong style="font-size:0.82rem;color:var(--accent);font-family:Arial,sans-serif;">
+        CQ6 — Platform–Symbol Co-distribution
+      </strong>
+      <p style="font-size:0.8rem;color:var(--muted);font-family:Arial,sans-serif;margin-top:0.3rem;line-height:1.6;">
+        How does the distribution of specific ritual symbols (e.g., "Koi" vs. "Offer Bodhisattva") differ
+        across platforms (e.g., RedNote vs. LinkedIn)? This demonstrates the value of the
+        <code style="font-size:0.72rem;background:#f5f0e8;padding:0.1rem 0.3rem;border-radius:3px;">circulatesOnPlatform</code>
+        property and adds "digital humanities" analytical depth to the knowledge graph.
+      </p>
+    </div>
+  </div>
+
+  <h3 style="font-size:1rem;color:var(--accent);margin:1.5rem 0 0.8rem;">Competency Questions (CQ1–CQ6)</h3>
+  <div class="table-wrap">
+  <table class="prop-table">
+    <thead><tr><th>#</th><th>Question</th><th>Key Property</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">CQ1</td><td style="font-size:0.82rem;">Which types of users engage in cyber-wishing, and what pressures or desires motivate them?</td><td class="mono">hasPerson · hasPressure</td></tr>
+      <tr><td class="mono">CQ2</td><td style="font-size:0.82rem;">How are traditional deities transformed into cyber products and meme-based wishing devices?</td><td class="mono">usesCyberProduct · alignsWithCulturalTarget</td></tr>
+      <tr><td class="mono">CQ3</td><td style="font-size:0.82rem;">What digital practices mediate cyber-wishing across different platforms?</td><td class="mono">performsPractice · circulatesOnPlatform</td></tr>
+      <tr><td class="mono">CQ4</td><td style="font-size:0.82rem;">What affective functions do cyber-wishing practices serve for different user groups?</td><td class="mono">servesAffectiveFunction</td></tr>
+      <tr><td class="mono">CQ5</td><td style="font-size:0.82rem;">How do meme functions and ritual symbols support the circulation of cyber-wishing practices?</td><td class="mono">servesMemeFunction · usesRitualSymbol</td></tr>
+      <tr style="background:rgba(201,148,58,0.06);">
+        <td class="mono" style="color:var(--gold);font-weight:bold;">CQ6 ✦</td>
+        <td style="font-size:0.82rem;"><strong>How does the distribution of specific ritual symbols differ across platforms?</strong> (e.g., "Koi" vs "Offer Bodhisattva" on RedNote vs LinkedIn)</td>
+        <td class="mono">circulatesOnPlatform · usesRitualSymbol</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+</section>
+
+<!-- Step 2: T-Box Design -->
+<section id="step2">
+<div class="section">
+  <h2 class="section-title"><span class="num">2</span> Step 2: T-Box Design <span class="step-label">Ontology Schema</span></h2>
+
+  <h3 style="font-size:1rem;color:var(--accent);margin-bottom:1rem;">Core Classes</h3>
+  <div class="onto-grid">
+    <div class="onto-card">
+      <div class="class-uri">wg:CyberWishingCase</div>
+      <h3>CyberWishingCase</h3>
+      <p>Central class. A specific instance of cyber-wishing, linking all related entities.</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">wg:Person</div>
+      <h3>Person</h3>
+      <p>The social actor type: Student, Jobseeker, Gamer, Couple, Traveller, etc.</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">wg:Pressure</div>
+      <h3>Pressure</h3>
+      <p>The social or emotional need motivating the wishing practice.</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">wg:CyberProduct</div>
+      <h3>CyberProduct</h3>
+      <p>The digital wishing object — cyber deity image, meme, wallpaper, template.</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">wg:CulturalTarget</div>
+      <h3>CulturalTarget</h3>
+      <p>Traditional folk deity or ritual reference (Caishen, Mazu, Wenchang Dijun…).</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">wg:DigitalPractice</div>
+      <h3>DigitalPractice</h3>
+      <p>Online action: reposting, commenting, saving images, changing avatar, divination.</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">wg:Platform</div>
+      <h3>Platform</h3>
+      <p>Digital environment: RedNote, Weibo, Bilibili, Douyin, WeChat, TikTok…</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">wg:TransformationMechanism</div>
+      <h3>TransformationMechanism</h3>
+      <p>How ritual reference becomes digital: memeification, platformisation, simulation…</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">wg:AffectiveFunction</div>
+      <h3>AffectiveFunction</h3>
+      <p>Emotional role: anxiety relief, hope generation, confidence building…</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">wg:MemeFunction</div>
+      <h3>MemeFunction</h3>
+      <p>Participatory/communicative role: virality, community bonding, humour…</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">wg:RitualSymbol</div>
+      <h3>RitualSymbol</h3>
+      <p>Visual/symbolic marker: koi fish, incense, "99", golden coins, lotus…</p>
+    </div>
+    <div class="onto-card">
+      <div class="class-uri">wg:Source</div>
+      <h3>Source</h3>
+      <p>Evidence for the case: URL, platform post, article, social media content.</p>
+    </div>
+  </div>
+
+  <h3 style="font-size:1rem;color:var(--accent);margin:1.5rem 0 0.8rem;">Object Properties</h3>
+  <div class="table-wrap">
+  <table class="prop-table">
+    <thead><tr><th>Property</th><th>Domain</th><th>Range</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">hasPerson</td><td>CyberWishingCase</td><td>Person</td><td>Links a case to the actor type</td></tr>
+      <tr><td class="mono">hasPressure</td><td>CyberWishingCase</td><td>Pressure</td><td>Links a case to the motivating pressure</td></tr>
+      <tr><td class="mono">usesCyberProduct</td><td>CyberWishingCase</td><td>CyberProduct</td><td>Links a case to the cyber deity or meme</td></tr>
+      <tr><td class="mono">alignsWithCulturalTarget</td><td>CyberProduct</td><td>CulturalTarget</td><td>Connects product to its traditional reference</td></tr>
+      <tr><td class="mono">performsPractice</td><td>CyberWishingCase</td><td>DigitalPractice</td><td>Links to the digital action performed</td></tr>
+      <tr><td class="mono">circulatesOnPlatform</td><td>CyberWishingCase</td><td>Platform</td><td>Records which platform hosts the practice</td></tr>
+      <tr><td class="mono">hasTransformationMechanism</td><td>CyberWishingCase</td><td>TransformationMechanism</td><td>Describes how ritual becomes digital</td></tr>
+      <tr><td class="mono">servesAffectiveFunction</td><td>CyberWishingCase</td><td>AffectiveFunction</td><td>Records the emotional effect</td></tr>
+      <tr><td class="mono">servesMemeFunction</td><td>CyberWishingCase</td><td>MemeFunction</td><td>Records the participatory function</td></tr>
+      <tr><td class="mono">usesRitualSymbol</td><td>CyberWishingCase</td><td>RitualSymbol</td><td>Records symbolic visual markers</td></tr>
+      <tr><td class="mono">hasSource</td><td>CyberWishingCase</td><td>Source</td><td>Links to evidence URL and type</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3 style="font-size:1rem;color:var(--accent);margin:1.5rem 0 0.8rem;">CSV → Ontology Mapping</h3>
+  <div class="table-wrap">
+  <table class="prop-table">
+    <thead><tr><th>CSV Column</th><th>Ontology Class / Property</th></tr></thead>
+    <tbody>
+      <tr><td>创造主体 (Person)</td><td class="mono">Person / hasPerson</td></tr>
+      <tr><td>压力/需求 (Press)</td><td class="mono">Pressure / hasPressure</td></tr>
+      <tr><td>赛博法器/神祇 (Product)</td><td class="mono">CyberProduct / usesCyberProduct</td></tr>
+      <tr><td>对齐目标 (Cultural/Ritual Target)</td><td class="mono">CulturalTarget / alignsWithCulturalTarget</td></tr>
+      <tr><td>数字实践/行为 (Digital Practice)</td><td class="mono">DigitalPractice / performsPractice</td></tr>
+      <tr><td>传播平台 (Platform)</td><td class="mono">Platform / circulatesOnPlatform</td></tr>
+      <tr><td>数字转化机制 (Digital Transformation)</td><td class="mono">TransformationMechanism / hasTransformationMechanism</td></tr>
+      <tr><td>情绪功能 (Affective Function)</td><td class="mono">AffectiveFunction / servesAffectiveFunction</td></tr>
+      <tr><td>梗功能 (Meme Function)</td><td class="mono">MemeFunction / servesMemeFunction</td></tr>
+      <tr><td>仪式/视觉符号 (Ritual or Visual Symbol)</td><td class="mono">RitualSymbol / usesRitualSymbol</td></tr>
+      <tr><td>证据链接 (Source URL)</td><td class="mono">Source / hasSourceURL</td></tr>
+      <tr><td>来源类型 (Source Type)</td><td class="mono">Source / hasSourceType</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+</section>
+
+<!-- Step 3: AI-Driven Extraction -->
+<section id="step3" style="background:#fff9f0;">
+<div class="section">
+  <h2 class="section-title"><span class="num">3</span> Step 3: AI-Driven Extraction <span class="step-label">Meme Data + Prompt Engineering</span></h2>
+
+  <!-- Meme Gallery -->
+  <h3 style="font-size:1.05rem;color:var(--accent);margin-bottom:0.8rem;">3.1 — Meme Image Collection</h3>
+  <div class="meme-gallery-intro">
+    Five user-group archetypes are represented in the collected meme data. For each group, I collected
+    a <strong>main meme image</strong> (the cyber-wishing artefact itself) and a
+    <strong>comment-section screenshot</strong> (evidence of participatory digital practice).
+    Together they form the multimodal evidence base for AI-driven A-Box extraction.
+  </div>
+
+  <!-- Meme 1: Programmer -->
+  <div class="meme-group">
+    <div class="meme-group-title">
+      <span class="meme-badge">Meme 1</span>
+      Programmer — Debugging Bodhisattva / Cyber Manjushri
+    </div>
+    <div class="meme-pair">
+      <div class="meme-item">
+        <img src="../meme data/meme1 programer.png" alt="Meme 1: Programmer cyber-wishing meme" loading="lazy">
+        <div class="meme-caption"><strong>Main Meme</strong> — Cyber Bodhisattva blessing programmers against bugs</div>
+      </div>
+      <div class="meme-item">
+        <img src="../meme data/meme1 programmer comment.png" alt="Meme 1: Comment section screenshot" loading="lazy">
+        <div class="meme-caption"><strong>Comment Section</strong> — Community participatory practice evidence</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Meme 2: Single Young Adult -->
+  <div class="meme-group">
+    <div class="meme-group-title">
+      <span class="meme-badge">Meme 2</span>
+      Single Young Adult — Love Fortune Wallpaper / Cyber Yuelao
+    </div>
+    <div class="meme-pair">
+      <div class="meme-item">
+        <img src="../meme data/meme2 for single.png" alt="Meme 2: Single adult love-fortune meme" loading="lazy">
+        <div class="meme-caption"><strong>Main Meme</strong> — Peach-blossom luck wallpaper for romantic aspiration</div>
+      </div>
+      <div class="meme-item">
+        <img src="../meme data/meme2 for single comment.png" alt="Meme 2: Comment section screenshot" loading="lazy">
+        <div class="meme-caption"><strong>Comment Section</strong> — Wish-making and manifestation community responses</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Meme 3: Student -->
+  <div class="meme-group">
+    <div class="meme-group-title">
+      <span class="meme-badge">Meme 3</span>
+      Student — Wenchang Dijun / Exam Blessing Meme
+    </div>
+    <div class="meme-pair">
+      <div class="meme-item">
+        <img src="../meme data/meme3 for student.png" alt="Meme 3: Student exam blessing meme" loading="lazy">
+        <div class="meme-caption"><strong>Main Meme</strong> — Wenchang Dijun (deity of study) blessing students</div>
+      </div>
+      <div class="meme-item">
+        <img src="../meme data/meme3 for student comment.png" alt="Meme 3: Comment section screenshot" loading="lazy">
+        <div class="meme-caption"><strong>Comment Section</strong> — Comment ritual and chain-letter style responses</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Meme 4: Health -->
+  <div class="meme-group">
+    <div class="meme-group-title">
+      <span class="meme-badge">Meme 4</span>
+      Health-Anxious User — Medicine Buddha / Health Blessing Meme
+    </div>
+    <div class="meme-pair">
+      <div class="meme-item">
+        <img src="../meme data/meme4 for health.png" alt="Meme 4: Health blessing meme" loading="lazy">
+        <div class="meme-caption"><strong>Main Meme</strong> — Traditional 去病符 (illness-removing talisman) as cyber product</div>
+      </div>
+      <div class="meme-item">
+        <img src="../meme data/meme4 for health comment.png" alt="Meme 4: Comment section screenshot" loading="lazy">
+        <div class="meme-caption"><strong>Comment Section</strong> — Health-wishing community participation</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Meme 5: Jobseeker -->
+  <div class="meme-group">
+    <div class="meme-group-title">
+      <span class="meme-badge">Meme 5</span>
+      Jobseeker — Offer Bodhisattva / Career Blessing
+    </div>
+    <div class="meme-pair">
+      <div class="meme-item">
+        <img src="../meme data/meme5 for jobseeker.png" alt="Meme 5: Jobseeker offer blessing meme" loading="lazy">
+        <div class="meme-caption"><strong>Main Meme</strong> — Job-offer blessing meme circulating on career platforms</div>
+      </div>
+      <div class="meme-item">
+        <img src="../meme data/meme5 job seeker comment.png" alt="Meme 5: Comment section screenshot" loading="lazy">
+        <div class="meme-caption"><strong>Comment Section</strong> — Shared career anxiety and collective digital blessing</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Prompt Demo -->
+  <h3 style="font-size:1.05rem;color:var(--accent);margin:2.5rem 0 0.8rem;padding-top:1.5rem;border-top:2px solid var(--border);">
+    3.2 — AI Prompt Engineering: Meme 4 Case Study
+  </h3>
+
+  <div class="prompt-intro">
+    <p style="margin-bottom:0.7rem;">
+      The extraction prompt is not a simple "what is in this image?" question. Instead it follows a
+      <strong>three-layer reasoning logic</strong> that progressively deepens from visual observation to
+      ontological abstraction:
+    </p>
+    <div class="prompt-logic">
+      <span class="pl-step">🔍 Prompt 1 — Identification</span>
+      <span class="pl-arrow">→</span>
+      <span class="pl-step">🔗 Prompt 2 — Relational Mapping</span>
+      <span class="pl-arrow">→</span>
+      <span class="pl-step">🧠 Prompt 3 — Logical Abstraction</span>
+    </div>
+    <p style="font-size:0.82rem;color:var(--muted);margin-top:0.5rem;">
+      By answering just 4–5 targeted meme images with this three-question protocol, we extract
+      high-quality A-Box instance data that directly populates the WishGraph ontology.
+      Below is the full demonstration using <strong>Meme 4 (Health-Anxious User)</strong>.
+    </p>
+  </div>
+
+  <!-- Prompt Round 1 -->
+  <div class="prompt-round">
+    <div class="prompt-round-label">
+      <span class="pr-num">1</span>
+      Prompt 1
+      <span class="pr-title">🔍 Identification — Who, What, Where?</span>
+    </div>
+
+    <div class="prompt-tricolumn">
+      <!-- Col 1: Meme Image -->
+      <div class="ptc-col">
+        <div class="ptc-header">🖼 Meme Image</div>
+        <div class="ptc-body" style="padding:0;">
+          <img class="ptc-meme-img" src="../meme data/meme4 for health.png" alt="Meme 4 Health" loading="lazy">
+        </div>
+      </div>
+      <!-- Col 2: Prompt -->
+      <div class="ptc-col">
+        <div class="ptc-header">📝 Prompt 1</div>
+        <div class="ptc-body">
+          <div class="ptc-prompt-text">
+            <span class="pq-label">Task</span>
+            <div class="pq-content">Please analyze this screenshot (including the meme image and its social media context).</div>
+            <div class="pq-sub">
+              <div class="pq-ask">
+                <strong>① Identify the subject (Person):</strong> Based on the posting context, profile picture, or comment content, infer the social identity of the participants (e.g., Gamer, SingleYoungAdult, Researcher, etc.).
+              </div>
+              <div class="pq-ask">
+                <strong>② Pinpoint the pressure points (Pressure):</strong> What anxieties, desires, or uncertainties are they expressing?
+              </div>
+              <div class="pq-ask">
+                <strong>③ Identify the Cyber Product:</strong> What is the central visual object in the image? (e.g., Love Fortune Wallpaper, Debugging Bodhisattva, etc.)
+              </div>
+              <div class="pq-ask">
+                <strong>④ Identify the Platform:</strong> Based on UI features, determine which platform this occurred on (e.g., RedNote, Bilibili, LinkedIn, etc.).
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Col 3: AI Output -->
+      <div class="ptc-col">
+        <div class="ptc-header">🤖 AI Output</div>
+        <div class="ptc-body" style="padding:0;">
+          <img class="ai-screenshot" src="../meme data/for meme4 promt1.png" alt="AI output for Prompt 1" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Prompt Round 2 -->
+  <div class="prompt-round">
+    <div class="prompt-round-label">
+      <span class="pr-num">2</span>
+      Prompt 2
+      <span class="pr-title">🔗 Relational Mapping — Cultural &amp; Behavioral Logic</span>
+    </div>
+
+    <div class="prompt-tricolumn">
+      <!-- Col 1: Meme Image -->
+      <div class="ptc-col">
+        <div class="ptc-header">🖼 Meme Image</div>
+        <div class="ptc-body" style="padding:0;">
+          <img class="ptc-meme-img" src="../meme data/meme4 for health.png" alt="Meme 4 Health" loading="lazy">
+        </div>
+      </div>
+      <!-- Col 2: Prompt -->
+      <div class="ptc-col">
+        <div class="ptc-header">📝 Prompt 2</div>
+        <div class="ptc-body">
+          <div class="ptc-prompt-text">
+            <span class="pq-label">Task</span>
+            <div class="pq-content">Based on the previous analysis, please further explore the underlying traditions and behavioral logic.</div>
+            <div class="pq-sub">
+              <div class="pq-ask">
+                <strong>① Trace the Cultural Target (CulturalTarget):</strong> What traditional folk symbols, deities, or religious archetypes does this cyber-amulet correspond to? (e.g., Yuelao, Caishen, Koi culture)
+              </div>
+              <div class="pq-ask">
+                <strong>② Analyze Digital Practices (DigitalPractice):</strong> What actions do users take to fulfill this "wish"? (e.g., sharing, commenting "99", placing the item next to physical devices, etc.)
+              </div>
+              <div class="pq-ask">
+                <strong>③ Extract Ritual Symbols (RitualSymbol):</strong> Which specific visual elements in the image convey a heightened sense of "ritual" and "sacredness"? (e.g., peach blossom background, gold coin emoji, specific "99" comment text, ASCII art)
+              </div>
+              <div class="pq-ask">
+                Please analyze how these elements work together to simulate a traditional ritual.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Col 3: AI Output -->
+      <div class="ptc-col">
+        <div class="ptc-header">🤖 AI Output</div>
+        <div class="ptc-body" style="padding:0;">
+          <img class="ai-screenshot" src="../meme data/for meme4 promt2.png" alt="AI output for Prompt 2" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Prompt Round 3 -->
+  <div class="prompt-round">
+    <div class="prompt-round-label">
+      <span class="pr-num">3</span>
+      Prompt 3
+      <span class="pr-title">🧠 Logical Abstraction — Knowledge Engineer Summary</span>
+    </div>
+
+    <div class="prompt-tricolumn">
+      <!-- Col 1: Meme Image -->
+      <div class="ptc-col">
+        <div class="ptc-header">🖼 Meme Image</div>
+        <div class="ptc-body" style="padding:0;">
+          <img class="ptc-meme-img" src="../meme data/meme4 for health.png" alt="Meme 4 Health" loading="lazy">
+        </div>
+      </div>
+      <!-- Col 2: Prompt -->
+      <div class="ptc-col">
+        <div class="ptc-header">📝 Prompt 3</div>
+        <div class="ptc-body">
+          <div class="ptc-prompt-text">
+            <span class="pq-label">Task</span>
+            <div class="pq-content">Finally, please provide a high-level summary from the perspective of a "knowledge engineer" so that I can convert it into JSON/RDF format.</div>
+            <div class="pq-sub">
+              <div class="pq-ask">
+                <strong>Summary of TransformationMechanism:</strong> How are traditional symbols transformed into "cyber" forms? Is it through interface simulation, homophonic transformation, or aestheticization?
+              </div>
+              <div class="pq-ask">
+                <strong>Define AffectiveFunction:</strong> What psychological good does this behavior provide to users? (e.g., communal encouragement, emotional reassurance, anxiety relief)
+              </div>
+              <div class="pq-ask">
+                <strong>Define MemeFunction:</strong> How does it spread on social networks? (e.g., comment ritual, fandom joke, participatory blessing)
+              </div>
+              <div class="pq-ask">
+                <strong>Final Task:</strong> Please integrate all findings and output them strictly in the following JSON format:<br>
+                <code style="font-size:0.72rem;color:var(--gold-light);">
+                  {"person":"…","pressure":"…","cyberProduct":"…","culturalTarget":"…","digitalPractice":"…","platform":[…],"transformationMechanism":[…],"affectiveFunction":[…],"memeFunction":[…],"ritualSymbol":[…]}
+                </code>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Col 3: AI Output -->
+      <div class="ptc-col">
+        <div class="ptc-header">🤖 AI Output (JSON/RDF)</div>
+        <div class="ptc-body" style="padding:0;">
+          <img class="ai-screenshot" src="../meme data/for meme 4 promt3.png" alt="AI output for Prompt 3 — JSON" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- Dataset Overview -->
+<section id="dataset">
+<div class="section">
+  <h2 class="section-title"><span class="num">◎</span> Dataset Overview <span class="step-label">metadata.csv</span></h2>
+  <p style="font-size:0.88rem;color:var(--muted);font-family:Arial,sans-serif;margin-bottom:1.2rem;">
+    The dataset contains <strong>14 cyber-wishing cases</strong> collected from Chinese-language platforms (RedNote, Weibo, Bilibili, TikTok, WeChat and others).
+    Each row encodes one wishing event across 12 structured fields derived from the ontology schema.
+  </p>
+  <div class="table-wrap">
+  <table id="csv-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Person</th>
+        <th>Pressure</th>
+        <th>Cyber Product</th>
+        <th>Cultural Target</th>
+        <th>Platform</th>
+        <th>Affective Function</th>
+        <th>Source</th>
+      </tr>
+    </thead>
+    <tbody id="csv-tbody"></tbody>
+  </table>
+  </div>
+</div>
+</section>
+
+<!-- Case Cards -->
+<section id="cases" style="background:#fff9f0;">
+<div class="section">
+  <h2 class="section-title"><span class="num">◎</span> Cyber-Wishing Cases <span class="step-label">A-Box Instances</span></h2>
+  <div class="case-grid" id="case-grid"></div>
+</div>
+</section>
+
+<!-- RDF / Turtle Snippet -->
+<section id="rdf">
+<div class="section">
+  <h2 class="section-title"><span class="num">◎</span> RDF Representation <span class="step-label">Turtle / OWL 2</span></h2>
+  <p style="font-size:0.88rem;color:var(--muted);font-family:Arial,sans-serif;margin-bottom:1rem;">
+    The full ontology is split into <code>wishgraph_tbox.ttl</code> (T-Box schema) and
+    <code>wishgraph_abox.ttl</code> (A-Box instances), with a merged <code>wishgraph_full.ttl</code>.
+    Below is an excerpt showing the T-Box class declarations and a sample A-Box instance for
+    the Meme 4 health case derived through AI Prompt Engineering.
+  </p>
+
+  <h3 style="font-size:0.9rem;color:var(--accent);margin-bottom:0.6rem;">T-Box Excerpt — Core Classes &amp; Properties</h3>
+  <div class="code-block"><span class="c-comment"># Prefix declarations</span>
+<span class="c-prefix">@prefix wg:</span>    <span class="c-uri">&lt;https://example.org/wishgraph#&gt;</span> <span class="c-lit">.</span>
+<span class="c-prefix">@prefix owl:</span>   <span class="c-uri">&lt;http://www.w3.org/2002/07/owl#&gt;</span> <span class="c-lit">.</span>
+<span class="c-prefix">@prefix rdfs:</span>  <span class="c-uri">&lt;http://www.w3.org/2000/01/rdf-schema#&gt;</span> <span class="c-lit">.</span>
+
+<span class="c-comment"># Central class</span>
+<span class="c-class">wg:CyberWishingCase</span>
+    <span class="c-prop">a</span> <span class="c-uri">owl:Class</span> <span class="c-lit">;</span>
+    <span class="c-prop">rdfs:label</span> <span class="c-lit">"CyberWishingCase"</span> <span class="c-lit">;</span>
+    <span class="c-prop">rdfs:comment</span> <span class="c-lit">"A specific instance of cyber-wishing."</span> <span class="c-lit">.</span>
+
+<span class="c-class">wg:Person</span>  <span class="c-prop">a</span> <span class="c-uri">owl:Class</span> <span class="c-lit">.</span>
+<span class="c-class">wg:Student</span> <span class="c-prop">a</span> <span class="c-uri">owl:Class</span> <span class="c-lit">;</span>  <span class="c-prop">rdfs:subClassOf</span> <span class="c-class">wg:Person</span> <span class="c-lit">.</span>
+
+<span class="c-comment"># Object property</span>
+<span class="c-class">wg:hasPerson</span>
+    <span class="c-prop">a</span> <span class="c-uri">owl:ObjectProperty</span> <span class="c-lit">;</span>
+    <span class="c-prop">rdfs:domain</span> <span class="c-class">wg:CyberWishingCase</span> <span class="c-lit">;</span>
+    <span class="c-prop">rdfs:range</span>  <span class="c-class">wg:Person</span> <span class="c-lit">.</span></div>
+
+  <h3 style="font-size:0.9rem;color:var(--accent);margin:1.2rem 0 0.6rem;">A-Box — Meme 4 Health Case (AI-Extracted Instance)</h3>
+  <div class="code-block"><span class="c-comment"># Health-Anxious User case — extracted via AI Prompt Engineering (Meme 4)</span>
+<span class="c-class">wg:case_06_health_anxious</span>
+    <span class="c-prop">a</span> <span class="c-uri">wg:CyberWishingCase</span> <span class="c-lit">,</span> <span class="c-uri">owl:NamedIndividual</span> <span class="c-lit">;</span>
+    <span class="c-prop">rdfs:label</span>      <span class="c-lit">"CyberWishingCase_6: health_anxious_user"</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:hasPerson</span>    <span class="c-class">wg:HealthAnxiousUser</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:hasPressure</span>  <span class="c-class">wg:Health_uncertainty_seeking_safety</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:usesCyberProduct</span>          <span class="c-class">wg:Medicine_Buddha_Health_Blessing_Meme</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:alignsWithCulturalTarget</span>  <span class="c-class">wg:Medicine_Buddha_Yaoshi_Dunhuang_Apsara</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:performsPractice</span>   <span class="c-class">wg:Collective_Commenting_Sharing_Praising</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:circulatesOnPlatform</span>  <span class="c-class">wg:RedNote</span> <span class="c-lit">,</span> <span class="c-class">wg:TikTok</span> <span class="c-lit">,</span> <span class="c-class">wg:Weibo</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:hasTransformationMechanism</span>  <span class="c-class">wg:AestheticisationAndRecontextualisation</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:servesAffectiveFunction</span>  <span class="c-class">wg:Anxiety_Relief</span> <span class="c-lit">,</span> <span class="c-class">wg:Communal_Encouragement</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:servesMemeFunction</span>  <span class="c-class">wg:Digital_Folklore_Circulation</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:usesRitualSymbol</span>   <span class="c-class">wg:Stylised_Gold_Blue_Apsara_Iconography</span> <span class="c-lit">,</span> <span class="c-class">wg:Date_Stamp_2026</span> <span class="c-lit">,</span> <span class="c-class">wg:Aureate_Halo</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:hasSource</span>  <span class="c-class">wg:src_meme4_health</span> <span class="c-lit">.</span></div>
+
+  <h3 style="font-size:0.9rem;color:var(--accent);margin:1.2rem 0 0.6rem;">A-Box Excerpt — Student Case (Case #3)</h3>
+  <div class="code-block"><span class="c-comment"># Student exam blessing case</span>
+<span class="c-class">wg:case_03_student</span>
+    <span class="c-prop">a</span> <span class="c-uri">wg:CyberWishingCase</span> <span class="c-lit">,</span> <span class="c-uri">owl:NamedIndividual</span> <span class="c-lit">;</span>
+    <span class="c-prop">rdfs:label</span>      <span class="c-lit">"CyberWishingCase_3: student"</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:hasPerson</span>    <span class="c-class">wg:student</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:hasPressure</span>  <span class="c-class">wg:Pre-exam_anxiety_praying_to_pass</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:usesCyberProduct</span>          <span class="c-class">wg:Wenchang_Dijun_Meme</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:alignsWithCulturalTarget</span>  <span class="c-class">wg:Wenchang_Dijun_Guanyin</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:performsPractice</span>   <span class="c-class">wg:Typing_receive_in_comment_sections</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:circulatesOnPlatform</span>  <span class="c-class">wg:Weibo</span> <span class="c-lit">,</span> <span class="c-class">wg:Bilibili</span> <span class="c-lit">,</span> <span class="c-class">wg:Xiaohongshu</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:servesAffectiveFunction</span>  <span class="c-class">wg:Confidence_boosting</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:servesMemeFunction</span>  <span class="c-class">wg:Viral_spreading_of_luck</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:usesRitualSymbol</span>   <span class="c-class">wg:Koi_fish</span> <span class="c-lit">,</span> <span class="c-class">wg:Digital_temple_lot</span> <span class="c-lit">;</span>
+    <span class="c-prop">wg:hasSource</span>  <span class="c-class">wg:src_case_03_student</span> <span class="c-lit">.</span></div>
+</div>
+</section>
+
+<!-- Step 4: SPARQL Insights -->
+<section id="step4" style="background:#fff9f0;">
+<div class="section">
+  <h2 class="section-title"><span class="num">4</span> Step 4: SPARQL Insights <span class="step-label">Data Queries &amp; Humanistic Analysis</span></h2>
+
+  <div class="cq-block">
+    <h3>CQ1 — Actors and Pressures</h3>
+    <p>Which types of users engage in cyber-wishing, and what pressures or desires motivate them?</p>
+    <div class="code-block"><span class="c-comment"># CQ1: Who wishes, and why?</span>
+<span class="c-prop">SELECT</span> <span class="c-lit">?case ?personLabel ?pressureLabel</span>
+<span class="c-prop">WHERE</span> {
+    <span class="c-lit">?case</span> <span class="c-prop">a</span> <span class="c-class">wg:CyberWishingCase</span> <span class="c-lit">.</span>
+    <span class="c-lit">?case</span> <span class="c-prop">wg:hasPerson</span>   <span class="c-lit">?person</span>   <span class="c-lit">.</span>
+    <span class="c-lit">?case</span> <span class="c-prop">wg:hasPressure</span> <span class="c-lit">?pressure</span> <span class="c-lit">.</span>
+    <span class="c-lit">?person</span>   <span class="c-prop">rdfs:label</span> <span class="c-lit">?personLabel</span>   <span class="c-lit">.</span>
+    <span class="c-lit">?pressure</span> <span class="c-prop">rdfs:label</span> <span class="c-lit">?pressureLabel</span> <span class="c-lit">.</span>
+}
+<span class="c-prop">ORDER BY</span> <span class="c-lit">?personLabel</span></div>
+  </div>
+
+  <div class="cq-block">
+    <h3>CQ2 — Traditional References → Cyber Products</h3>
+    <p>How are traditional deities transformed into cyber products and meme-based wishing devices?</p>
+    <div class="code-block"><span class="c-prop">SELECT</span> <span class="c-lit">?case ?cyberProductLabel ?culturalTargetLabel ?mechanismLabel</span>
+<span class="c-prop">WHERE</span> {
+    <span class="c-lit">?case</span> <span class="c-prop">a</span> <span class="c-class">wg:CyberWishingCase</span> <span class="c-lit">.</span>
+    <span class="c-lit">?case</span> <span class="c-prop">wg:usesCyberProduct</span> <span class="c-lit">?product</span> <span class="c-lit">.</span>
+    <span class="c-lit">?product</span> <span class="c-prop">rdfs:label</span> <span class="c-lit">?cyberProductLabel</span> <span class="c-lit">.</span>
+    <span class="c-prop">OPTIONAL</span> {
+        <span class="c-lit">?case</span> <span class="c-prop">wg:alignsWithCulturalTarget</span> <span class="c-lit">?target</span> <span class="c-lit">.</span>
+        <span class="c-lit">?target</span> <span class="c-prop">rdfs:label</span> <span class="c-lit">?culturalTargetLabel</span> <span class="c-lit">.</span>
+    }
+    <span class="c-prop">OPTIONAL</span> {
+        <span class="c-lit">?case</span> <span class="c-prop">wg:hasTransformationMechanism</span> <span class="c-lit">?mech</span> <span class="c-lit">.</span>
+        <span class="c-lit">?mech</span> <span class="c-prop">rdfs:label</span> <span class="c-lit">?mechanismLabel</span> <span class="c-lit">.</span>
+    }
+}</div>
+  </div>
+
+  <div class="cq-block">
+    <h3>CQ3 — Digital Practices and Platforms</h3>
+    <p>What digital practices mediate cyber-wishing across different platforms?</p>
+    <div class="code-block"><span class="c-prop">SELECT</span> <span class="c-lit">?platformLabel (GROUP_CONCAT(DISTINCT ?practiceLabel ; separator=" | ") AS ?practices)</span>
+<span class="c-prop">WHERE</span> {
+    <span class="c-lit">?case</span> <span class="c-prop">wg:circulatesOnPlatform</span> <span class="c-lit">?platform</span> <span class="c-lit">.</span>
+    <span class="c-lit">?case</span> <span class="c-prop">wg:performsPractice</span>    <span class="c-lit">?practice</span> <span class="c-lit">.</span>
+    <span class="c-lit">?platform</span> <span class="c-prop">rdfs:label</span> <span class="c-lit">?platformLabel</span> <span class="c-lit">.</span>
+    <span class="c-lit">?practice</span> <span class="c-prop">rdfs:label</span> <span class="c-lit">?practiceLabel</span> <span class="c-lit">.</span>
+}
+<span class="c-prop">GROUP BY</span> <span class="c-lit">?platformLabel</span></div>
+  </div>
+
+  <div class="cq-block">
+    <h3>CQ4 — Affective Functions</h3>
+    <p>What affective functions do cyber-wishing practices serve for different user groups?</p>
+    <div class="code-block"><span class="c-prop">SELECT</span> <span class="c-lit">?personLabel (GROUP_CONCAT(DISTINCT ?affLabel ; separator=" | ") AS ?affFunctions)</span>
+<span class="c-prop">WHERE</span> {
+    <span class="c-lit">?case</span> <span class="c-prop">wg:hasPerson</span>              <span class="c-lit">?person</span> <span class="c-lit">.</span>
+    <span class="c-lit">?case</span> <span class="c-prop">wg:servesAffectiveFunction</span> <span class="c-lit">?af</span>     <span class="c-lit">.</span>
+    <span class="c-lit">?person</span> <span class="c-prop">rdfs:label</span> <span class="c-lit">?personLabel</span> <span class="c-lit">.</span>
+    <span class="c-lit">?af</span>     <span class="c-prop">rdfs:label</span> <span class="c-lit">?affLabel</span>    <span class="c-lit">.</span>
+}
+<span class="c-prop">GROUP BY</span> <span class="c-lit">?personLabel</span></div>
+  </div>
+
+  <div class="cq-block">
+    <h3>CQ5 — Meme Functions and Ritual Symbols</h3>
+    <p>How do meme functions and ritual symbols support the circulation of cyber-wishing practices?</p>
+    <div class="code-block"><span class="c-prop">SELECT</span> <span class="c-lit">?case ?memeFunctionLabel ?ritualSymbolLabel ?platformLabel</span>
+<span class="c-prop">WHERE</span> {
+    <span class="c-lit">?case</span> <span class="c-prop">a</span> <span class="c-class">wg:CyberWishingCase</span> <span class="c-lit">.</span>
+    <span class="c-prop">OPTIONAL</span> { <span class="c-lit">?case</span> <span class="c-prop">wg:servesMemeFunction</span> <span class="c-lit">?mf</span> <span class="c-lit">.</span>  <span class="c-lit">?mf</span> <span class="c-prop">rdfs:label</span> <span class="c-lit">?memeFunctionLabel</span> <span class="c-lit">. </span>}
+    <span class="c-prop">OPTIONAL</span> { <span class="c-lit">?case</span> <span class="c-prop">wg:usesRitualSymbol</span>   <span class="c-lit">?rs</span> <span class="c-lit">.</span>  <span class="c-lit">?rs</span> <span class="c-prop">rdfs:label</span> <span class="c-lit">?ritualSymbolLabel</span> <span class="c-lit">. </span>}
+    <span class="c-prop">OPTIONAL</span> { <span class="c-lit">?case</span> <span class="c-prop">wg:circulatesOnPlatform</span> <span class="c-lit">?pl</span> <span class="c-lit">.</span> <span class="c-lit">?pl</span>  <span class="c-prop">rdfs:label</span> <span class="c-lit">?platformLabel</span> <span class="c-lit">. </span>}
+}
+<span class="c-prop">ORDER BY</span> <span class="c-lit">?case</span></div>
+  </div>
+
+  <div class="cq-block" style="border-left-color:#c9943a;background:rgba(201,148,58,0.04);">
+    <h3 style="display:flex;align-items:center;gap:0.5rem;">
+      CQ6 — Platform–Symbol Co-distribution
+    </h3>
+    <p>How does the distribution of specific ritual symbols (e.g., "Koi" vs "Offer Bodhisattva") differ across platforms (e.g., RedNote vs LinkedIn)?</p>
+    <div class="code-block"><span class="c-comment"># CQ6: Platform-symbol co-distribution — which ritual symbols appear on which platforms?</span>
+<span class="c-prop">SELECT</span> <span class="c-lit">?symbolLabel ?platformLabel (COUNT(DISTINCT ?case) AS ?caseCount)</span>
+<span class="c-prop">WHERE</span> {
+    <span class="c-lit">?case</span> <span class="c-prop">a</span>   <span class="c-class">wg:CyberWishingCase</span>    <span class="c-lit">.</span>
+    <span class="c-lit">?case</span> <span class="c-prop">wg:usesRitualSymbol</span>    <span class="c-lit">?symbol</span>   <span class="c-lit">.</span>
+    <span class="c-lit">?case</span> <span class="c-prop">wg:circulatesOnPlatform</span> <span class="c-lit">?platform</span> <span class="c-lit">.</span>
+    <span class="c-lit">?symbol</span>   <span class="c-prop">rdfs:label</span> <span class="c-lit">?symbolLabel</span>   <span class="c-lit">.</span>
+    <span class="c-lit">?platform</span> <span class="c-prop">rdfs:label</span> <span class="c-lit">?platformLabel</span> <span class="c-lit">.</span>
+}
+<span class="c-prop">GROUP BY</span> <span class="c-lit">?symbolLabel ?platformLabel</span>
+<span class="c-prop">ORDER BY</span> <span class="c-prop">DESC</span>(<span class="c-lit">?caseCount</span>) <span class="c-lit">?platformLabel</span></div>
+    <p style="font-size:0.78rem;color:var(--muted);margin-top:0.5rem;font-family:Arial,sans-serif;">
+      <strong>Humanistic insight:</strong> This query reveals whether platform affordances select for particular
+      ritual symbol vocabularies — e.g., koi imagery concentrating on lifestyle platforms (RedNote) while
+      career deities (Offer Bodhisattva) dominate professional networks (LinkedIn, Maimai). This validates
+      the <code style="font-size:0.72rem;">circulatesOnPlatform</code> property's analytical power.
+    </p>
+  </div>
+
+</div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>
+    <strong>WishGraph Knowledge Representation</strong><br>
+    team beyoo (Yuming Lian, Yutong Li, Xinyi Guo)
+  </p>
+</footer>
+
+</div><!-- end main-content -->
+
+<script>
+// ── Sidebar Toggle ──
+function toggleSidebar() {
+  document.body.classList.toggle('sidebar-collapsed');
+}
+
+// ── Active nav link highlight on scroll ──
+const sections = document.querySelectorAll('section[id], div[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.remove('active');
+    if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+  });
+});
+
+// ── Dataset from generated JSON ──
+const CASES = [
+  {i:1, person:"Programmer", pressure:"Bugs, debugging, code crashes, project launch pressure", cyberProduct:"Cyber Manjushri, Debugging Bodhisattva", culturalTarget:"Manjushri (Bodhisattva of Wisdom)", platform:["GitHub","Tech Forums","WeChat Groups"], affective:["Anxiety relief","seeking control over unpredictable technical errors"], meme:["Tech community bonding","self-deprecating humor"], ritual:["Code comments as Buddha ASCII art","Server Talisman (符)"], source:"https://www.xiaohongshu.com/explore/676e791b000000000b022d4f", sourceType:"Tech Community Meme / UGC"},
+  {i:2, person:"Company Executive (高管)", pressure:"Wealth anxiety, market volatility, KPI pressure", cyberProduct:"Cyber Caishen (God of Wealth)", culturalTarget:"Caishen / Guan Yu", platform:["WeChat Moments","Business Forums"], affective:["Hope generation","alleviating financial stress"], meme:["Displaying ambition","networking through shared business culture"], ritual:["Golden coins emojis","Cyber Caishen wallpapers","Digital golden toads"], source:"https://www.ctee.com.tw/news/20220812700299-430903", sourceType:"Social Media Post / UGC"},
+  {i:3, person:"Student", pressure:"Pre-exam anxiety, praying to pass, praying for high scores", cyberProduct:"Wenchang Dijun Meme, Exam Blessing Guanyin", culturalTarget:"Wenchang Dijun, Guanyin", platform:["Weibo","Bilibili","Xiaohongshu"], affective:["Confidence boosting","cognitive stress buffer"], meme:["Viral spreading of luck","chain letter style ritual"], ritual:["Koi fish (锦鲤)","Digital temple lot (签)","Character Pass (过)"], source:"https://www.xiaohongshu.com/explore/690d977d0000000007036331", sourceType:"Viral Social Media Post"},
+  {i:4, person:"Jobseeker", pressure:"Interview anxiety, offer anxiety, unemployment pressure", cyberProduct:"Offer Bodhisattva, Cyber Caishen", culturalTarget:"Beidi Bodhisattvas / Gods of Fortune", platform:["LinkedIn","Maimai","Xiaohongshu"], affective:["Combating rejection depression","maintaining hope"], meme:["Shared struggle identity","cynical yet hopeful subculture"], ritual:["Offer text on Buddhist halos","Lotus seats made of resumes"], source:"https://www.xiaohongshu.com/explore/691d3f0f000000001b0313c8", sourceType:"Career Networking Platform UGC"},
+  {i:5, person:"Researcher", pressure:"Thesis anxiety, citation anxiety, deadline (ddl) pressure", cyberProduct:"Thesis Bodhisattva, Manjushri for Writing", culturalTarget:"Manjushri (Bodhisattva of Intellect)", platform:["Twitter (X)","Academic Forums","WeChat"], affective:["Alleviating imposter syndrome","coping with rejections"], meme:["Academic venting","dark academia humor"], ritual:["Buddha holding a Nature/Science journal","Revise & Resubmit talismans"], source:"https://www.xiaohongshu.com/explore/68cebda9000000000b03c5d4", sourceType:"Academic Community Meme"},
+  {i:6, person:"健康焦虑者 (Health-Anxious User)", pressure:"求平安、求健康 (Seeking safety and health)", cyberProduct:"Medicine Buddha Meme, Health Blessing Meme", culturalTarget:"Medicine Buddha; 传统祛病符咒", platform:["Rednote","TikTok","Weibo","Facebook"], affective:["补偿性心理安抚 (Compensatory reassurance)"], meme:["解构沉重感 (Deflecting gravity)","集体认同感 (Collective identity)"], ritual:["蓝靛色 (Indigo blue)","佛祖手持输液管 (Buddha with IV drip)"], source:"https://www.xiaohongshu.com/explore/6978af94000000002202db23", sourceType:"Social Media Post"},
+  {i:7, person:"偶然参与者 (Casual Participant)", pressure:"玩梗、内疚、自嘲、赛博功德", cyberProduct:"Gatling Bodhisattva, Cyber Merit", culturalTarget:"投币许愿池；庙会随机祈福", platform:["Rednote","TikTok","Weibo","Facebook"], affective:["Social Currency","Lightweight Amusement","Curiosity Satisfaction"], meme:["文化解码器 (Cultural Decoder)"], ritual:["Stickers","佛像加潮流文字 (Buddha with trendy text)"], source:"", sourceType:""},
+  {i:8, person:"Meme创作者 (Meme Creator)", pressure:"二创、转发、集体玩梗", cyberProduct:"Buddha Reaction Meme, CyberMerit Meme", culturalTarget:"忿怒尊 (Wrathful Deities) / 护法神", platform:["Rednote","TikTok","Weibo","Facebook"], affective:["Subversive Joy","In-group Identity","荒诞感的共鸣"], meme:["Intertextuality","知识压缩与传播","解构 (Deconstruction)"], ritual:["Collage Aesthetic","自嘲式符号 (Self-deprecating symbols)"], source:"https://www.xiaohongshu.com/discovery/item/69738cf6000000000c036542", sourceType:"UGC"},
+  {i:9, person:"泛灵性用户 (Spiritual User)", pressure:"情绪安慰、仪式感、自我疗愈", cyberProduct:"Online Incense, Digital Prayer", culturalTarget:"家庭神龛 (Home Altar) / 禅修 (Dhyana)", platform:["Rednote","TikTok","Weibo","Facebook"], affective:["深度心理补偿","孤独感的数字消解"], meme:["Cyber Zen","解构 (Deconstruction)"], ritual:["辉光与粒子效果","神圣几何与分形 (Sacred geometry)"], source:"https://www.tiktok.com/@panda_chakra/video/7312128670817160480", sourceType:"Short Video"},
+  {i:10, person:"模板/挑战参与者 (Template Participant)", pressure:"参与挑战、转发模板、社交表达", cyberProduct:"RedNote Blessing Template, TikTok Ritual Meme", culturalTarget:"印制灵符 (Fu) / 功德簿 (Merit Book)", platform:["Rednote","TikTok","Weibo","Facebook"], affective:["群体共鸣","即时满足","社交货币"], meme:["梗的标准化","降低认知负荷"], ritual:["高频 UI 元素","数字仪表盘 (Digital dashboard)"], source:"", sourceType:""},
+  {i:11, person:"Gamer / Fan (抽卡玩家)", pressure:"Gacha anxiety; lottery uncertainty; desire for rare cards / photocards", cyberProduct:"Gacha Luck Meme; Good Luck Song Ritual; Idol Blessing Image", culturalTarget:"Luck-seeking ritual; celebrity-as-luck-symbol; draw-lot logic", platform:["Bilibili","RedNote","Weibo","Douyin","Fandom communities"], affective:["Hope","excitement","anxiety relief","playful confidence"], meme:["Luck ritual","fandom joke","gacha superstition","participatory meme"], ritual:["iPad screen","idol photo","Good Luck Comes song","album photocard"], source:"", sourceType:"Short video; fandom post; game community post"},
+  {i:12, person:"Single Young Adult (单身青年)", pressure:"Relationship anxiety; desire for romance; peach-blossom luck", cyberProduct:"Love Fortune Wallpaper; Peach-Blossom Avatar; Cyber Yuelao", culturalTarget:"Yuelao; peach-blossom luck; manifestation culture", platform:["RedNote","Weibo","TikTok","Instagram","Pinterest"], affective:["Romantic hope","reassurance","self-comfort","emotional compensation"], meme:["Love manifestation template","wish-making post","romantic self-branding"], ritual:["Peach blossom","pink colour scheme","Yuelao reference","affirmation text"], source:"", sourceType:"Social media post; wallpaper; manifestation content"},
+  {i:13, person:"Couple (情侣)", pressure:"Relationship insecurity; desire for long-lasting love; reconciliation", cyberProduct:"Relationship Blessing Meme; 99 Comment Ritual; CP Blessing Post", culturalTarget:"Chinese homophonic '99 / jiujiu' (long-lasting) blessing culture", platform:["Weibo","RedNote","Douyin","Instagram","Fandom communities"], affective:["Emotional reassurance","relationship stability","collective blessing"], meme:["Comment ritual","couple blessing meme","CP support meme","participatory blessing"], ritual:['"99" comment','heart emoji','couple photo','blessing text','CP imagery'], source:"", sourceType:"Social media comment; couple post"},
+  {i:14, person:"Traveller (旅行者)", pressure:"Travel uncertainty; safety concerns; flight disruption anxiety", cyberProduct:"Cyber Mazu; Online Mazu Divination; Digital Poe Divination", culturalTarget:"Mazu worship; poe divination / throwing sacred blocks", platform:["RedNote","WeChat","Weibo","Temple website","Online divination website"], affective:["Safety reassurance","reduction of travel anxiety","spiritual comfort"], meme:["Travel blessing ritual","online divination practice","safe-journey wish"], ritual:["Mazu image","temple iconography","sacred blocks / poe","divination interface","incense"], source:"", sourceType:"Social media post; online divination tool"}
+];
+
+// Render CSV table
+const tbody = document.getElementById('csv-tbody');
+CASES.forEach(c => {
+  const tr = document.createElement('tr');
+  const src = c.source
+    ? `<a href="${c.source}" target="_blank" class="source-link">🔗 ${c.sourceType || 'Source'}</a>`
+    : (c.sourceType ? `<span style="font-size:0.7rem;color:var(--muted)">${c.sourceType}</span>` : '—');
+  tr.innerHTML = `
+    <td style="font-weight:bold;color:var(--gold)">${c.i}</td>
+    <td><span class="person-badge">${c.person}</span></td>
+    <td style="max-width:180px;font-size:0.75rem">${c.pressure}</td>
+    <td style="font-size:0.75rem">${c.cyberProduct}</td>
+    <td style="font-size:0.75rem">${c.culturalTarget}</td>
+    <td>${c.platform.map(p=>`<span class="tag">${p}</span>`).join('')}</td>
+    <td style="font-size:0.75rem">${c.affective.join('; ')}</td>
+    <td>${src}</td>`;
+  tbody.appendChild(tr);
+});
+
+// Render Case Cards
+const grid = document.getElementById('case-grid');
+CASES.forEach(c => {
+  const card = document.createElement('div');
+  card.className = 'case-card';
+  const src = c.source
+    ? `<a href="${c.source}" target="_blank" class="source-link">↗ View source</a>`
+    : '';
+  card.innerHTML = `
+    <div class="case-num">Case ${c.i}</div>
+    <h3>${c.person}</h3>
+    <div class="pressure">${c.pressure}</div>
+    <div class="case-field">
+      <div class="field-label">Cyber Product</div>
+      <div class="field-value">${c.cyberProduct}</div>
+    </div>
+    <div class="case-field">
+      <div class="field-label">Cultural Target</div>
+      <div class="field-value">${c.culturalTarget}</div>
+    </div>
+    <div class="case-field">
+      <div class="field-label">Platform</div>
+      <div class="field-value">${c.platform.map(p=>`<span class="tag">${p}</span>`).join('')}</div>
+    </div>
+    <div class="case-field">
+      <div class="field-label">Affective Function</div>
+      <div class="field-value">${c.affective.join(' · ')}</div>
+    </div>
+    <div class="case-field">
+      <div class="field-label">Meme Function</div>
+      <div class="field-value">${c.meme.join(' · ')}</div>
+    </div>
+    <div class="case-field">
+      <div class="field-label">Ritual Symbol</div>
+      <div class="field-value">${c.ritual.map(s=>`<span class="tag">${s}</span>`).join('')}</div>
+    </div>
+    ${src}
+  `;
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>

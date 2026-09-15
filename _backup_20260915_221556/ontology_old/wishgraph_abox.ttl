@@ -1,0 +1,379 @@
+@prefix wg:   <https://example.org/wishgraph#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+############################################################
+# A-Box — 9 cyber-ritual cases
+############################################################
+
+wg:Case_CatWish a wg:CyberRitualCase ;
+    rdfs:label "Case_CatWish" ;
+    wg:hasSubject wg:ExamWishPoster ;
+    wg:hasPerformativeAction wg:Posting_ExamWish ;
+    wg:circulatesOnPlatform wg:Xiaohongshu ;
+    wg:hasSecularPressure wg:ExamPressure ;
+    wg:usesRemediatedSignifier wg:ExamCatImg ;
+    wg:usesRitualSymbol wg:KnittedKasaya , wg:LotusCushion ;
+    wg:hasArchetype wg:Cat , wg:Mahayana ;
+    wg:hasRemediationStrategy wg:CatBuddha ;
+    wg:resultsInOutcome wg:MemeTherapy .
+
+wg:Case_DigitalEnlightenment a wg:CyberRitualCase ;
+    rdfs:label "Case_DigitalEnlightenment" ;
+    wg:hasSubject wg:DigitalEnlightenmentPoster ;
+    wg:hasPerformativeAction wg:Posting_BuddhaTeaching ;
+    wg:circulatesOnPlatform wg:Tiktok ;
+    wg:hasSecularPressure wg:ExistentialPressure_ModernAnxiety ;
+    wg:usesRemediatedSignifier wg:PsychedelicBuddhaVideo ;
+    wg:usesRitualSymbol wg:LotusCushion , wg:PsychedelicAura ;
+    wg:hasArchetype wg:Mahayana ;
+    wg:hasRemediationStrategy wg:PsychedelicAestheticRemediation ;
+    wg:resultsInOutcome wg:InnerPeace .
+
+wg:Case_HealthWish a wg:CyberRitualCase ;
+    rdfs:label "Case_HealthWish" ;
+    wg:hasSubject wg:HealthWishPoster ;
+    wg:hasPerformativeAction wg:Posting_HealthWish ;
+    wg:circulatesOnPlatform wg:Xiaohongshu ;
+    wg:hasSecularPressure wg:HealthProblem ;
+    wg:usesRemediatedSignifier wg:BlueBuddhaImg ;
+    wg:hasArchetype wg:MedicineBuddha ;
+    wg:hasRemediationStrategy wg:RestoreOriginal ;
+    wg:resultsInOutcome wg:HealthRecovery .
+
+wg:Case_InstagramTraditionalPrayer a wg:CyberRitualCase ;
+    rdfs:label "Case_InstagramTraditionalPrayer" ;
+    wg:hasSubject wg:TraditionalPrayerPoster ;
+    wg:hasPerformativeAction wg:Posting_NewYearPrayer ;
+    wg:circulatesOnPlatform wg:Instagram ;
+    wg:hasSecularPressure wg:MundanePressure_FutureUncertainty ;
+    wg:usesRemediatedSignifier wg:TraditionalBuddhaPostImage ;
+    wg:hasArchetype wg:MedicineBuddha ;
+    wg:hasRemediationStrategy wg:RestoreOriginal ;
+    wg:resultsInOutcome wg:NewYearVibes .
+
+wg:Case_InstagramWealth a wg:CyberRitualCase ;
+    rdfs:label "Case_InstagramWealth" ;
+    wg:hasSubject wg:MaterialisticUser , wg:WealthClaimCommenter ;
+    wg:hasPerformativeAction wg:Commenting_ClaimWealth , wg:Posting_WealthManifesting ;
+    wg:circulatesOnPlatform wg:Instagram ;
+    wg:hasSecularPressure wg:MundanePressure_StatusAnxiety ;
+    wg:usesRemediatedSignifier wg:SportsCarManifestingVideo ;
+    wg:usesRitualSymbol wg:Emoji_PrayingHands , wg:LoFiBeatAndSlowMo , wg:Mantra_ClaimEnergy ;
+    wg:hasArchetype wg:LuxurySportsCar ;
+    wg:hasRemediationStrategy wg:Remediation_LuxuryCar ;
+    wg:resultsInOutcome wg:FinancialFreedom .
+
+wg:Case_ManifestingKardashian a wg:CyberRitualCase ;
+    rdfs:label "Case_ManifestingKardashian" ;
+    wg:hasSubject wg:KardashianManifestingPoster ;
+    wg:hasPerformativeAction wg:Posting_ManifestingSpell ;
+    wg:circulatesOnPlatform wg:Xiaohongshu ;
+    wg:hasSecularPressure wg:CareerWealth ;
+    wg:usesRemediatedSignifier wg:KrisJennerMemeImg ;
+    wg:usesRitualSymbol wg:ManifestingMantraText ;
+    wg:hasArchetype wg:KrisJennerPopIcon ;
+    wg:hasRemediationStrategy wg:PopIdolGod ;
+    wg:resultsInOutcome wg:WealthDelusion .
+
+wg:Case_SubliminalRomance a wg:CyberRitualCase ;
+    rdfs:label "Case_SubliminalRomance" ;
+    wg:hasSubject wg:RomanceSeekingUser ;
+    wg:hasPerformativeAction wg:Posting_SubliminalVideo ;
+    wg:circulatesOnPlatform wg:Bilibili ;
+    wg:hasSecularPressure wg:MundanePressure_RomanticAnxiety ;
+    wg:usesRemediatedSignifier wg:SubliminalButterflyVideo ;
+    wg:usesRitualSymbol wg:GlitterAesthetic , wg:SubliminalAudioFrequency ;
+    wg:hasArchetype wg:Butterfly ;
+    wg:hasRemediationStrategy wg:ButterflyGod ;
+    wg:resultsInOutcome wg:RomanticAttraction .
+
+wg:Case_XWealthManifesting a wg:CyberRitualCase ;
+    rdfs:label "Case_XWealthManifesting" ;
+    wg:hasSubject wg:ManifestPoster ;
+    wg:hasPerformativeAction wg:Posting_Manifest2026 ;
+    wg:circulatesOnPlatform wg:XPlatform ;
+    wg:hasSecularPressure wg:MundanePressure_WealthDesire ;
+    wg:usesRemediatedSignifier wg:CashManifestingVideo ;
+    wg:usesRitualSymbol wg:Emoji_RedHeart ;
+    wg:hasArchetype wg:StackOfCash ;
+    wg:hasRemediationStrategy wg:Remediation_CashFetishization ;
+    wg:resultsInOutcome wg:Prosperity .
+
+wg:Case_XiaohongshuCET6Comment a wg:CyberRitualCase ;
+    rdfs:label "Case_XiaohongshuCET6Comment" ;
+    wg:hasSubject wg:CET6Commenter ;
+    wg:hasPerformativeAction wg:Commenting_CET6Manifestation ;
+    wg:circulatesOnPlatform wg:Xiaohongshu ;
+    wg:hasSecularPressure wg:ExamPressure ;
+    wg:usesRemediatedSignifier wg:KrisJennerReplyImage ;
+    wg:usesRitualSymbol wg:Mantra_CET6Success ;
+    wg:hasArchetype wg:KrisJennerPopIcon ;
+    wg:hasRemediationStrategy wg:PopIdolGod ;
+    wg:resultsInOutcome wg:AcademicSuccess .
+
+
+############################################################
+# Dimension instances with typed facet values
+############################################################
+
+wg:AcademicSuccess a wg:AffectiveOutcome ;
+    rdfs:label "AcademicSuccess" .
+
+wg:FinancialFreedom a wg:AffectiveOutcome ;
+    rdfs:label "FinancialFreedom" .
+
+wg:HealthRecovery a wg:AffectiveOutcome ;
+    rdfs:label "HealthRecovery" .
+
+wg:InnerPeace a wg:AffectiveOutcome ;
+    rdfs:label "InnerPeace" .
+
+wg:MemeTherapy a wg:AffectiveOutcome ;
+    rdfs:label "MemeTherapy" .
+
+wg:NewYearVibes a wg:AffectiveOutcome ;
+    rdfs:label "NewYearVibes" .
+
+wg:Prosperity a wg:AffectiveOutcome ;
+    rdfs:label "Prosperity" .
+
+wg:RomanticAttraction a wg:AffectiveOutcome ;
+    rdfs:label "RomanticAttraction" .
+
+wg:WealthDelusion a wg:AffectiveOutcome ;
+    rdfs:label "WealthDelusion" .
+
+wg:Butterfly a wg:Archetype ;
+    rdfs:label "Butterfly"
+    ; wg:archetypeType "Animal" .
+
+wg:Cat a wg:Archetype ;
+    rdfs:label "Cat"
+    ; wg:archetypeType "Animal" .
+
+wg:KrisJennerPopIcon a wg:Archetype ;
+    rdfs:label "KrisJennerPopIcon"
+    ; wg:archetypeType "Modern" .
+
+wg:LuxurySportsCar a wg:Archetype ;
+    rdfs:label "LuxurySportsCar"
+    ; wg:archetypeType "SecularCommodity" .
+
+wg:Mahayana a wg:Archetype ;
+    rdfs:label "Mahayana"
+    ; wg:archetypeType "Traditional" .
+
+wg:MedicineBuddha a wg:Archetype ;
+    rdfs:label "MedicineBuddha"
+    ; wg:archetypeType "Traditional" .
+
+wg:StackOfCash a wg:Archetype ;
+    rdfs:label "StackOfCash"
+    ; wg:archetypeType "SecularCommodity" .
+
+wg:Commenting_CET6Manifestation a wg:PerformativeAction ;
+    rdfs:label "Commenting_CET6Manifestation" .
+
+wg:Commenting_ClaimWealth a wg:PerformativeAction ;
+    rdfs:label "Commenting_ClaimWealth" .
+
+wg:Posting_BuddhaTeaching a wg:PerformativeAction ;
+    rdfs:label "Posting_BuddhaTeaching" .
+
+wg:Posting_ExamWish a wg:PerformativeAction ;
+    rdfs:label "Posting_ExamWish" .
+
+wg:Posting_HealthWish a wg:PerformativeAction ;
+    rdfs:label "Posting_HealthWish" .
+
+wg:Posting_Manifest2026 a wg:PerformativeAction ;
+    rdfs:label "Posting_Manifest2026" .
+
+wg:Posting_ManifestingSpell a wg:PerformativeAction ;
+    rdfs:label "Posting_ManifestingSpell" .
+
+wg:Posting_NewYearPrayer a wg:PerformativeAction ;
+    rdfs:label "Posting_NewYearPrayer" .
+
+wg:Posting_SubliminalVideo a wg:PerformativeAction ;
+    rdfs:label "Posting_SubliminalVideo" .
+
+wg:Posting_WealthManifesting a wg:PerformativeAction ;
+    rdfs:label "Posting_WealthManifesting" .
+
+wg:Bilibili a wg:Platform ;
+    rdfs:label "Bilibili" .
+
+wg:Instagram a wg:Platform ;
+    rdfs:label "Instagram" .
+
+wg:Tiktok a wg:Platform ;
+    rdfs:label "Tiktok" .
+
+wg:XPlatform a wg:Platform ;
+    rdfs:label "XPlatform" .
+
+wg:Xiaohongshu a wg:Platform ;
+    rdfs:label "Xiaohongshu" .
+
+wg:BlueBuddhaImg a wg:RemediatedSignifier ;
+    rdfs:label "BlueBuddhaImg"
+    ; wg:signifierType "Image" .
+
+wg:CashManifestingVideo a wg:RemediatedSignifier ;
+    rdfs:label "CashManifestingVideo"
+    ; wg:signifierType "Video" .
+
+wg:ExamCatImg a wg:RemediatedSignifier ;
+    rdfs:label "ExamCatImg"
+    ; wg:signifierType "Image" .
+
+wg:KrisJennerMemeImg a wg:RemediatedSignifier ;
+    rdfs:label "KrisJennerMemeImg"
+    ; wg:signifierType "Image" .
+
+wg:KrisJennerReplyImage a wg:RemediatedSignifier ;
+    rdfs:label "KrisJennerReplyImage"
+    ; wg:signifierType "Image" .
+
+wg:PsychedelicBuddhaVideo a wg:RemediatedSignifier ;
+    rdfs:label "PsychedelicBuddhaVideo"
+    ; wg:signifierType "Video" .
+
+wg:SportsCarManifestingVideo a wg:RemediatedSignifier ;
+    rdfs:label "SportsCarManifestingVideo"
+    ; wg:signifierType "Video" .
+
+wg:SubliminalButterflyVideo a wg:RemediatedSignifier ;
+    rdfs:label "SubliminalButterflyVideo"
+    ; wg:signifierType "Video" .
+
+wg:TraditionalBuddhaPostImage a wg:RemediatedSignifier ;
+    rdfs:label "TraditionalBuddhaPostImage"
+    ; wg:signifierType "Image" .
+
+wg:ButterflyGod a wg:RemediationStrategy ;
+    rdfs:label "ButterflyGod"
+    ; wg:strategyType "SacredHybridization" .
+
+wg:CatBuddha a wg:RemediationStrategy ;
+    rdfs:label "CatBuddha"
+    ; wg:strategyType "SacredHybridization" .
+
+wg:PopIdolGod a wg:RemediationStrategy ;
+    rdfs:label "PopIdolGod"
+    ; wg:strategyType "SecularIdolDeification" .
+
+wg:PsychedelicAestheticRemediation a wg:RemediationStrategy ;
+    rdfs:label "PsychedelicAestheticRemediation"
+    ; wg:strategyType "SacredAmplification" .
+
+wg:Remediation_CashFetishization a wg:RemediationStrategy ;
+    rdfs:label "Remediation_CashFetishization"
+    ; wg:strategyType "SymbolicEnchantment" .
+
+wg:Remediation_LuxuryCar a wg:RemediationStrategy ;
+    rdfs:label "Remediation_LuxuryCar"
+    ; wg:strategyType "SymbolicEnchantment" .
+
+wg:RestoreOriginal a wg:RemediationStrategy ;
+    rdfs:label "RestoreOriginal"
+    ; wg:strategyType "DigitalTransposition" .
+
+wg:Emoji_PrayingHands a wg:RitualSymbol ;
+    rdfs:label "Emoji_PrayingHands" .
+
+wg:Emoji_RedHeart a wg:RitualSymbol ;
+    rdfs:label "Emoji_RedHeart" .
+
+wg:GlitterAesthetic a wg:RitualSymbol ;
+    rdfs:label "GlitterAesthetic" .
+
+wg:KnittedKasaya a wg:RitualSymbol ;
+    rdfs:label "KnittedKasaya" .
+
+wg:LoFiBeatAndSlowMo a wg:RitualSymbol ;
+    rdfs:label "LoFiBeatAndSlowMo" .
+
+wg:LotusCushion a wg:RitualSymbol ;
+    rdfs:label "LotusCushion" .
+
+wg:ManifestingMantraText a wg:RitualSymbol ;
+    rdfs:label "ManifestingMantraText" .
+
+wg:Mantra_CET6Success a wg:RitualSymbol ;
+    rdfs:label "Mantra_CET6Success" .
+
+wg:Mantra_ClaimEnergy a wg:RitualSymbol ;
+    rdfs:label "Mantra_ClaimEnergy" .
+
+wg:PsychedelicAura a wg:RitualSymbol ;
+    rdfs:label "PsychedelicAura" .
+
+wg:SubliminalAudioFrequency a wg:RitualSymbol ;
+    rdfs:label "SubliminalAudioFrequency" .
+
+wg:CareerWealth a wg:SecularPressure ;
+    rdfs:label "CareerWealth"
+    ; wg:pressureType "Mundane" .
+
+wg:ExamPressure a wg:SecularPressure ;
+    rdfs:label "ExamPressure"
+    ; wg:pressureType "Mundane" .
+
+wg:ExistentialPressure_ModernAnxiety a wg:SecularPressure ;
+    rdfs:label "ExistentialPressure_ModernAnxiety"
+    ; wg:pressureType "Existential" .
+
+wg:HealthProblem a wg:SecularPressure ;
+    rdfs:label "HealthProblem"
+    ; wg:pressureType "Existential" .
+
+wg:MundanePressure_FutureUncertainty a wg:SecularPressure ;
+    rdfs:label "MundanePressure_FutureUncertainty"
+    ; wg:pressureType "Mundane" .
+
+wg:MundanePressure_RomanticAnxiety a wg:SecularPressure ;
+    rdfs:label "MundanePressure_RomanticAnxiety"
+    ; wg:pressureType "Mundane" .
+
+wg:MundanePressure_StatusAnxiety a wg:SecularPressure ;
+    rdfs:label "MundanePressure_StatusAnxiety"
+    ; wg:pressureType "Mundane" .
+
+wg:MundanePressure_WealthDesire a wg:SecularPressure ;
+    rdfs:label "MundanePressure_WealthDesire"
+    ; wg:pressureType "Mundane" .
+
+wg:CET6Commenter a wg:Subject ;
+    rdfs:label "CET6Commenter" .
+
+wg:DigitalEnlightenmentPoster a wg:Subject ;
+    rdfs:label "DigitalEnlightenmentPoster" .
+
+wg:ExamWishPoster a wg:Subject ;
+    rdfs:label "ExamWishPoster" .
+
+wg:HealthWishPoster a wg:Subject ;
+    rdfs:label "HealthWishPoster" .
+
+wg:KardashianManifestingPoster a wg:Subject ;
+    rdfs:label "KardashianManifestingPoster" .
+
+wg:ManifestPoster a wg:Subject ;
+    rdfs:label "ManifestPoster" .
+
+wg:MaterialisticUser a wg:Subject ;
+    rdfs:label "MaterialisticUser" .
+
+wg:RomanceSeekingUser a wg:Subject ;
+    rdfs:label "RomanceSeekingUser" .
+
+wg:TraditionalPrayerPoster a wg:Subject ;
+    rdfs:label "TraditionalPrayerPoster" .
+
+wg:WealthClaimCommenter a wg:Subject ;
+    rdfs:label "WealthClaimCommenter" .
