@@ -1,0 +1,398 @@
+@prefix : <http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix creon: <http://www.ontologydesignpatterns.org/ont/creativity/creon.owl#> .
+@base <http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#> .
+
+<http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl> rdf:type owl:Ontology ;
+                                                                 owl:imports <http://www.ontologydesignpatterns.org/ont/creativity/creon.owl> ;
+                                                                 <http://purl.org/dc/terms/created> "2026-06-10"^^xsd:date ;
+                                                                 <http://purl.org/dc/terms/creator> "Xinyi Guo" ,
+                                                                                                    "Yuming Lian" ,
+                                                                                                    "Yutong Li" ;
+                                                                 <http://purl.org/dc/terms/description> "An ontology for representing and analyzing digital cyber-wishing behaviors and modern manifesting rituals on social media platforms. It models how users remediate various archetypes—ranging from traditional deities (e.g., Buddha) to modern pop-culture icons (e.g., celebrities, cute animals) and secular commodities—into digital totems to alleviate mundane or existential pressures."@en ;
+                                                                 <http://purl.org/dc/terms/license> <https://creativecommons.org/licenses/by/4.0/> ;
+                                                                 <http://purl.org/dc/terms/modified> "2026-06-10"^^xsd:date ;
+                                                                 <http://purl.org/dc/terms/title> "The Cyber-Wishing Ontology (WishGraph)"@en ;
+                                                                 rdfs:comment "A refined ontology for Cyber-Wishing, mapped directly to CREON, designed by Digital Humanities students to capture the intersection of semiotics, consumerism, and modern cyber-beliefs."@en ;
+                                                                 owl:versionInfo "1.0 (June 2026)"@en .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://purl.org/dc/terms/created
+<http://purl.org/dc/terms/created> rdf:type owl:AnnotationProperty .
+
+
+###  http://purl.org/dc/terms/creator
+<http://purl.org/dc/terms/creator> rdf:type owl:AnnotationProperty .
+
+
+###  http://purl.org/dc/terms/description
+<http://purl.org/dc/terms/description> rdf:type owl:AnnotationProperty .
+
+
+###  http://purl.org/dc/terms/license
+<http://purl.org/dc/terms/license> rdf:type owl:AnnotationProperty .
+
+
+###  http://purl.org/dc/terms/modified
+<http://purl.org/dc/terms/modified> rdf:type owl:AnnotationProperty .
+
+
+###  http://purl.org/dc/terms/title
+<http://purl.org/dc/terms/title> rdf:type owl:AnnotationProperty .
+
+
+#################################################################
+#    Datatypes
+#################################################################
+
+###  http://www.w3.org/2001/XMLSchema#date
+xsd:date rdf:type rdfs:Datatype .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.ontologydesignpatterns.org/ont/creativity/creon.owl#focusedOn
+creon:focusedOn rdf:type owl:ObjectProperty .
+
+
+###  http://www.ontologydesignpatterns.org/ont/creativity/creon.owl#hasPart
+creon:hasPart rdf:type owl:ObjectProperty .
+
+
+###  http://www.ontologydesignpatterns.org/ont/creativity/creon.owl#influencedBy
+creon:influencedBy rdf:type owl:ObjectProperty .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#circulatesOn
+:circulatesOn rdf:type owl:ObjectProperty ;
+              rdfs:domain :CyberRitualCase ;
+              rdfs:range :Platform ;
+              rdfs:comment "Specifies the digital platform where the cyber ritual takes place."@en ;
+              rdfs:label "circulates on"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#containsSymbol
+:containsSymbol rdf:type owl:ObjectProperty ;
+                rdfs:subPropertyOf creon:hasPart ;
+                rdfs:domain :RemediatedSignifier ;
+                rdfs:range :RitualSymbol ;
+                rdfs:comment "Links the ritual to specific visual or symbolic markers (e.g., emojis, glowing effects)."@en ;
+                rdfs:label "contains symbol"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#employsSignifier
+:employsSignifier rdf:type owl:ObjectProperty ;
+                  rdfs:subPropertyOf creon:focusedOn ;
+                  rdfs:domain :CyberRitualCase ;
+                  rdfs:range :RemediatedSignifier ;
+                  rdfs:comment "Links the ritual case to the specific digital signifier used."@en ;
+                  rdfs:label "employs signifier"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#hasPerformativeAction
+:hasPerformativeAction rdf:type owl:ObjectProperty ;
+                       rdfs:subPropertyOf creon:hasPart ;
+                       rdfs:domain :CyberRitualCase ;
+                       rdfs:range :PerformativeAction ;
+                       rdfs:comment "Connects the ritual case to the specific actions executed by the user."@en ;
+                       rdfs:label "has performative action"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#performedBy
+:performedBy rdf:type owl:ObjectProperty ;
+             rdfs:domain :PerformativeAction ;
+             rdfs:range dul:Agent ;
+             rdfs:comment "Connects a performative action to the subject who performs it."@en ;
+             rdfs:label "performed by"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#remediates
+:remediates rdf:type owl:ObjectProperty ;
+            rdfs:domain :RemediatedSignifier ;
+            rdfs:range :Archetype ;
+            rdfs:comment "Shows the connection between a digital signifier and the traditional archetype it reframes."@en ;
+            rdfs:label "remediates"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#resolvesIntoAffect
+:resolvesIntoAffect rdf:type owl:ObjectProperty ;
+                    rdfs:domain :CyberRitualCase ;
+                    rdfs:range :AffectiveOutcome ;
+                    rdfs:comment "Indicates the emotional or psychological resolution produced by the cyber ritual."@en ;
+                    rdfs:label "resolves into affect"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#transformedVia
+:transformedVia rdf:type owl:ObjectProperty ;
+                rdfs:subPropertyOf creon:hasPart ;
+                rdfs:domain :CyberRitualCase ;
+                rdfs:range :RemediationStrategy ;
+                rdfs:comment "Links the ritual to the specific remediation strategy used to adapt traditional symbols."@en ;
+                rdfs:label "transformed via"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#triggeredBy
+:triggeredBy rdf:type owl:ObjectProperty ;
+             rdfs:subPropertyOf creon:influencedBy ;
+             rdfs:domain :CyberRitualCase ;
+             rdfs:range :SecularPressure ;
+             rdfs:comment "Indicates the underlying mundane or existential pressure that drives the cyber ritual."@en ;
+             rdfs:label "triggered by"@en .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#hasSourceURL
+:hasSourceURL rdf:type owl:DatatypeProperty ;
+              rdfs:domain creon:CreativitySituation ;
+              rdfs:range xsd:anyURI ;
+              rdfs:comment "the original online source associated with a represented cyber-ritual situation" ;
+              rdfs:label "has source URL" .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#hasTextContent
+:hasTextContent rdf:type owl:DatatypeProperty ;
+                rdfs:domain :Mantra ;
+                rdfs:range xsd:string ;
+                rdfs:comment "Specifies the literal textual content of a mantra." ;
+                rdfs:label "has text content" .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.ontologydesignpatterns.org/ont/creativity/creon.owl#CreativeIdea
+creon:CreativeIdea rdf:type owl:Class .
+
+
+###  http://www.ontologydesignpatterns.org/ont/creativity/creon.owl#CreativeProduct
+creon:CreativeProduct rdf:type owl:Class .
+
+
+###  http://www.ontologydesignpatterns.org/ont/creativity/creon.owl#CreativityPress
+creon:CreativityPress rdf:type owl:Class .
+
+
+###  http://www.ontologydesignpatterns.org/ont/creativity/creon.owl#CreativitySituation
+creon:CreativitySituation rdf:type owl:Class ;
+                          owl:equivalentClass :CyberRitualCase .
+
+
+###  http://www.ontologydesignpatterns.org/ont/creativity/creon.owl#PersonalProcess
+creon:PersonalProcess rdf:type owl:Class .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#AffectiveOutcome
+:AffectiveOutcome rdf:type owl:Class ;
+                  rdfs:subClassOf creon:CreativeProduct ;
+                  rdfs:comment "The emotional or psychological resolution resulting from the ritual practice."@en ;
+                  rdfs:label "Affective Outcome"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Animal
+:Animal rdf:type owl:Class ;
+        rdfs:subClassOf :Archetype ;
+        rdfs:comment "A non-human animal archetype that is remediated into a cyber-wishing signifier, often through cuteness, humor, or meme conventions."@en ;
+        rdfs:label "Animal Archetype"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Archetype
+:Archetype rdf:type owl:Class ;
+           rdfs:subClassOf creon:CreativeIdea ;
+           rdfs:comment "A source figure, object, symbol, or cultural template that is transformed into a digital signifier within a cyber-wishing practice."@en ;
+           rdfs:label "Archetype"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#CommentingAction
+:CommentingAction rdf:type owl:Class ;
+                  rdfs:subClassOf :PerformativeAction ;
+                  rdfs:comment "A performative action in which a subject participates in a cyber-wishing practice by writing a comment, reply, affirmation, or claiming phrase under a digital signifier."@en ;
+                  rdfs:label "Commenting Action"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#CyberRitualCase
+:CyberRitualCase rdf:type owl:Class ;
+                 rdfs:comment "The core event encompassing the entirety of a cyber-wishing practice, binding together the actor, process, product, and environment."@en ;
+                 rdfs:label "Cyber Ritual Case"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#DigitalTransposition
+:DigitalTransposition rdf:type owl:Class ;
+                      rdfs:subClassOf :RemediationStrategy ;
+                      rdfs:comment "Strategies aiming to preserve the original reverence, visual accuracy, and sacredness of the traditional ritual in a digital space."@en ;
+                      rdfs:label "Digital Transposition Remediation"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Emoji
+:Emoji rdf:type owl:Class ;
+       rdfs:subClassOf :RitualSymbol ;
+       rdfs:comment "A small digital pictographic symbol used as a ritual marker, affective cue, or participation signal in cyber-wishing practices."@en ;
+       rdfs:label "Emoji"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#ExistentialPressure
+:ExistentialPressure rdf:type owl:Class ;
+                     rdfs:subClassOf :SecularPressure ;
+                     rdfs:comment "Deeper life anxieties, concerning health, mortality, or profound emotional instability."@en ;
+                     rdfs:label "Existential Pressure"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#ImageSignifier
+:ImageSignifier rdf:type owl:Class ;
+                rdfs:subClassOf :RemediatedSignifier ;
+                rdfs:comment "A remediated signifier whose primary media modality is an image; it may also contain captions or other textual elements."@en ;
+                rdfs:label "Image Signifier"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Mantra
+:Mantra rdf:type owl:Class ;
+        rdfs:subClassOf :RitualSymbol ;
+        rdfs:comment "A repeated or formulaic textual expression used to declare, reinforce, or perform a wish in a cyber ritual."@en ;
+        rdfs:label "Mantra"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#ModernArchetype
+:ModernArchetype rdf:type owl:Class ;
+                 rdfs:subClassOf :Archetype ;
+                 rdfs:comment "A contemporary figure, meme, or pop-cultural icon that is remediated into a digital wishing object, often functioning as a secular totem in cyber-wishing practices."@en ,
+                              "Contemporary figures, memes, or pop-culture icons that are remediated into digital wishing objects, serving as secular totems for cyber-wishing." ;
+                 rdfs:label "Modern Archetype"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#MundanePressure
+:MundanePressure rdf:type owl:Class ;
+                 rdfs:subClassOf :SecularPressure ;
+                 rdfs:comment "Everyday worldly pressures, such as academic exams, workplace KPIs, or gaming luck."@en ;
+                 rdfs:label "Mundane Pressure"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#PerformativeAction
+:PerformativeAction rdf:type owl:Class ;
+                    rdfs:subClassOf creon:PersonalProcess ;
+                    rdfs:comment "The act of publishing, commenting, sharing, or interacting with digital content on social media platforms, which serves as the externalized execution of the cyber-wishing ritual"@en ;
+                    rdfs:label "Performative Action"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Platform
+:Platform rdf:type owl:Class ;
+          rdfs:comment "The digital environment or social media platform where the cyber-wishing circulates."@en ;
+          rdfs:label "Platform"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#PostingAction
+:PostingAction rdf:type owl:Class ;
+               rdfs:subClassOf :PerformativeAction ;
+               rdfs:comment "A performative action in which a subject publishes, uploads, or shares a cyber-wishing signifier on a digital platform."@en ;
+               rdfs:label "Posting Action"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#RemediatedSignifier
+:RemediatedSignifier rdf:type owl:Class ;
+                     rdfs:subClassOf creon:CreativeProduct ;
+                     rdfs:comment "The digital transformation of a traditional wishing object, forming the core icon of the cyber ritual."@en ;
+                     rdfs:label "Remediated Signifier"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#RemediationStrategy
+:RemediationStrategy rdf:type owl:Class ;
+                     rdfs:subClassOf creon:PersonalProcess ;
+                     rdfs:comment "The creative method through which traditional ritual elements are adapted into digital formats."@en ;
+                     rdfs:label "Remediation Strategy"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#RitualSymbol
+:RitualSymbol rdf:type owl:Class ;
+              rdfs:subClassOf creon:CreativeProduct ;
+              owl:disjointWith :TraditionalArchetype ;
+              rdfs:comment "Specific visual, textual, or interactive markers that mediate the ritual (e.g., a glowing aura, an emoji)."@en ;
+              rdfs:label "Ritual Symbol"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#SacredAmplification
+:SacredAmplification rdf:type owl:Class ;
+                     rdfs:subClassOf :RemediationStrategy ;
+                     rdfs:comment "A remediation strategy in which an already sacred or religious source is digitally intensified, making its sacredness, aura, or supernatural quality more visually or affectively salient."@en ;
+                     rdfs:label "Sacred Amplification Remediation"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#SacredHybridization
+:SacredHybridization rdf:type owl:Class ;
+                     rdfs:subClassOf :RemediationStrategy ;
+                     rdfs:comment "A remediation strategy in which a secular, ordinary, or non-religious source is blended with sacred visual forms, ritual roles, or religious iconography."@en ;
+                     rdfs:label "Sacred Hybridization Remediation"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#SecularCommodity
+:SecularCommodity rdf:type owl:Class ;
+                  rdfs:subClassOf :Archetype ;
+                  rdfs:comment "Everyday consumer goods, luxury items, or financial assets (e.g., sports cars, cash) that serve as the baseline source for material manifesting."@en ;
+                  rdfs:label "Secular Commodity Archetype"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#SecularIdolDeification
+:SecularIdolDeification rdf:type owl:Class ;
+                        rdfs:subClassOf :RemediationStrategy ;
+                        rdfs:comment "A remediation strategy in which a celebrity, influencer, or pop-cultural figure is assigned a quasi-divine role as an object of wishing, luck, success, or aspiration."@en ;
+                        rdfs:label "Secular Idol Deification Remediation"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#SecularPressure
+:SecularPressure rdf:type owl:Class ;
+                 rdfs:subClassOf creon:CreativityPress ;
+                 rdfs:comment "The real-world need, anxiety, or uncertainty that triggers the cyber ritual practice."@en ;
+                 rdfs:label "Secular Pressure"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Subject
+:Subject rdf:type owl:Class ;
+         rdfs:subClassOf dul:Agent ;
+         rdfs:comment "The individual participating in the cyber ritual, often driven by underlying anxieties or desires."@en ;
+         rdfs:label "Subject"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#SymbolicEnchantment
+:SymbolicEnchantment rdf:type owl:Class ;
+                     rdfs:subClassOf :RemediationStrategy ;
+                     rdfs:comment "A remediation strategy in which a natural object or cultural symbol is endowed with ritual efficacy and becomes a medium for attracting, activating, or realizing a desired outcome."@en ;
+                     rdfs:label "Symbolic Enchantment Remediation"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#TraditionalArchetype
+:TraditionalArchetype rdf:type owl:Class ;
+                      rdfs:subClassOf :Archetype ;
+                      rdfs:comment "The original, traditional deity, symbol, or concept from which the digital signifier is derived."@en ;
+                      rdfs:label "Traditional Archetype"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#VideoSignifier
+:VideoSignifier rdf:type owl:Class ;
+                rdfs:subClassOf :RemediatedSignifier ;
+                rdfs:comment "A remediated signifier whose primary media modality is video; it may also contain captions, subtitles, or accompanying text."@en ;
+                rdfs:label "Video Signifier"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#VisualOrAuditoryMarker
+:VisualOrAuditoryMarker rdf:type owl:Class ;
+                        rdfs:subClassOf :RitualSymbol ;
+                        rdfs:comment "A visual or auditory cue, such as light, aura, music, slow motion, or decorative imagery, that helps produce the ritual atmosphere of a cyber-wishing signifier."@en ;
+                        rdfs:label "Visual or Auditory Marker"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Agent
+dul:Agent rdf:type owl:Class .
+
+
+###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi

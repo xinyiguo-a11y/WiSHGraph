@@ -157,7 +157,9 @@ creon:influencedBy rdf:type owl:ObjectProperty .
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#hasSourceURL
 :hasSourceURL rdf:type owl:DatatypeProperty ;
               rdfs:domain creon:CreativitySituation ;
-              rdfs:range xsd:anyURI .
+              rdfs:range xsd:anyURI ;
+              rdfs:comment "the original online source associated with a represented cyber-ritual situation" ;
+              rdfs:label "has source URL" .
 
 
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#hasTextContent
@@ -490,6 +492,7 @@ dul:Agent rdf:type owl:Class .
                  :resolvesIntoAffect :HealthRecovery ;
                  :transformedVia :RestoreOriginal ;
                  :triggeredBy :HealthProblem ;
+                 :hasSourceURL "https://xhslink.cn/o/7EqcM3TCMbO" ;
                  rdfs:comment "A cyber-wishing case in which a user posts or engages with a Medicine Buddha image in response to health-related anxiety."@en ;
                  rdfs:label "Medicine Buddha Health Wish Case"@en .
 
@@ -503,6 +506,7 @@ dul:Agent rdf:type owl:Class .
                                  :resolvesIntoAffect :NewYearVibes ;
                                  :transformedVia :RestoreOriginal ;
                                  :triggeredBy :MundanePressure_FutureUncertainty ;
+                                 :hasSourceURL "https://www.instagram.com/p/DaiKtLrEve2/?stkn=MTY3NGp1dHl2cnp5dg==" ;
                                  rdfs:comment "A cyber-ritual case where a user posts a traditional, unedited image of Buddha on Instagram to pray for positive energy and good news for the upcoming year."@en ;
                                  rdfs:label "Instagram Traditional Buddha Prayer Case"@en .
 
@@ -530,6 +534,7 @@ dul:Agent rdf:type owl:Class .
                             :resolvesIntoAffect :WealthDelusion ;
                             :transformedVia :PopIdolGod ;
                             :triggeredBy :CareerWealth ;
+                            :hasSourceURL "https://xhslink.cn/o/2r8I5Se4tQR" ;
                             rdfs:comment "A cyber-ritual case where a user posts a Kris Jenner meme to manifest wealth, career success, and multi-identities."@en ;
                             rdfs:label "Manifesting Kardashian Case"@en .
 
