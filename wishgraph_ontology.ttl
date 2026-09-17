@@ -219,6 +219,7 @@ creon:PersonalProcess rdf:type owl:Class .
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#CommentingAction
 :CommentingAction rdf:type owl:Class ;
                   rdfs:subClassOf :PerformativeAction ;
+                  owl:disjointWith :PostingAction ;
                   rdfs:comment "A performative action in which a subject participates in a cyber-wishing practice by writing a comment, reply, affirmation, or claiming phrase under a digital signifier."@en ;
                   rdfs:label "Commenting Action"@en .
 
@@ -253,6 +254,7 @@ creon:PersonalProcess rdf:type owl:Class .
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#ImageSignifier
 :ImageSignifier rdf:type owl:Class ;
                 rdfs:subClassOf :RemediatedSignifier ;
+                owl:disjointWith :VideoSignifier ;
                 rdfs:comment "A remediated signifier whose primary media modality is an image; it may also contain captions or other textual elements."@en ;
                 rdfs:label "Image Signifier"@en .
 
