@@ -1023,6 +1023,59 @@ footer strong { color: var(--gold-light); }
       <p>The emotional or affective function the practice resolves into (anxiety relief, hope, reassurance, communal encouragement).</p>
     </div>
   </div>
+  <div style="
+  margin: 0 0 1.4rem;
+  padding: .9rem 1rem;
+  background: rgba(201,148,58,.08);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 8px 8px 0;
+  font-family: Arial, sans-serif;
+  font-size: .78rem;
+  line-height: 1.8;
+  color: var(--muted);
+">
+  <strong style="color:var(--accent);">Ontology reuse.</strong><br>
+
+  WishGraph formally imports the <code class="mono">CREON</code> ontology and reuses several
+  higher-level concepts through two different kinds of class alignment.<br><br>
+
+  <strong style="color:var(--ink);">Equivalent class</strong><br>
+  <code class="mono">CyberRitualCase</code>
+  &nbsp;↔&nbsp;
+  <code class="mono">creon:CreativitySituation</code>
+  <span style="font-size:.7rem;color:var(--muted);">
+    (owl:equivalentClass)
+  </span>
+  <br><br>
+
+  <strong style="color:var(--ink);">Subclass relations</strong><br>
+
+  <code class="mono">SecularPressure</code>
+  &nbsp;⊑&nbsp;
+  <code class="mono">creon:CreativityPress</code><br>
+
+  <code class="mono">Archetype</code>
+  &nbsp;⊑&nbsp;
+  <code class="mono">creon:CreativeIdea</code><br>
+
+  <code class="mono">PerformativeAction</code>,
+  <code class="mono">RemediationStrategy</code>
+  &nbsp;⊑&nbsp;
+  <code class="mono">creon:PersonalProcess</code><br>
+
+  <code class="mono">RemediatedSignifier</code>,
+  <code class="mono">RitualSymbol</code>,
+  <code class="mono">AffectiveOutcome</code>
+  &nbsp;⊑&nbsp;
+  <code class="mono">creon:CreativeProduct</code><br><br>
+
+  <span>
+    The equivalence relation identifies the WishGraph case class with the corresponding
+    CREON situation concept, while the subclass relations specialise broader CREON concepts
+    for the specific domain of cyber-wishing.
+  </span>
+</div>
+
 
   <h3 style="font-size:1rem;color:var(--accent);margin:1.6rem 0 .7rem;">Object Properties</h3>
   <p style="font-size:.86rem;line-height:1.8;margin-bottom:.8rem;">
