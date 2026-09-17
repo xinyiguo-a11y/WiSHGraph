@@ -19,7 +19,7 @@
                                                                  <http://purl.org/dc/terms/modified> "2026-06-10"^^xsd:date ;
                                                                  <http://purl.org/dc/terms/title> "The Cyber-Wishing Ontology (WishGraph)"@en ;
                                                                  rdfs:comment "A refined ontology for Cyber-Wishing, mapped directly to CREON, designed by Digital Humanities students to capture the intersection of semiotics, consumerism, and modern cyber-beliefs."@en ;
-                                                                 owl:versionInfo "1.0 (June 2026)"@en .
+                                                                 owl:versionInfo "4.0 (Sep 2026)"@en .
 
 #################################################################
 #    Annotation properties
@@ -421,6 +421,22 @@ dul:Agent rdf:type owl:Class .
                rdfs:label "Blue Buddha Image"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#BornToSucceedVideo
+:BornToSucceedVideo rdf:type owl:NamedIndividual ,
+                             :VideoSignifier ;
+                    :containsSymbol :Emoji_BlackHeart ,
+                                    :ExecutiveLuxuryAesthetic ,
+                                    :Mantra_BornToSucceed ;
+                    :remediates :SuccessfulExecutiveIdeal ;
+                    rdfs:label "Born To Succeed Video"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#BusinessProsperity
+:BusinessProsperity rdf:type owl:NamedIndividual ,
+                             :AffectiveOutcome ;
+                    rdfs:label "Business Prosperity"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Butterfly
 :Butterfly rdf:type owl:NamedIndividual ,
                     :Animal ;
@@ -449,6 +465,29 @@ dul:Agent rdf:type owl:Class .
                rdfs:label "Commenter Anhui Student"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Caishen
+:Caishen rdf:type owl:NamedIndividual ,
+                  :TraditionalArchetype ;
+         rdfs:label "Caishen"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#CaishenBlessingPoster
+:CaishenBlessingPoster rdf:type owl:NamedIndividual ,
+                                :Subject ;
+                       rdfs:label "Caishen Blessing Poster"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#CaishenProsperityImg
+:CaishenProsperityImg rdf:type owl:NamedIndividual ,
+                               :ImageSignifier ;
+                      :containsSymbol :GoldCoins ,
+                                      :GoldenHalo ,
+                                      :Mantra_CaishenArrival ,
+                                      :Yuanbao ;
+                      :remediates :Caishen ;
+                      rdfs:label "Caishen Prosperity Img"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#CareerWealth
 :CareerWealth rdf:type owl:NamedIndividual ,
                        :MundanePressure ;
@@ -470,6 +509,18 @@ dul:Agent rdf:type owl:Class .
               rdfs:label "Cat Buddha Exam Wish Case"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Case_CelebrityMemeReassurance
+:Case_CelebrityMemeReassurance rdf:type owl:NamedIndividual ,
+                                        :CyberRitualCase ;
+                               :circulatesOn :Tiktok ;
+                               :employsSignifier :SupportiveCelebrityMemeVideo ;
+                               :hasPerformativeAction :Posting_ReassuranceMemeVideo ;
+                               :resolvesIntoAffect :EmotionalReassurance ;
+                               :transformedVia :SecularIdolDeification_CelebrityMeme ;
+                               :triggeredBy :MundanePressure_GeneralUncertainty ;
+                               rdfs:label "Celebrity Meme Reassurance Case"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Case_DigitalEnlightenment
 :Case_DigitalEnlightenment rdf:type owl:NamedIndividual ,
                                     :CyberRitualCase ;
@@ -481,6 +532,54 @@ dul:Agent rdf:type owl:Class .
                            :triggeredBy :ExistentialPressure_ModernAnxiety ;
                            rdfs:comment "A cyber-ritual case where a user posts a highly aestheticized Buddha video to seek and share spiritual teachings and inner peace."@en ;
                            rdfs:label "Digital Enlightenment Case"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Case_FinancialSuccessAffirmation
+:Case_FinancialSuccessAffirmation rdf:type owl:NamedIndividual ,
+                                           :CyberRitualCase ;
+                                  :circulatesOn :Tiktok ;
+                                  :employsSignifier :BornToSucceedVideo ;
+                                  :hasPerformativeAction :Posting_SuccessAffirmationVideo ;
+                                  :resolvesIntoAffect :FinancialEmpowerment ;
+                                  :transformedVia :SymbolicEnchantment_SuccessIdeal ;
+                                  :triggeredBy :MundanePressure_CareerFinancialAspiration ;
+                                  rdfs:label "Financial Success Affirmation Case"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Case_GlobalTycoonMantra
+:Case_GlobalTycoonMantra rdf:type owl:NamedIndividual ,
+                                  :CyberRitualCase ;
+                         :circulatesOn :Instagram ;
+                         :employsSignifier :GlobalTycoonChequeImg ;
+                         :hasPerformativeAction :Posting_GlobalTycoonMantra ;
+                         :resolvesIntoAffect :ProsperityExpectation ;
+                         :transformedVia :SymbolicEnchantment_WealthAssets ;
+                         :triggeredBy :MundanePressure_WealthStatusDesire ;
+                         rdfs:label "Global Tycoon Mantra Case"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Case_GrandfatherHealthPrayer
+:Case_GrandfatherHealthPrayer rdf:type owl:NamedIndividual ,
+                                       :CyberRitualCase ;
+                              :circulatesOn :Xiaohongshu ;
+                              :employsSignifier :HundredIllnessesRetreatTalismanImg ;
+                              :hasPerformativeAction :Posting_HealthTalismanPrayer ;
+                              :resolvesIntoAffect :FamilyHealthRecovery ;
+                              :transformedVia :DigitalTransposition_HealingTalisman ;
+                              :triggeredBy :ExistentialPressure_FamilyIllness ;
+                              rdfs:label "Grandfather Health Prayer Case"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Case_GuanyinWishFulfillment
+:Case_GuanyinWishFulfillment rdf:type owl:NamedIndividual ,
+                                      :CyberRitualCase ;
+                             :circulatesOn :Xiaohongshu ;
+                             :employsSignifier :GuanyinWishImg ;
+                             :hasPerformativeAction :Posting_GuanyinWish ;
+                             :resolvesIntoAffect :RomanticFulfillment ;
+                             :transformedVia :SacredAmplification_Guanyin ;
+                             :triggeredBy :MundanePressure_RomanticFutureUncertainty ;
+                             rdfs:label "Guanyin Wish Fulfillment Case"@en .
 
 
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Case_HealthWish
@@ -552,6 +651,54 @@ dul:Agent rdf:type owl:Class .
                         rdfs:label "Subliminal Romance Case"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Case_TikTokLoveManifestation
+:Case_TikTokLoveManifestation rdf:type owl:NamedIndividual ,
+                                       :CyberRitualCase ;
+                              :circulatesOn :Tiktok ;
+                              :employsSignifier :LoveManifestationVideo ;
+                              :hasPerformativeAction :Posting_LoveManifestVideo ;
+                              :resolvesIntoAffect :RomanticFulfillment ;
+                              :transformedVia :SymbolicEnchantment_LoveIdeal ;
+                              :triggeredBy :MundanePressure_RomanticDesire ;
+                              rdfs:label "Tik Tok Love Manifestation Case"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Case_UKWealthGodAltar
+:Case_UKWealthGodAltar rdf:type owl:NamedIndividual ,
+                                :CyberRitualCase ;
+                       :circulatesOn :Xiaohongshu ;
+                       :employsSignifier :WealthGodAltarImg ;
+                       :hasPerformativeAction :Posting_WealthGodAltar ;
+                       :resolvesIntoAffect :ProsperityHope ;
+                       :transformedVia :DigitalTransposition_WealthGodAltar ;
+                       :triggeredBy :MundanePressure_FinancialProsperity ;
+                       rdfs:label "UKWealth God Altar Case"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Case_WeiboCaishenBlessing
+:Case_WeiboCaishenBlessing rdf:type owl:NamedIndividual ,
+                                    :CyberRitualCase ;
+                           :circulatesOn :Weibo ;
+                           :employsSignifier :CaishenProsperityImg ;
+                           :hasPerformativeAction :Posting_CaishenBlessing ;
+                           :resolvesIntoAffect :BusinessProsperity ;
+                           :transformedVia :SacredAmplification_Caishen ;
+                           :triggeredBy :CareerWealth ;
+                           rdfs:label "Weibo Caishen Blessing Case"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Case_WeiboLuckyRabbitWish
+:Case_WeiboLuckyRabbitWish rdf:type owl:NamedIndividual ,
+                                    :CyberRitualCase ;
+                           :circulatesOn :Weibo ;
+                           :employsSignifier :LuckyRabbitGoodLuckImg ;
+                           :hasPerformativeAction :Posting_LikeCommentBlessing ;
+                           :resolvesIntoAffect :WishFulfillment ;
+                           :transformedVia :Remediation_RabbitLuck ;
+                           :triggeredBy :CareerWealth ;
+                           rdfs:label "Weibo Lucky Rabbit Wish Case"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Case_XWealthManifesting
 :Case_XWealthManifesting rdf:type owl:NamedIndividual ,
                                   :CyberRitualCase ;
@@ -587,6 +734,12 @@ dul:Agent rdf:type owl:Class .
                       rdfs:label "Cash Manifesting Video"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#CashStacks
+:CashStacks rdf:type owl:NamedIndividual ,
+                     :VisualOrAuditoryMarker ;
+            rdfs:label "Cash Stacks"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Cat
 :Cat rdf:type owl:NamedIndividual ,
               :Animal ;
@@ -599,6 +752,12 @@ dul:Agent rdf:type owl:Class .
                     :SacredHybridization ;
            rdfs:comment "An animal memeification strategy in which a cat is visually and symbolically transformed into a Buddha-like wishing figure."@en ;
            rdfs:label "Cat Buddha Remediation"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#CloudAesthetic
+:CloudAesthetic rdf:type owl:NamedIndividual ,
+                         :VisualOrAuditoryMarker ;
+                rdfs:label "Cloud Aesthetic"@en .
 
 
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Commenting_CET6Manifestation
@@ -621,11 +780,35 @@ dul:Agent rdf:type owl:Class .
                         rdfs:label "Commenting Claim Wealth"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#DigitalAltarDisplay
+:DigitalAltarDisplay rdf:type owl:NamedIndividual ,
+                              :VisualOrAuditoryMarker ;
+                     rdfs:label "Digital Altar Display"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#DigitalEnlightenmentPoster
 :DigitalEnlightenmentPoster rdf:type owl:NamedIndividual ,
                                      :Subject ;
                             rdfs:comment "A digital user sharing highly aestheticized spiritual content to explore the Buddha's teachings."@en ;
                             rdfs:label "Panda Chakra User"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#DigitalTransposition_HealingTalisman
+:DigitalTransposition_HealingTalisman rdf:type owl:NamedIndividual ,
+                                               :DigitalTransposition ;
+                                      rdfs:label "Digital Transposition Healing Talisman"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#DigitalTransposition_WealthGodAltar
+:DigitalTransposition_WealthGodAltar rdf:type owl:NamedIndividual ,
+                                              :DigitalTransposition ;
+                                     rdfs:label "Digital Transposition Wealth God Altar"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Emoji_BlackHeart
+:Emoji_BlackHeart rdf:type owl:NamedIndividual ,
+                           :Emoji ;
+                  rdfs:label "Emoji Black Heart"@en .
 
 
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Emoji_PrayingHands
@@ -640,6 +823,18 @@ dul:Agent rdf:type owl:Class .
                          :Emoji ;
                 rdfs:comment "The '❤️' emoji used alongside manifestation text to amplify the positive emotional attachment and intentionality of the wish."@en ;
                 rdfs:label "Red Heart Emoji Symbol"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Emoji_WhiteHeart
+:Emoji_WhiteHeart rdf:type owl:NamedIndividual ,
+                           :Emoji ;
+                  rdfs:label "Emoji White Heart"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#EmotionalReassurance
+:EmotionalReassurance rdf:type owl:NamedIndividual ,
+                               :AffectiveOutcome ;
+                      rdfs:label "Emotional Reassurance"@en .
 
 
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#ExamCatImg
@@ -666,11 +861,35 @@ dul:Agent rdf:type owl:Class .
                 rdfs:label "Exam-Wishing User"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#ExecutiveLuxuryAesthetic
+:ExecutiveLuxuryAesthetic rdf:type owl:NamedIndividual ,
+                                   :VisualOrAuditoryMarker ;
+                          rdfs:label "Executive Luxury Aesthetic"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#ExistentialPressure_FamilyIllness
+:ExistentialPressure_FamilyIllness rdf:type owl:NamedIndividual ,
+                                            :ExistentialPressure ;
+                                   rdfs:label "Existential Pressure Family Illness"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#ExistentialPressure_ModernAnxiety
 :ExistentialPressure_ModernAnxiety rdf:type owl:NamedIndividual ,
                                             :ExistentialPressure ;
                                    rdfs:comment "Deep life anxieties and spiritual voids generated by the complexities of contemporary society."@en ;
                                    rdfs:label "Modern Anxiety and Existential Pressure"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#FamilyHealthRecovery
+:FamilyHealthRecovery rdf:type owl:NamedIndividual ,
+                               :AffectiveOutcome ;
+                      rdfs:label "Family Health Recovery"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#FinancialEmpowerment
+:FinancialEmpowerment rdf:type owl:NamedIndividual ,
+                               :AffectiveOutcome ;
+                      rdfs:label "Financial Empowerment"@en .
 
 
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#FinancialFreedom
@@ -680,11 +899,79 @@ dul:Agent rdf:type owl:Class .
                   rdfs:label "Hope for Financial Freedom"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#FinancialSuccessPoster
+:FinancialSuccessPoster rdf:type owl:NamedIndividual ,
+                                 :Subject ;
+                        rdfs:label "Financial Success Poster"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#GlitterAesthetic
 :GlitterAesthetic rdf:type owl:NamedIndividual ,
                            :VisualOrAuditoryMarker ;
                   rdfs:comment "Sparkling visual effects used as a digital marker to signify magical energy and attraction."@en ;
                   rdfs:label "Glitter Aesthetic"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#GlobalTycoonChequeImg
+:GlobalTycoonChequeImg rdf:type owl:NamedIndividual ,
+                                :ImageSignifier ;
+                       :containsSymbol :CashStacks ,
+                                       :LuxuryGoldAesthetic ,
+                                       :Mantra_GlobalTycoon ;
+                       :remediates :WealthAssets ;
+                       rdfs:label "Global Tycoon Cheque Img"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#GodOfWealth
+:GodOfWealth rdf:type owl:NamedIndividual ,
+                      :TraditionalArchetype ;
+             rdfs:label "God Of Wealth"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#GoldCoins
+:GoldCoins rdf:type owl:NamedIndividual ,
+                    :VisualOrAuditoryMarker ;
+           rdfs:label "Gold Coins"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#GoldenAura
+:GoldenAura rdf:type owl:NamedIndividual ,
+                     :VisualOrAuditoryMarker ;
+            rdfs:label "Golden Aura"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#GoldenHalo
+:GoldenHalo rdf:type owl:NamedIndividual ,
+                     :VisualOrAuditoryMarker ;
+            rdfs:label "Golden Halo"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#GrandfatherHealthPoster
+:GrandfatherHealthPoster rdf:type owl:NamedIndividual ,
+                                  :Subject ;
+                         rdfs:label "Grandfather Health Poster"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Guanyin
+:Guanyin rdf:type owl:NamedIndividual ,
+                  :TraditionalArchetype ;
+         rdfs:label "Guanyin"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#GuanyinWishImg
+:GuanyinWishImg rdf:type owl:NamedIndividual ,
+                         :ImageSignifier ;
+                :containsSymbol :CloudAesthetic ,
+                                :GoldenAura ,
+                                :Mantra_WishImmediatelyRealized ;
+                :remediates :Guanyin ;
+                rdfs:label "Guanyin Wish Img"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#GuanyinWishPoster
+:GuanyinWishPoster rdf:type owl:NamedIndividual ,
+                            :Subject ;
+                   rdfs:label "Guanyin Wish Poster"@en .
 
 
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#HealthProblem
@@ -706,6 +993,16 @@ dul:Agent rdf:type owl:Class .
                            :Subject ;
                   rdfs:comment "A subject who performs a health-oriented cyber-wishing action by engaging with a Medicine Buddha image."@en ;
                   rdfs:label "Health-Wishing User"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#HundredIllnessesRetreatTalismanImg
+:HundredIllnessesRetreatTalismanImg rdf:type owl:NamedIndividual ,
+                                             :ImageSignifier ;
+                                    :containsSymbol :Emoji_PrayingHands ,
+                                                    :Mantra_HundredIllnessesRetreat ,
+                                                    :RedTalismanInk ;
+                                    :remediates :TaoistHealingTalisman ;
+                                    rdfs:label "Hundred Illnesses Retreat Talisman Img"@en .
 
 
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#InnerPeace
@@ -777,6 +1074,43 @@ dul:Agent rdf:type owl:Class .
               rdfs:label "Lotus Cushion"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#LoveManifestPoster
+:LoveManifestPoster rdf:type owl:NamedIndividual ,
+                             :Subject ;
+                    rdfs:label "Love Manifest Poster"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#LoveManifestationVideo
+:LoveManifestationVideo rdf:type owl:NamedIndividual ,
+                                 :VideoSignifier ;
+                        :containsSymbol :Emoji_WhiteHeart ,
+                                        :RomanticMusic ,
+                                        :SunsetAesthetic ;
+                        :remediates :RomanticCoupleIdeal ;
+                        rdfs:label "Love Manifestation Video"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#LuckyRabbitGoodLuckImg
+:LuckyRabbitGoodLuckImg rdf:type owl:NamedIndividual ,
+                                 :ImageSignifier ;
+                        :containsSymbol :Mantra_GoodLuckComes ,
+                                        :PinkCuteAesthetic ;
+                        :remediates :Rabbit ;
+                        rdfs:label "Lucky Rabbit Good Luck Img"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#LuckyRabbitWishPoster
+:LuckyRabbitWishPoster rdf:type owl:NamedIndividual ,
+                                :Subject ;
+                       rdfs:label "Lucky Rabbit Wish Poster"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#LuxuryGoldAesthetic
+:LuxuryGoldAesthetic rdf:type owl:NamedIndividual ,
+                              :VisualOrAuditoryMarker ;
+                     rdfs:label "Luxury Gold Aesthetic"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#LuxurySportsCar
 :LuxurySportsCar rdf:type owl:NamedIndividual ,
                           :SecularCommodity ;
@@ -805,6 +1139,12 @@ dul:Agent rdf:type owl:Class .
                        rdfs:label "Manifesting Mantra Text"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Mantra_BornToSucceed
+:Mantra_BornToSucceed rdf:type owl:NamedIndividual ,
+                               :Mantra ;
+                      rdfs:label "Mantra Born To Succeed"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Mantra_CET6Success
 :Mantra_CET6Success rdf:type owl:NamedIndividual ,
                              :Mantra ;
@@ -813,12 +1153,54 @@ dul:Agent rdf:type owl:Class .
                     rdfs:label "CET-6 Success Mantra"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Mantra_CaishenArrival
+:Mantra_CaishenArrival rdf:type owl:NamedIndividual ,
+                                :Mantra ;
+                       rdfs:label "Mantra Caishen Arrival"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Mantra_ClaimEnergy
 :Mantra_ClaimEnergy rdf:type owl:NamedIndividual ,
                              :Mantra ;
                     :hasTextContent "I claim this positive energy" ;
                     rdfs:comment "The textual spell 'I claim this positive energy' used to verbally manifest and lock in the desire."@en ;
                     rdfs:label "Claim Energy Mantra"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Mantra_DoingAmazingSweetie
+:Mantra_DoingAmazingSweetie rdf:type owl:NamedIndividual ,
+                                     :Mantra ;
+                            rdfs:label "Mantra Doing Amazing Sweetie"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Mantra_EverythingWillBeAlright
+:Mantra_EverythingWillBeAlright rdf:type owl:NamedIndividual ,
+                                         :Mantra ;
+                                rdfs:label "Mantra Everything Will Be Alright"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Mantra_GlobalTycoon
+:Mantra_GlobalTycoon rdf:type owl:NamedIndividual ,
+                              :Mantra ;
+                     rdfs:label "Mantra Global Tycoon"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Mantra_GoodLuckComes
+:Mantra_GoodLuckComes rdf:type owl:NamedIndividual ,
+                               :Mantra ;
+                      rdfs:label "Mantra Good Luck Comes"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Mantra_HundredIllnessesRetreat
+:Mantra_HundredIllnessesRetreat rdf:type owl:NamedIndividual ,
+                                         :Mantra ;
+                                rdfs:label "Mantra Hundred Illnesses Retreat"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Mantra_WishImmediatelyRealized
+:Mantra_WishImmediatelyRealized rdf:type owl:NamedIndividual ,
+                                         :Mantra ;
+                                rdfs:label "Mantra Wish Immediately Realized"@en .
 
 
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#MaterialisticUser
@@ -842,6 +1224,18 @@ dul:Agent rdf:type owl:Class .
              rdfs:label "Meme Therapy"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#MundanePressure_CareerFinancialAspiration
+:MundanePressure_CareerFinancialAspiration rdf:type owl:NamedIndividual ,
+                                                    :MundanePressure ;
+                                           rdfs:label "Mundane Pressure Career Financial Aspiration"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#MundanePressure_FinancialProsperity
+:MundanePressure_FinancialProsperity rdf:type owl:NamedIndividual ,
+                                              :MundanePressure ;
+                                     rdfs:label "Mundane Pressure Financial Prosperity"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#MundanePressure_FutureUncertainty
 :MundanePressure_FutureUncertainty rdf:type owl:NamedIndividual ,
                                             :MundanePressure ;
@@ -849,11 +1243,29 @@ dul:Agent rdf:type owl:Class .
                                    rdfs:label "Future Uncertainty Pressure"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#MundanePressure_GeneralUncertainty
+:MundanePressure_GeneralUncertainty rdf:type owl:NamedIndividual ,
+                                             :MundanePressure ;
+                                    rdfs:label "Mundane Pressure General Uncertainty"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#MundanePressure_RomanticAnxiety
 :MundanePressure_RomanticAnxiety rdf:type owl:NamedIndividual ,
                                           :MundanePressure ;
                                  rdfs:comment "Everyday worldly pressures and desires regarding finding love, personal attractiveness, and relationship quality."@en ;
                                  rdfs:label "Romantic Anxiety"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#MundanePressure_RomanticDesire
+:MundanePressure_RomanticDesire rdf:type owl:NamedIndividual ,
+                                         :MundanePressure ;
+                                rdfs:label "Mundane Pressure Romantic Desire"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#MundanePressure_RomanticFutureUncertainty
+:MundanePressure_RomanticFutureUncertainty rdf:type owl:NamedIndividual ,
+                                                    :MundanePressure ;
+                                           rdfs:label "Mundane Pressure Romantic Future Uncertainty"@en .
 
 
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#MundanePressure_StatusAnxiety
@@ -870,11 +1282,23 @@ dul:Agent rdf:type owl:Class .
                               rdfs:label "Wealth Desire Pressure"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#MundanePressure_WealthStatusDesire
+:MundanePressure_WealthStatusDesire rdf:type owl:NamedIndividual ,
+                                             :MundanePressure ;
+                                    rdfs:label "Mundane Pressure Wealth Status Desire"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#NewYearVibes
 :NewYearVibes rdf:type owl:NamedIndividual ,
                        :AffectiveOutcome ;
               rdfs:comment "A genuine emotional resolution producing psychological solace, hope, and feelings of being blessed for the year 2025."@en ;
               rdfs:label "Sincere Hope for New Year Vibes"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#PinkCuteAesthetic
+:PinkCuteAesthetic rdf:type owl:NamedIndividual ,
+                            :VisualOrAuditoryMarker ;
+                   rdfs:label "Pink Cute Aesthetic"@en .
 
 
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#PopIdolGod
@@ -892,6 +1316,13 @@ dul:Agent rdf:type owl:Class .
                         rdfs:label "Posting Buddha Teaching"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Posting_CaishenBlessing
+:Posting_CaishenBlessing rdf:type owl:NamedIndividual ,
+                                  :PostingAction ;
+                         :performedBy :CaishenBlessingPoster ;
+                         rdfs:label "Posting Caishen Blessing"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Posting_ExamWish
 :Posting_ExamWish rdf:type owl:NamedIndividual ,
                            :PostingAction ;
@@ -900,12 +1331,47 @@ dul:Agent rdf:type owl:Class .
                   rdfs:label "Posting Exam Wish"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Posting_GlobalTycoonMantra
+:Posting_GlobalTycoonMantra rdf:type owl:NamedIndividual ,
+                                     :PostingAction ;
+                            :performedBy :ProsperityManifestPoster ;
+                            rdfs:label "Posting Global Tycoon Mantra"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Posting_GuanyinWish
+:Posting_GuanyinWish rdf:type owl:NamedIndividual ,
+                              :PostingAction ;
+                     :performedBy :GuanyinWishPoster ;
+                     rdfs:label "Posting Guanyin Wish"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Posting_HealthTalismanPrayer
+:Posting_HealthTalismanPrayer rdf:type owl:NamedIndividual ,
+                                       :PostingAction ;
+                              :performedBy :GrandfatherHealthPoster ;
+                              rdfs:label "Posting Health Talisman Prayer"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Posting_HealthWish
 :Posting_HealthWish rdf:type owl:NamedIndividual ,
                              :PostingAction ;
                     :performedBy :HealthWishPoster ;
                     rdfs:comment "The performative action of posting or sharing a Medicine Buddha image to express a wish for health recovery or protection."@en ;
                     rdfs:label "Posting Health Wish"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Posting_LikeCommentBlessing
+:Posting_LikeCommentBlessing rdf:type owl:NamedIndividual ,
+                                      :PostingAction ;
+                             :performedBy :LuckyRabbitWishPoster ;
+                             rdfs:label "Posting Like Comment Blessing"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Posting_LoveManifestVideo
+:Posting_LoveManifestVideo rdf:type owl:NamedIndividual ,
+                                    :PostingAction ;
+                           :performedBy :LoveManifestPoster ;
+                           rdfs:label "Posting Love Manifest Video"@en .
 
 
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Posting_Manifest2026
@@ -932,12 +1398,33 @@ dul:Agent rdf:type owl:Class .
                        rdfs:label "Posting New Year Prayer Action"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Posting_ReassuranceMemeVideo
+:Posting_ReassuranceMemeVideo rdf:type owl:NamedIndividual ,
+                                       :PostingAction ;
+                              :performedBy :ReassuranceManifestPoster ;
+                              rdfs:label "Posting Reassurance Meme Video"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Posting_SubliminalVideo
 :Posting_SubliminalVideo rdf:type owl:NamedIndividual ,
                                   :PostingAction ;
                          :performedBy :RomanceSeekingUser ;
                          rdfs:comment "The performative act of publishing or engaging with a subliminal butterfly video to activate its romantic attraction power."@en ;
                          rdfs:label "Posting Subliminal Video"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Posting_SuccessAffirmationVideo
+:Posting_SuccessAffirmationVideo rdf:type owl:NamedIndividual ,
+                                          :PostingAction ;
+                                 :performedBy :FinancialSuccessPoster ;
+                                 rdfs:label "Posting Success Affirmation Video"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Posting_WealthGodAltar
+:Posting_WealthGodAltar rdf:type owl:NamedIndividual ,
+                                 :PostingAction ;
+                        :performedBy :UKWealthGodPoster ;
+                        rdfs:label "Posting Wealth God Altar"@en .
 
 
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Posting_WealthManifesting
@@ -953,6 +1440,24 @@ dul:Agent rdf:type owl:Class .
                      :AffectiveOutcome ;
             rdfs:comment "A genuine emotional and psychological resolution derived from the ritual, bringing hope and motivational comfort regarding personal wealth."@en ;
             rdfs:label "Sincere Hope for Prosperity"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#ProsperityExpectation
+:ProsperityExpectation rdf:type owl:NamedIndividual ,
+                                :AffectiveOutcome ;
+                       rdfs:label "Prosperity Expectation"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#ProsperityHope
+:ProsperityHope rdf:type owl:NamedIndividual ,
+                         :AffectiveOutcome ;
+                rdfs:label "Prosperity Hope"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#ProsperityManifestPoster
+:ProsperityManifestPoster rdf:type owl:NamedIndividual ,
+                                   :Subject ;
+                          rdfs:label "Prosperity Manifest Poster"@en .
 
 
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#PsychedelicAestheticRemediation
@@ -980,6 +1485,30 @@ dul:Agent rdf:type owl:Class .
                         rdfs:label "Psychedelic Buddha Video"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Rabbit
+:Rabbit rdf:type owl:NamedIndividual ,
+                 :Animal ;
+        rdfs:label "Rabbit"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#RainbowAura
+:RainbowAura rdf:type owl:NamedIndividual ,
+                      :VisualOrAuditoryMarker ;
+             rdfs:label "Rainbow Aura"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#ReassuranceManifestPoster
+:ReassuranceManifestPoster rdf:type owl:NamedIndividual ,
+                                    :Subject ;
+                           rdfs:label "Reassurance Manifest Poster"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#RedTalismanInk
+:RedTalismanInk rdf:type owl:NamedIndividual ,
+                         :VisualOrAuditoryMarker ;
+                rdfs:label "Red Talisman Ink"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Remediation_CashFetishization
 :Remediation_CashFetishization rdf:type owl:NamedIndividual ,
                                         :SymbolicEnchantment ;
@@ -992,6 +1521,12 @@ dul:Agent rdf:type owl:Class .
                                 :SymbolicEnchantment ;
                        rdfs:comment "The specific application of commodity fetishization strategy to a sports car video."@en ;
                        rdfs:label "Luxury Car Fetishization"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Remediation_RabbitLuck
+:Remediation_RabbitLuck rdf:type owl:NamedIndividual ,
+                                 :SymbolicEnchantment ;
+                        rdfs:label "Remediation Rabbit Luck"@en .
 
 
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#RestoreOriginal
@@ -1013,6 +1548,42 @@ dul:Agent rdf:type owl:Class .
                              :AffectiveOutcome ;
                     rdfs:comment "A genuine psychological outcome providing the user with hope, confidence, and positive anticipation of romance."@en ;
                     rdfs:label "Sincere Hope for Romantic Attraction"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#RomanticCoupleIdeal
+:RomanticCoupleIdeal rdf:type owl:NamedIndividual ,
+                              :ModernArchetype ;
+                     rdfs:label "Romantic Couple Ideal"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#RomanticFulfillment
+:RomanticFulfillment rdf:type owl:NamedIndividual ,
+                              :AffectiveOutcome ;
+                     rdfs:label "Romantic Fulfillment"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#RomanticMusic
+:RomanticMusic rdf:type owl:NamedIndividual ,
+                        :VisualOrAuditoryMarker ;
+               rdfs:label "Romantic Music"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#SacredAmplification_Caishen
+:SacredAmplification_Caishen rdf:type owl:NamedIndividual ,
+                                      :SacredAmplification ;
+                             rdfs:label "Sacred Amplification Caishen"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#SacredAmplification_Guanyin
+:SacredAmplification_Guanyin rdf:type owl:NamedIndividual ,
+                                      :SacredAmplification ;
+                             rdfs:label "Sacred Amplification Guanyin"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#SecularIdolDeification_CelebrityMeme
+:SecularIdolDeification_CelebrityMeme rdf:type owl:NamedIndividual ,
+                                               :SecularIdolDeification ;
+                                      rdfs:label "Secular Idol Deification Celebrity Meme"@en .
 
 
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#SportsCarManifestingVideo
@@ -1048,6 +1619,58 @@ dul:Agent rdf:type owl:Class .
                           rdfs:label "Subliminal Butterfly Video"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#SuccessfulExecutiveIdeal
+:SuccessfulExecutiveIdeal rdf:type owl:NamedIndividual ,
+                                   :ModernArchetype ;
+                          rdfs:label "Successful Executive Ideal"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#SunsetAesthetic
+:SunsetAesthetic rdf:type owl:NamedIndividual ,
+                          :VisualOrAuditoryMarker ;
+                 rdfs:label "Sunset Aesthetic"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#SupportiveCelebrityMemeVideo
+:SupportiveCelebrityMemeVideo rdf:type owl:NamedIndividual ,
+                                       :VideoSignifier ;
+                              :containsSymbol :Mantra_DoingAmazingSweetie ,
+                                              :Mantra_EverythingWillBeAlright ,
+                                              :RainbowAura ;
+                              :remediates :SupportiveCelebrityMomagerMeme ;
+                              rdfs:label "Supportive Celebrity Meme Video"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#SupportiveCelebrityMomagerMeme
+:SupportiveCelebrityMomagerMeme rdf:type owl:NamedIndividual ,
+                                         :ModernArchetype ;
+                                rdfs:label "Supportive Celebrity Momager Meme"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#SymbolicEnchantment_LoveIdeal
+:SymbolicEnchantment_LoveIdeal rdf:type owl:NamedIndividual ,
+                                        :SymbolicEnchantment ;
+                               rdfs:label "Symbolic Enchantment Love Ideal"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#SymbolicEnchantment_SuccessIdeal
+:SymbolicEnchantment_SuccessIdeal rdf:type owl:NamedIndividual ,
+                                           :SymbolicEnchantment ;
+                                  rdfs:label "Symbolic Enchantment Success Ideal"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#SymbolicEnchantment_WealthAssets
+:SymbolicEnchantment_WealthAssets rdf:type owl:NamedIndividual ,
+                                           :SymbolicEnchantment ;
+                                  rdfs:label "Symbolic Enchantment Wealth Assets"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#TaoistHealingTalisman
+:TaoistHealingTalisman rdf:type owl:NamedIndividual ,
+                                :TraditionalArchetype ;
+                       rdfs:label "Taoist Healing Talisman"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Tiktok
 :Tiktok rdf:type owl:NamedIndividual ,
                  :Platform ;
@@ -1070,6 +1693,18 @@ dul:Agent rdf:type owl:Class .
                          rdfs:label "Devout Instagram User"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#UKWealthGodPoster
+:UKWealthGodPoster rdf:type owl:NamedIndividual ,
+                            :Subject ;
+                   rdfs:label "UKWealth God Poster"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#WealthAssets
+:WealthAssets rdf:type owl:NamedIndividual ,
+                       :SecularCommodity ;
+              rdfs:label "Wealth Assets"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#WealthClaimCommenter
 :WealthClaimCommenter rdf:type owl:NamedIndividual ,
                                :Subject ;
@@ -1084,6 +1719,26 @@ dul:Agent rdf:type owl:Class .
                 rdfs:label "Ironic Comfort of Wealth Delusion"@en .
 
 
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#WealthGodAltarImg
+:WealthGodAltarImg rdf:type owl:NamedIndividual ,
+                            :ImageSignifier ;
+                   :containsSymbol :DigitalAltarDisplay ;
+                   :remediates :GodOfWealth ;
+                   rdfs:label "Wealth God Altar Img"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Weibo
+:Weibo rdf:type owl:NamedIndividual ,
+                :Platform ;
+       rdfs:label "Weibo"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#WishFulfillment
+:WishFulfillment rdf:type owl:NamedIndividual ,
+                          :AffectiveOutcome ;
+                 rdfs:label "Wish Fulfillment"@en .
+
+
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#XPlatform
 :XPlatform rdf:type owl:NamedIndividual ,
                     :Platform ;
@@ -1096,6 +1751,12 @@ dul:Agent rdf:type owl:Class .
                       :Platform ;
              rdfs:comment "A Chinese social media and lifestyle-sharing platform where several cyber-wishing cases circulate."@en ;
              rdfs:label "Xiaohongshu Platform"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#Yuanbao
+:Yuanbao rdf:type owl:NamedIndividual ,
+                  :VisualOrAuditoryMarker ;
+         rdfs:label "Yuanbao"@en .
 
 
 ###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi
