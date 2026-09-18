@@ -187,8 +187,7 @@ creon:CreativityPress rdf:type owl:Class .
 
 
 ###  http://www.ontologydesignpatterns.org/ont/creativity/creon.owl#CreativitySituation
-creon:CreativitySituation rdf:type owl:Class ;
-                          owl:equivalentClass :CyberRitualCase .
+creon:CreativitySituation rdf:type owl:Class .
 
 
 ###  http://www.ontologydesignpatterns.org/ont/creativity/creon.owl#PersonalProcess
@@ -225,6 +224,7 @@ creon:PersonalProcess rdf:type owl:Class .
 
 ###  http://www.ontologydesignpatterns.org/ont/cyberwishing/cw.owl#CyberRitualCase
 :CyberRitualCase rdf:type owl:Class ;
+                 rdfs:subClassOf creon:CreativitySituation ;
                  rdfs:comment "The core event encompassing the entirety of a cyber-wishing practice, binding together the actor, process, product, and environment."@en ;
                  rdfs:label "Cyber Ritual Case"@en .
 
